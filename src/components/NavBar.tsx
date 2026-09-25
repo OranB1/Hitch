@@ -3,9 +3,11 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { signOut } from "@/app/auth/actions";
 import { Button } from "@/components/Button";
+import MobileNav from "@/components/MobileNav";
 
 const LINKS = [
   { href: "/marketplace", label: "Opportunities" },
+  { href: "/demo", label: "See a demo" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
 ];
@@ -17,7 +19,7 @@ export default async function NavBar() {
   } = await supabase.auth.getUser();
 
   return (
-    <header className="border-b-[0.5px] border-graphite bg-void">
+    <header className="relative border-b-[0.5px] border-graphite bg-void">
       <nav className="mx-auto flex max-w-[1200px] items-center gap-6 px-6 py-4">
         <Link href="/" className="flex items-center gap-2 font-serif text-[19px] text-paper">
           <Image
@@ -30,7 +32,7 @@ export default async function NavBar() {
           />
           Hitch
         </Link>
-        <div className="flex flex-1 gap-2">
+        <div className="hidden flex-1 gap-2 md:flex">
           {LINKS.map((l) => (
             <Link
               key={l.href}
@@ -43,31 +45,37 @@ export default async function NavBar() {
         </div>
         <Link
           href="/marketplace/post"
-          className="hidden rounded-buttons border border-graphite px-3 py-[7px] text-[13px] font-[510] text-mist transition-colors hover:border-smoke sm:block"
+          className="hidden rounded-buttons border border-graphite px-3 py-[7px] text-[13px] font-[510] text-mist transition-colors hover:border-smoke md:block"
         >
           Post an opportunity
         </Link>
 
-        {user ? (
-          <div className="flex items-center gap-4 text-[14px]">
-            <Link href="/marketplace/applications" className="text-mist transition-colors hover:text-paper">
-              My applications
-            </Link>
-            <Link href="/profile" className="text-mist transition-colors hover:text-paper">
-              Profile
-            </Link>
-            <form action={signOut} className="flex items-center gap-3">
-              <span className="text-fog">{user.email}</span>
-              <button type="submit" className="text-mist transition-colors hover:text-paper">
-                Sign out
-              </button>
-            </form>
-          </div>
-        ) : (
-          <Button href="/login" variant="pill" size="sm">
-            Sign in
-          </Button>
-        )}
+        <div className="hidden md:block">
+          {user ? (
+            <div className="flex items-center gap-4 text-[14px]">
+              <Link href="/marketplace/applications" className="text-mist transition-colors hover:text-paper">
+                My applications
+              </Link>
+              <Link href="/profile" className="text-mist transition-colors hover:text-paper">
+                Profile
+              </Link>
+              <form action={signOut} className="flex items-center gap-3">
+                <span className="text-fog">{user.email}</span>
+                <button type="submit" className="text-mist transition-colors hover:text-paper">
+                  Sign out
+                </button>
+              </form>
+            </div>
+          ) : (
+            <Button href="/login" variant="pill" size="sm">
+              Sign in
+            </Button>
+          )}
+        </div>
+
+        <div className="ml-auto md:hidden">
+          <MobileNav userEmail={user?.email ?? null} signOutAction={signOut} />
+        </div>
       </nav>
     </header>
   );

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
+import { toastQueue } from "@/components/Toast";
 import { TASK_TYPE_OPTIONS } from "@/lib/data/marketplace-options";
 import type { Tables } from "@/lib/supabase/database.types";
 
@@ -60,6 +61,17 @@ export default function MyApplications() {
     init();
   }, [supabase, router]);
 
+  async function withdraw(applicationId: string) {
+    if (!window.confirm("Withdraw this application?")) return;
+    setApplications((prev) => prev.map((a) => (a.id === applicationId ? { ...a, status: "withdrawn" } : a)));
+    const { error } = await supabase.from("opportunity_applications").update({ status: "withdrawn" }).eq("id", applicationId);
+    if (error) {
+      toastQueue.add({ title: "Couldn't withdraw application", description: error.message });
+      return;
+    }
+    toastQueue.add({ title: "Application withdrawn" });
+  }
+
   if (loading) {
     return <div className="mt-8 rounded-cards bg-carbon p-6 shadow-subtle text-body-sm text-fog">Loading…</div>;
   }
@@ -103,6 +115,14 @@ export default function MyApplications() {
             </span>
           </div>
           {a.cover_note && <p className="mt-3 text-body-sm text-mist">{a.cover_note}</p>}
+          {(a.status === "submitted" || a.status === "shortlisted") && (
+            <button
+              onClick={() => withdraw(a.id)}
+              className="mt-3 rounded-buttons border border-graphite px-3 py-1.5 text-[13px] text-mist hover:border-smoke"
+            >
+              Withdraw
+            </button>
+          )}
         </div>
       ))}
     </div>

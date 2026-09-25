@@ -4,6 +4,7 @@ export type PostedOpportunity = {
   title: string;
   description: string;
   hospitalTrust: string;
+  isRemote: boolean;
   taskType: TaskType;
   requiredSkills: Skill[];
   preferredSkills: Skill[];

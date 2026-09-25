@@ -32,6 +32,33 @@ export function medSchoolYearLabel(value: string): string {
   return MED_SCHOOL_YEAR_LABELS[value] ?? value;
 }
 
+// A single ordered stage list spanning both applicant profile shapes (a medical student's
+// year_of_study and a doctor's grade), so a posting's "minimum stage" can be compared against
+// either kind of applicant with one ordinal ranking instead of free-text substring matching.
+export type Stage = "1" | "2" | "3" | "4" | "5" | "Intercalating" | "F1" | "F2" | "F3" | "F4" | "IN_SPECIALTY_TRAINING";
+
+export const STAGE_OPTIONS: { value: Stage; label: string }[] = [
+  { value: "1", label: "1st year (med school)" },
+  { value: "2", label: "2nd year (med school)" },
+  { value: "3", label: "3rd year (med school)" },
+  { value: "4", label: "4th year (med school)" },
+  { value: "5", label: "5th year (med school)" },
+  { value: "Intercalating", label: "Intercalating" },
+  { value: "F1", label: "F1" },
+  { value: "F2", label: "F2" },
+  { value: "F3", label: "F3" },
+  { value: "F4", label: "F4" },
+  { value: "IN_SPECIALTY_TRAINING", label: "In specialty training" },
+];
+
+export const STAGE_RANK: Record<Stage, number> = Object.fromEntries(
+  STAGE_OPTIONS.map((o, i) => [o.value, i])
+) as Record<Stage, number>;
+
+export function stageLabel(value: string): string {
+  return STAGE_OPTIONS.find((o) => o.value === value)?.label ?? value;
+}
+
 export type OnboardingRole = {
   value: "medical_student" | "doctor_applicant" | "consultant_registrar";
   label: string;

@@ -5,10 +5,13 @@ import { useRouter } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
 
+const APPLICANT_ROLES = new Set(["medical_student", "doctor_applicant"]);
+
 export default function ProfileForm() {
   const supabase = useMemo(() => createClient(), []);
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
+  const [role, setRole] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -38,11 +41,12 @@ export default function ProfileForm() {
 
       const { data: profile } = await supabase
         .from("profiles")
-        .select("full_name, about_motivation, about_experience, about_goals, avatar_url, cv_url, cv_filename, cv_uploaded_at")
+        .select("full_name, role, about_motivation, about_experience, about_goals, avatar_url, cv_url, cv_filename, cv_uploaded_at")
         .eq("id", currentUser.id)
         .maybeSingle();
 
       if (profile) {
+        setRole(profile.role);
         setFullName(profile.full_name ?? "");
         setAboutMotivation(profile.about_motivation ?? "");
         setAboutExperience(profile.about_experience ?? "");
@@ -153,6 +157,8 @@ export default function ProfileForm() {
     return <div className="mt-8 rounded-cards bg-carbon p-6 shadow-subtle text-body-sm text-fog">Loading…</div>;
   }
 
+  const isApplicant = role ? APPLICANT_ROLES.has(role) : true;
+
   return (
     <div className="mt-8 space-y-4">
       <div className="rounded-cards bg-carbon p-6 shadow-subtle">
@@ -197,75 +203,87 @@ export default function ProfileForm() {
         </div>
       </div>
 
-      <div className="rounded-cards bg-carbon p-6 shadow-subtle space-y-4">
-        <div>
-          <p className="text-body-sm text-mist">About you</p>
-          <p className="mt-0.5 text-caption text-ash">
-            Posters see this when you apply — answering all three helps them compare applicants fairly.
+      {isApplicant ? (
+        <>
+          <div className="rounded-cards bg-carbon p-6 shadow-subtle space-y-4">
+            <div>
+              <p className="text-body-sm text-mist">About you</p>
+              <p className="mt-0.5 text-caption text-ash">
+                Posters see this when you apply — answering all three helps them compare applicants fairly.
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-caption text-ash">What draws you to this specialty / type of work?</label>
+              <textarea
+                value={aboutMotivation}
+                onChange={(e) => setAboutMotivation(e.target.value)}
+                onBlur={() => handleSaveAbout("about_motivation", aboutMotivation)}
+                rows={2}
+                placeholder="e.g. what's pulling you toward this area, or why you want to build this skill"
+                className="mt-1 w-full rounded-inputs border border-graphite bg-black/[0.025] px-[14px] py-[12px] text-[14px] text-mist focus:border-mist focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="block text-caption text-ash">Relevant experience so far</label>
+              <textarea
+                value={aboutExperience}
+                onChange={(e) => setAboutExperience(e.target.value)}
+                onBlur={() => handleSaveAbout("about_experience", aboutExperience)}
+                rows={2}
+                placeholder="e.g. audits, QIPs, research, or anything else relevant — even if informal"
+                className="mt-1 w-full rounded-inputs border border-graphite bg-black/[0.025] px-[14px] py-[12px] text-[14px] text-mist focus:border-mist focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="block text-caption text-ash">What are you hoping to get out of it?</label>
+              <textarea
+                value={aboutGoals}
+                onChange={(e) => setAboutGoals(e.target.value)}
+                onBlur={() => handleSaveAbout("about_goals", aboutGoals)}
+                rows={2}
+                placeholder="e.g. a specific portfolio point, co-authorship, or just hands-on experience"
+                className="mt-1 w-full rounded-inputs border border-graphite bg-black/[0.025] px-[14px] py-[12px] text-[14px] text-mist focus:border-mist focus:outline-none"
+              />
+            </div>
+          </div>
+
+          <div className="rounded-cards bg-carbon p-6 shadow-subtle">
+            <p className="text-body-sm text-mist">CV</p>
+            <p className="mt-1 text-caption text-ash">PDF only. Required before you can apply to an opportunity.</p>
+            <div className="mt-3 flex items-center gap-3">
+              <input ref={cvInputRef} type="file" accept="application/pdf" onChange={handleCvChange} className="hidden" />
+              <button
+                onClick={() => cvInputRef.current?.click()}
+                disabled={saving}
+                className="rounded-buttons border border-graphite px-4 py-2 text-[13px] text-mist hover:border-smoke disabled:opacity-50"
+              >
+                {cvFilename ? "Replace CV" : "Upload CV"}
+              </button>
+              {cvFilename && (
+                <button onClick={handleViewCv} className="text-[13px] text-mist underline hover:text-paper">
+                  {cvFilename}
+                </button>
+              )}
+            </div>
+            {cvUploadedAt && (
+              <p className="mt-2 text-caption text-ash">
+                Uploaded {new Date(cvUploadedAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
+              </p>
+            )}
+          </div>
+        </>
+      ) : (
+        <div className="rounded-cards bg-carbon p-6 shadow-subtle">
+          <p className="text-body-sm text-mist">Posting as {fullName || "yourself"}</p>
+          <p className="mt-1 text-caption text-ash">
+            As a consultant or registrar, applicants see your name when you post an opportunity — no CV or applicant
+            bio needed here.
           </p>
         </div>
-
-        <div>
-          <label className="block text-caption text-ash">What draws you to this specialty / type of work?</label>
-          <textarea
-            value={aboutMotivation}
-            onChange={(e) => setAboutMotivation(e.target.value)}
-            onBlur={() => handleSaveAbout("about_motivation", aboutMotivation)}
-            rows={2}
-            placeholder="e.g. what's pulling you toward this area, or why you want to build this skill"
-            className="mt-1 w-full rounded-inputs border border-graphite bg-black/[0.025] px-[14px] py-[12px] text-[14px] text-mist focus:border-mist focus:outline-none"
-          />
-        </div>
-
-        <div>
-          <label className="block text-caption text-ash">Relevant experience so far</label>
-          <textarea
-            value={aboutExperience}
-            onChange={(e) => setAboutExperience(e.target.value)}
-            onBlur={() => handleSaveAbout("about_experience", aboutExperience)}
-            rows={2}
-            placeholder="e.g. audits, QIPs, research, or anything else relevant — even if informal"
-            className="mt-1 w-full rounded-inputs border border-graphite bg-black/[0.025] px-[14px] py-[12px] text-[14px] text-mist focus:border-mist focus:outline-none"
-          />
-        </div>
-
-        <div>
-          <label className="block text-caption text-ash">What are you hoping to get out of it?</label>
-          <textarea
-            value={aboutGoals}
-            onChange={(e) => setAboutGoals(e.target.value)}
-            onBlur={() => handleSaveAbout("about_goals", aboutGoals)}
-            rows={2}
-            placeholder="e.g. a specific portfolio point, co-authorship, or just hands-on experience"
-            className="mt-1 w-full rounded-inputs border border-graphite bg-black/[0.025] px-[14px] py-[12px] text-[14px] text-mist focus:border-mist focus:outline-none"
-          />
-        </div>
-      </div>
-
-      <div className="rounded-cards bg-carbon p-6 shadow-subtle">
-        <p className="text-body-sm text-mist">CV</p>
-        <p className="mt-1 text-caption text-ash">PDF only. Required before you can apply to an opportunity.</p>
-        <div className="mt-3 flex items-center gap-3">
-          <input ref={cvInputRef} type="file" accept="application/pdf" onChange={handleCvChange} className="hidden" />
-          <button
-            onClick={() => cvInputRef.current?.click()}
-            disabled={saving}
-            className="rounded-buttons border border-graphite px-4 py-2 text-[13px] text-mist hover:border-smoke disabled:opacity-50"
-          >
-            {cvFilename ? "Replace CV" : "Upload CV"}
-          </button>
-          {cvFilename && (
-            <button onClick={handleViewCv} className="text-[13px] text-mist underline hover:text-paper">
-              {cvFilename}
-            </button>
-          )}
-        </div>
-        {cvUploadedAt && (
-          <p className="mt-2 text-caption text-ash">
-            Uploaded {new Date(cvUploadedAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
-          </p>
-        )}
-      </div>
+      )}
 
       {message && <p className="text-caption text-fog">{message}</p>}
     </div>

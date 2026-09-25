@@ -6,10 +6,17 @@ import type { User } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
 import { toastQueue } from "@/components/Toast";
 import { TASK_TYPE_OPTIONS, SKILL_OPTIONS, type TaskType, type Skill } from "@/lib/data/marketplace-options";
+import { stageLabel } from "@/lib/data/onboarding-options";
 import { getPartneredHospitals, computeMatch, type MatchProfile } from "@/lib/marketplace";
 import type { Tables } from "@/lib/supabase/database.types";
 
 type Opportunity = Tables<"opportunities">;
+type PosterProfile = {
+  full_name: string | null;
+  department: string | null;
+  hospital_trust: string | null;
+  avatar_url: string | null;
+};
 
 const INPUT_CLASS =
   "rounded-inputs border border-graphite bg-black/[0.025] px-3 py-2 text-[13px] text-mist focus:border-mist focus:outline-none";
@@ -33,6 +40,7 @@ export default function MarketplaceBrowser() {
     role: null,
   });
   const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
+  const [postersById, setPostersById] = useState<Map<string, PosterProfile>>(new Map());
   const [appliedIds, setAppliedIds] = useState<Set<string>>(new Set());
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -95,6 +103,17 @@ export default function MarketplaceBrowser() {
       if (opps) {
         setOpportunities(opps);
         if (opps.length) setSelectedId(opps[0].id);
+
+        const posterIds = [...new Set(opps.map((o) => o.poster_id))];
+        if (posterIds.length) {
+          const { data: posters } = await supabase
+            .from("profiles")
+            .select("id, full_name, department, hospital_trust, avatar_url")
+            .in("id", posterIds);
+          if (posters) {
+            setPostersById(new Map(posters.map((p) => [p.id, p])));
+          }
+        }
       }
       setLoading(false);
     }
@@ -263,6 +282,27 @@ export default function MarketplaceBrowser() {
                 {selected.is_remote ? "Remote / virtual" : selected.hospital_trust ?? "Location not specified"}
               </p>
 
+              {(() => {
+                const poster = postersById.get(selected.poster_id);
+                if (!poster) return null;
+                return (
+                  <div className="mt-3 flex items-center gap-2">
+                    <div className="h-7 w-7 shrink-0 overflow-hidden rounded-pills bg-black/[0.045]">
+                      {poster.avatar_url ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={poster.avatar_url} alt="" className="h-full w-full object-cover" />
+                      ) : null}
+                    </div>
+                    <p className="text-caption text-fog">
+                      Posted by{" "}
+                      <span className="text-mist">{poster.full_name || "a Hitch member"}</span>
+                      {[poster.department, poster.hospital_trust].filter(Boolean).length > 0 &&
+                        ` · ${[poster.department, poster.hospital_trust].filter(Boolean).join(", ")}`}
+                    </p>
+                  </div>
+                );
+              })()}
+
               <p className="mt-4 whitespace-pre-wrap text-body-sm text-mist">{selected.description}</p>
 
               {selectedMatch && selectedMatch.checks.length > 0 && (
@@ -295,7 +335,7 @@ export default function MarketplaceBrowser() {
                   <div><span className="text-fog">Apply by: </span><span className="text-mist">{new Date(selected.deadline).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}</span></div>
                 )}
                 {selected.min_year_of_study && (
-                  <div><span className="text-fog">Minimum stage: </span><span className="text-mist">{selected.min_year_of_study}</span></div>
+                  <div><span className="text-fog">Minimum stage: </span><span className="text-mist">{stageLabel(selected.min_year_of_study)}+</span></div>
                 )}
                 {selected.experience_level && (
                   <div><span className="text-fog">Experience: </span><span className="text-mist">{selected.experience_level.replace(/_/g, " ")}</span></div>

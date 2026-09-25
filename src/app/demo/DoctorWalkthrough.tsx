@@ -16,6 +16,7 @@ import {
   type AvailabilityHours,
 } from "@/lib/data/marketplace-options";
 import { computeMatch } from "@/lib/marketplace";
+import { STAGE_OPTIONS, stageLabel } from "@/lib/data/onboarding-options";
 import { DEMO_STUDENT_PROFILE } from "./demoStudentProfile";
 import type { PostedOpportunity } from "./types";
 
@@ -92,6 +93,7 @@ export default function DoctorWalkthrough({
   const StepIcon = STEP_ICON[step];
 
   const [hospitalTrust, setHospitalTrust] = useState("Chelsea and Westminster Hospital NHS Foundation Trust");
+  const [isRemote, setIsRemote] = useState(false);
   const [taskType, setTaskType] = useState<TaskType>("qip");
   const [title, setTitle] = useState("Reducing missed VTE risk assessments on the cardiology ward");
   const [description, setDescription] = useState(
@@ -100,7 +102,7 @@ export default function DoctorWalkthrough({
   const [requiredSkills, setRequiredSkills] = useState<Skill[]>(["data_collection"]);
   const [preferredSkills, setPreferredSkills] = useState<Skill[]>(["excel", "statistics"]);
   const [experienceLevel, setExperienceLevel] = useState<ExperienceLevel>("some_experience");
-  const [minYearOfStudy, setMinYearOfStudy] = useState("3rd year+");
+  const [minYearOfStudy, setMinYearOfStudy] = useState("3");
   const [estimatedCommitment, setEstimatedCommitment] = useState<AvailabilityHours>("2-5h");
   const [duration, setDuration] = useState("8 weeks");
 
@@ -110,6 +112,7 @@ export default function DoctorWalkthrough({
         title,
         description,
         hospitalTrust,
+        isRemote,
         taskType,
         requiredSkills,
         preferredSkills,
@@ -137,7 +140,7 @@ export default function DoctorWalkthrough({
       specialty: null,
       hospital_trust: hospitalTrust,
       deanery_region: null,
-      min_year_of_study: null,
+      min_year_of_study: minYearOfStudy,
       required_skills: requiredSkills,
       preferred_skills: preferredSkills,
       experience_level: experienceLevel,
@@ -215,16 +218,38 @@ export default function DoctorWalkthrough({
 
             {step === "hospital" && (
               <div>
-                <p className="text-[20px] font-[510] tracking-[-0.24px] text-paper">Which hospital or trust?</p>
+                <p className="text-[20px] font-[510] tracking-[-0.24px] text-paper">Where will this be done?</p>
                 <p className="mt-1 text-caption text-ash">
                   Helps students find opportunities local to them — try editing this to your own trust.
                 </p>
-                <input
-                  type="text"
-                  value={hospitalTrust}
-                  onChange={(e) => setHospitalTrust(e.target.value)}
-                  className={INPUT_CLASS}
-                />
+                <div className="mt-3 flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsRemote(false)}
+                    className={`${CHIP_BASE} ${!isRemote ? CHIP_ON : CHIP_OFF}`}
+                  >
+                    In person
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsRemote(true)}
+                    className={`${CHIP_BASE} ${isRemote ? CHIP_ON : CHIP_OFF}`}
+                  >
+                    Remote / virtual
+                  </button>
+                </div>
+                <div className="mt-4">
+                  <label className="block text-body-sm text-mist">
+                    Hospital / trust{!isRemote && <span className="text-coral-red"> *</span>}
+                  </label>
+                  <input
+                    type="text"
+                    value={hospitalTrust}
+                    onChange={(e) => setHospitalTrust(e.target.value)}
+                    placeholder={isRemote ? "Optional for remote work" : "e.g. St Mary's Hospital"}
+                    className={INPUT_CLASS}
+                  />
+                </div>
               </div>
             )}
 
@@ -269,7 +294,7 @@ export default function DoctorWalkthrough({
             {step === "requirements" && (
               <div className="space-y-5">
                 <div>
-                  <p className="text-[20px] font-[510] tracking-[-0.24px] text-paper">Required skills</p>
+                  <p className="text-[20px] font-[510] tracking-[-0.24px] text-paper">Required skills *</p>
                   <p className="mt-1 text-caption text-ash">Only what a student truly can&apos;t do the task without.</p>
                   <div className="mt-3 flex flex-wrap gap-2">
                     {SKILL_OPTIONS.map((o) => (
@@ -302,7 +327,7 @@ export default function DoctorWalkthrough({
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>
-                    <label className="block text-body-sm text-mist">Experience level</label>
+                    <label className="block text-body-sm text-mist">Experience level *</label>
                     <select
                       className={INPUT_CLASS}
                       value={experienceLevel}
@@ -316,13 +341,18 @@ export default function DoctorWalkthrough({
                     </select>
                   </div>
                   <div>
-                    <label className="block text-body-sm text-mist">Minimum year / stage</label>
-                    <input
-                      type="text"
+                    <label className="block text-body-sm text-mist">Minimum year / stage *</label>
+                    <select
+                      className={INPUT_CLASS}
                       value={minYearOfStudy}
                       onChange={(e) => setMinYearOfStudy(e.target.value)}
-                      className={INPUT_CLASS}
-                    />
+                    >
+                      {STAGE_OPTIONS.map((o) => (
+                        <option key={o.value} value={o.value} className="bg-carbon">
+                          {o.label}+
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 </div>
               </div>
@@ -333,7 +363,7 @@ export default function DoctorWalkthrough({
                 <p className="text-[20px] font-[510] tracking-[-0.24px] text-paper">How much time will this take?</p>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>
-                    <label className="block text-body-sm text-mist">Hours per week</label>
+                    <label className="block text-body-sm text-mist">Hours per week *</label>
                     <select
                       className={INPUT_CLASS}
                       value={estimatedCommitment}
@@ -364,7 +394,9 @@ export default function DoctorWalkthrough({
                 <p className="text-[20px] font-[510] tracking-[-0.24px] text-paper">This is what students will see</p>
                 <div className="mt-4 rounded-cards border border-graphite bg-black/[0.015] p-5">
                   <p className="font-[510] text-paper">{title}</p>
-                  <p className="mt-1 text-caption text-fog">{hospitalTrust}</p>
+                  <p className="mt-1 text-caption text-fog">
+                    {isRemote ? "Remote / virtual" : hospitalTrust || "Location not specified"}
+                  </p>
                   <div className="mt-2 flex flex-wrap gap-1">
                     <span className="rounded-badges bg-black/[0.045] px-[6px] text-label text-fog">{taskTypeLabel}</span>
                   </div>
@@ -390,7 +422,7 @@ export default function DoctorWalkthrough({
                     </div>
                     <div>
                       <span className="text-fog">Minimum stage: </span>
-                      <span className="text-mist">{minYearOfStudy}</span>
+                      <span className="text-mist">{stageLabel(minYearOfStudy)}+</span>
                     </div>
                   </div>
                 </div>
@@ -404,7 +436,9 @@ export default function DoctorWalkthrough({
                   <p className="text-[20px] font-[510] tracking-[-0.24px] text-paper">Your opportunity is live</p>
                 </div>
                 <p className="mt-1 text-body-sm text-fog">
-                  {`Students and foundation doctors near ${hospitalTrust.split(" NHS")[0]} can see and apply to this now. You'll see a ranked shortlist as applications come in.`}
+                  {isRemote
+                    ? "Students and foundation doctors looking for remote work can see and apply to this now. You'll see a ranked shortlist as applications come in."
+                    : `Students and foundation doctors near ${hospitalTrust.split(" NHS")[0]} can see and apply to this now. You'll see a ranked shortlist as applications come in.`}
                 </p>
 
                 <div className="mt-6 rounded-cards border border-graphite bg-black/[0.015] p-5">
@@ -414,7 +448,9 @@ export default function DoctorWalkthrough({
                       {matchPercent}% match
                     </span>
                   </div>
-                  <p className="mt-1 text-caption text-fog">{hospitalTrust}</p>
+                  <p className="mt-1 text-caption text-fog">
+                    {isRemote ? "Remote / virtual" : hospitalTrust || "Location not specified"}
+                  </p>
                 </div>
 
                 <button

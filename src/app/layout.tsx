@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono, Source_Serif_4 } from "next/font/google";
 import NavBar from "@/components/NavBar";
-import DemoModeButton from "@/components/DemoModeButton";
 import Footer from "@/components/Footer";
 import { GlobalToastRegion } from "@/components/Toast";
 import "./globals.css";
@@ -22,9 +21,9 @@ const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
 });
 
-const TITLE = "Hitch — Know where you stand.";
+const TITLE = "Hitch — Get your QIP, audit, or research project done.";
 const DESCRIPTION =
-  "Portfolio scoring and offer-likelihood estimates for UK specialty training applicants.";
+  "A structured marketplace matching hospitals and consultants with medical students and foundation doctors for QIPs, audits, research, and presentations.";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://hitch.health"),
@@ -63,7 +62,6 @@ export default function RootLayout({
     >
       <body className="flex min-h-full flex-col bg-void text-mist">
         <NavBar />
-        <DemoModeButton />
         {children}
         <Footer />
         <GlobalToastRegion />

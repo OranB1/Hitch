@@ -9,6 +9,7 @@ import {
   type ResearchExperience,
   type AvailabilityHours,
 } from "@/lib/data/marketplace-options";
+import { STAGE_RANK, stageLabel, type Stage } from "@/lib/data/onboarding-options";
 
 export function getPartneredHospitals(medSchool: string | null): string[] {
   if (!medSchool) return [];
@@ -144,10 +145,16 @@ export function computeMatch(opportunity: OpportunityForMatch, profile: MatchPro
     if (met) earnedWeight += 15;
   }
 
-  if (opportunity.min_year_of_study) {
-    const studentYear = profile.yearOfStudy ?? profile.grade;
-    const met = !!studentYear && studentYear.toLowerCase().includes(opportunity.min_year_of_study.toLowerCase());
-    checks.unshift({ label: opportunity.min_year_of_study, met, required: true });
+  // Minimum stage — 10%, compared ordinally (a combined med-school-year + foundation-year scale)
+  // rather than by free-text substring, since "3rd year" never substring-matches a stored "3".
+  if (opportunity.min_year_of_study && opportunity.min_year_of_study in STAGE_RANK) {
+    const minRank = STAGE_RANK[opportunity.min_year_of_study as Stage];
+    const studentStage = profile.yearOfStudy ?? profile.grade;
+    const studentRank = studentStage && studentStage in STAGE_RANK ? STAGE_RANK[studentStage as Stage] : -1;
+    const met = studentRank >= minRank;
+    checks.unshift({ label: `${stageLabel(opportunity.min_year_of_study)}+`, met, required: true });
+    totalWeight += 10;
+    if (met) earnedWeight += 10;
   }
 
   const percent = totalWeight > 0 ? Math.round((earnedWeight / totalWeight) * 100) : 100;

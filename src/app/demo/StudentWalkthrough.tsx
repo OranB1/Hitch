@@ -114,7 +114,7 @@ export default function StudentWalkthrough({
       specialty: null,
       hospital_trust: postedOpportunity.hospitalTrust,
       deanery_region: null,
-      min_year_of_study: null,
+      min_year_of_study: postedOpportunity.minYearOfStudy,
       required_skills: postedOpportunity.requiredSkills,
       preferred_skills: postedOpportunity.preferredSkills,
       experience_level: postedOpportunity.experienceLevel,

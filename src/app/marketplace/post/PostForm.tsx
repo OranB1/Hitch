@@ -16,6 +16,7 @@ import {
 } from "@/lib/data/marketplace-options";
 import { PRIORITY_SPECIALTIES } from "@/lib/data/all-specialty-ratios";
 import { UK_DEANERIES } from "@/lib/data/deaneries";
+import { STAGE_OPTIONS } from "@/lib/data/onboarding-options";
 
 const SPECIALTY_OPTIONS = [...PRIORITY_SPECIALTIES, "Not specific"];
 
@@ -238,14 +239,21 @@ export default function PostForm() {
 
         <div>
           <label className="block text-body-sm text-mist">Minimum year / stage *</label>
-          <input
-            type="text"
+          <select
             required
+            className={INPUT_CLASS}
             value={minYearOfStudy}
             onChange={(e) => setMinYearOfStudy(e.target.value)}
-            placeholder="e.g. 3rd year, or F1+"
-            className={INPUT_CLASS}
-          />
+          >
+            <option value="" className="bg-carbon" disabled>
+              Select one
+            </option>
+            {STAGE_OPTIONS.map((o) => (
+              <option key={o.value} value={o.value} className="bg-carbon">
+                {o.label}+
+              </option>
+            ))}
+          </select>
         </div>
 
         <div>

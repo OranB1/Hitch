@@ -73,7 +73,7 @@ export default function Home() {
             Live: QIP, audit & research matching
           </span>
 
-          <h1 className="mt-4 text-heading-lg font-serif font-normal text-paper">
+          <h1 className="mt-4 text-[36px] leading-[1.15] tracking-[-0.3px] font-serif font-normal text-paper sm:text-heading-lg">
             Get your QIP, audit, or research project actually done.
           </h1>
           <p className="mt-6 max-w-lg text-body text-fog">
@@ -92,6 +92,12 @@ export default function Home() {
               Post an opportunity
             </Link>
           </div>
+          <Link
+            href="/demo"
+            className="mt-4 inline-flex items-center gap-1 text-[13px] font-[510] text-mist underline hover:text-paper"
+          >
+            Not ready to sign in? Try the interactive demo <ArrowRight size={13} />
+          </Link>
         </div>
 
         <div className="mt-16 lg:mt-0 lg:w-[380px] lg:shrink-0">

@@ -4,7 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
-import { TASK_TYPE_OPTIONS, QI_EXPERIENCE_OPTIONS, type Skill } from "@/lib/data/marketplace-options";
+import { toastQueue } from "@/components/Toast";
+import { TASK_TYPE_OPTIONS, QI_EXPERIENCE_OPTIONS, type Skill, type OpportunityStatus } from "@/lib/data/marketplace-options";
 import { medSchoolYearLabel } from "@/lib/data/onboarding-options";
 import { computeMatch, type MatchProfile } from "@/lib/marketplace";
 import type { Tables } from "@/lib/supabase/database.types";
@@ -55,6 +56,18 @@ const STATUS_STYLES: Record<string, string> = {
   accepted: "bg-pulse-green/15 text-pulse-green",
   rejected: "bg-coral-red/15 text-coral-red",
   withdrawn: "bg-black/[0.045] text-ash",
+};
+
+const POSTING_STATUS_STYLES: Record<OpportunityStatus, string> = {
+  open: "bg-pulse-green/15 text-pulse-green",
+  filled: "bg-iris-violet/15 text-iris-violet",
+  closed: "bg-black/[0.045] text-ash",
+};
+
+const POSTING_STATUS_LABELS: Record<OpportunityStatus, string> = {
+  open: "Open",
+  filled: "Filled",
+  closed: "Closed",
 };
 
 export default function MyPostings() {
@@ -133,6 +146,31 @@ export default function MyPostings() {
     await supabase.from("opportunity_applications").update({ status }).eq("id", applicationId);
   }
 
+  async function updatePostingStatus(postingId: string, status: OpportunityStatus) {
+    setPostings((prev) => prev.map((p) => (p.id === postingId ? { ...p, status } : p)));
+    const { error } = await supabase.from("opportunities").update({ status }).eq("id", postingId);
+    if (error) {
+      toastQueue.add({ title: "Couldn't update posting", description: error.message });
+      return;
+    }
+    toastQueue.add({ title: `Posting marked ${POSTING_STATUS_LABELS[status].toLowerCase()}` });
+  }
+
+  async function deletePosting(postingId: string, title: string) {
+    if (!window.confirm(`Delete "${title}"? This can't be undone.`)) return;
+    const { error } = await supabase.from("opportunities").delete().eq("id", postingId);
+    if (error) {
+      toastQueue.add({ title: "Couldn't delete posting", description: error.message });
+      return;
+    }
+    setPostings((prev) => {
+      const next = prev.filter((p) => p.id !== postingId);
+      setSelectedId(next.length ? next[0].id : null);
+      return next;
+    });
+    toastQueue.add({ title: "Posting deleted" });
+  }
+
   async function viewCv(cvPath: string) {
     const { data } = await supabase.storage.from("cvs").createSignedUrl(cvPath, 60);
     if (data?.signedUrl) window.open(data.signedUrl, "_blank");
@@ -172,9 +210,18 @@ export default function MyPostings() {
               selectedId === p.id ? "border-acid-lime bg-acid-lime/5" : "border-graphite bg-carbon hover:border-smoke"
             }`}
           >
-            <p className="font-[510] text-paper">{p.title}</p>
+            <div className="flex items-center gap-2">
+              <p className="font-[510] text-paper">{p.title}</p>
+              <span
+                className={`shrink-0 rounded-badges px-[6px] text-label font-[510] ${
+                  POSTING_STATUS_STYLES[(p.status as OpportunityStatus) ?? "open"]
+                }`}
+              >
+                {POSTING_STATUS_LABELS[(p.status as OpportunityStatus) ?? "open"]}
+              </span>
+            </div>
             <p className="mt-1 text-caption text-fog">
-              {TASK_TYPE_OPTIONS.find((t) => t.value === p.task_type)?.label ?? p.task_type} · {p.status}
+              {TASK_TYPE_OPTIONS.find((t) => t.value === p.task_type)?.label ?? p.task_type}
               {p.is_remote && " · Remote"}
             </p>
           </button>
@@ -184,10 +231,46 @@ export default function MyPostings() {
       <div>
         {selected && (
           <div className="rounded-cards bg-carbon p-6 shadow-subtle">
-            <h2 className="text-[17px] font-[510] text-paper">{selected.title}</h2>
-            <p className="mt-1 text-body-sm text-fog">
-              {applications.length} application{applications.length === 1 ? "" : "s"}
-            </p>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <h2 className="text-[17px] font-[510] text-paper">{selected.title}</h2>
+                <p className="mt-1 text-body-sm text-fog">
+                  {applications.length} application{applications.length === 1 ? "" : "s"}
+                </p>
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                {selected.status !== "open" && (
+                  <button
+                    onClick={() => updatePostingStatus(selected.id, "open")}
+                    className="rounded-buttons border border-graphite px-3 py-1.5 text-[13px] text-mist hover:border-smoke"
+                  >
+                    Reopen
+                  </button>
+                )}
+                {selected.status !== "filled" && (
+                  <button
+                    onClick={() => updatePostingStatus(selected.id, "filled")}
+                    className="rounded-buttons border border-graphite px-3 py-1.5 text-[13px] text-mist hover:border-smoke"
+                  >
+                    Mark filled
+                  </button>
+                )}
+                {selected.status !== "closed" && (
+                  <button
+                    onClick={() => updatePostingStatus(selected.id, "closed")}
+                    className="rounded-buttons border border-graphite px-3 py-1.5 text-[13px] text-mist hover:border-smoke"
+                  >
+                    Close
+                  </button>
+                )}
+                <button
+                  onClick={() => deletePosting(selected.id, selected.title)}
+                  className="rounded-buttons border border-coral-red/30 px-3 py-1.5 text-[13px] text-coral-red hover:border-coral-red/60"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
           </div>
         )}
 
