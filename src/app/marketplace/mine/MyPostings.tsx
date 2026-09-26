@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
 import { toastQueue } from "@/components/Toast";
+import ConfirmDialog from "@/components/ConfirmDialog";
 import { TASK_TYPE_OPTIONS, QI_EXPERIENCE_OPTIONS, type Skill, type OpportunityStatus } from "@/lib/data/marketplace-options";
 import { medSchoolYearLabel } from "@/lib/data/onboarding-options";
 import { computeMatch, type MatchProfile } from "@/lib/marketplace";
@@ -80,6 +81,8 @@ export default function MyPostings() {
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingApplications, setLoadingApplications] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; title: string } | null>(null);
+  const [contactEmails, setContactEmails] = useState<Map<string, string | null>>(new Map());
 
   useEffect(() => {
     async function init() {
@@ -142,6 +145,18 @@ export default function MyPostings() {
     loadApplications();
   }, [selectedId, supabase]);
 
+  useEffect(() => {
+    const accepted = applications.filter((a) => a.status === "accepted" && !contactEmails.has(a.id));
+    if (accepted.length === 0) return;
+    (async () => {
+      for (const a of accepted) {
+        const { data } = await supabase.rpc("get_accepted_contact_email", { p_application_id: a.id });
+        setContactEmails((prev) => new Map(prev).set(a.id, data ?? null));
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [applications]);
+
   async function updateStatus(applicationId: string, status: string) {
     setApplications((prev) => prev.map((a) => (a.id === applicationId ? { ...a, status } : a)));
     await supabase.from("opportunity_applications").update({ status }).eq("id", applicationId);
@@ -158,8 +173,8 @@ export default function MyPostings() {
     toastQueue.add({ title: `Posting marked ${POSTING_STATUS_LABELS[status].toLowerCase()}` });
   }
 
-  async function deletePosting(postingId: string, title: string) {
-    if (!window.confirm(`Delete "${title}"? This can't be undone.`)) return;
+  async function deletePosting(postingId: string) {
+    setDeleteTarget(null);
     const { error } = await supabase.from("opportunities").delete().eq("id", postingId);
     if (error) {
       toastQueue.add({ title: "Couldn't delete posting", description: error.message });
@@ -266,7 +281,7 @@ export default function MyPostings() {
                   </button>
                 )}
                 <button
-                  onClick={() => deletePosting(selected.id, selected.title)}
+                  onClick={() => setDeleteTarget({ id: selected.id, title: selected.title })}
                   className="rounded-buttons border border-coral-red/30 px-3 py-1.5 text-[13px] text-coral-red hover:border-coral-red/60"
                 >
                   Delete
@@ -346,6 +361,20 @@ export default function MyPostings() {
                   {a.cover_note && (
                     <p className="mt-2 rounded-inputs bg-black/[0.02] p-3 text-body-sm text-mist">{a.cover_note}</p>
                   )}
+                  {a.status === "accepted" && (
+                    <div className="mt-3 rounded-inputs border border-pulse-green/40 bg-pulse-green/[0.06] p-3">
+                      {contactEmails.get(a.id) ? (
+                        <p className="text-body-sm text-mist">
+                          Contact them directly:{" "}
+                          <a href={`mailto:${contactEmails.get(a.id)}`} className="font-[510] underline hover:text-paper">
+                            {contactEmails.get(a.id)}
+                          </a>
+                        </p>
+                      ) : (
+                        <p className="text-caption text-ash">Loading contact details…</p>
+                      )}
+                    </div>
+                  )}
 
                   <div className="mt-3 flex flex-wrap items-center gap-2">
                     {a.applicantProfile?.cv_url && (
@@ -387,6 +416,16 @@ export default function MyPostings() {
           )}
         </div>
       </div>
+
+      <ConfirmDialog
+        open={deleteTarget !== null}
+        title={`Delete "${deleteTarget?.title}"?`}
+        description="This can't be undone."
+        confirmLabel="Delete"
+        destructive
+        onConfirm={() => deleteTarget && deletePosting(deleteTarget.id)}
+        onCancel={() => setDeleteTarget(null)}
+      />
     </div>
   );
 }

@@ -54,6 +54,7 @@ export type Database = {
           min_year_of_study: string | null
           poster_id: string
           preferred_skills: string[] | null
+          project_duration: string | null
           required_skills: string[] | null
           specialty: string | null
           status: string
@@ -74,6 +75,7 @@ export type Database = {
           min_year_of_study?: string | null
           poster_id: string
           preferred_skills?: string[] | null
+          project_duration?: string | null
           required_skills?: string[] | null
           specialty?: string | null
           status?: string
@@ -94,6 +96,7 @@ export type Database = {
           min_year_of_study?: string | null
           poster_id?: string
           preferred_skills?: string[] | null
+          project_duration?: string | null
           required_skills?: string[] | null
           specialty?: string | null
           status?: string
@@ -215,6 +218,7 @@ export type Database = {
           department: string | null
           email: string | null
           full_name: string | null
+          gmc_number: string | null
           grade: string | null
           hospital_trust: string | null
           id: string
@@ -246,6 +250,7 @@ export type Database = {
           department?: string | null
           email?: string | null
           full_name?: string | null
+          gmc_number?: string | null
           grade?: string | null
           hospital_trust?: string | null
           id: string
@@ -277,6 +282,7 @@ export type Database = {
           department?: string | null
           email?: string | null
           full_name?: string | null
+          gmc_number?: string | null
           grade?: string | null
           hospital_trust?: string | null
           id?: string
@@ -299,6 +305,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_accepted_contact_email: {
+        Args: { p_application_id: string }
+        Returns: string
+      }
       hook_restrict_signup_by_email_domain: {
         Args: { event: Json }
         Returns: Json

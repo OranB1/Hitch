@@ -10,6 +10,7 @@ import {
   SKILL_OPTIONS,
   EXPERIENCE_LEVEL_OPTIONS,
   AVAILABILITY_OPTIONS,
+  PROJECT_DURATION_OPTIONS,
   type TaskType,
   type Skill,
   type ExperienceLevel,
@@ -43,21 +44,23 @@ const STEP_ICON: Record<Step, React.ComponentType<{ size?: number }>> = {
   posted: Eye,
 };
 
+// Fictional trusts and figures — deliberately not naming any real NHS trust here, since this is
+// an illustrative "coming soon" mockup, not real data.
 const CROSS_TRUST_TEASER = [
   {
-    trust: "Imperial College Healthcare NHS Trust",
+    trust: "A London teaching hospital trust",
     title: "Cutting surgical-site infections on colorectal wards",
-    stat: "Completed · reduced infections 18%",
+    stat: "Illustrative example",
   },
   {
-    trust: "London North West University Healthcare NHS Trust",
+    trust: "A regional acute trust",
     title: "Standardising discharge summaries in acute medicine",
-    stat: "Completed · 6 students involved",
+    stat: "Illustrative example",
   },
   {
-    trust: "Hillingdon Hospitals NHS Foundation Trust",
+    trust: "A district general hospital",
     title: "Improving VTE prophylaxis prescribing on admission",
-    stat: "In progress · 2nd PDSA cycle",
+    stat: "Illustrative example",
   },
 ];
 
@@ -104,7 +107,7 @@ export default function DoctorWalkthrough({
   const [experienceLevel, setExperienceLevel] = useState<ExperienceLevel>("some_experience");
   const [minYearOfStudy, setMinYearOfStudy] = useState("3");
   const [estimatedCommitment, setEstimatedCommitment] = useState<AvailabilityHours>("2-5h");
-  const [duration, setDuration] = useState("8 weeks");
+  const [duration, setDuration] = useState("1–3 months");
 
   function goNext() {
     if (step === "preview") {
@@ -377,13 +380,14 @@ export default function DoctorWalkthrough({
                     </select>
                   </div>
                   <div>
-                    <label className="block text-body-sm text-mist">Roughly how long overall</label>
-                    <input
-                      type="text"
-                      value={duration}
-                      onChange={(e) => setDuration(e.target.value)}
-                      className={INPUT_CLASS}
-                    />
+                    <label className="block text-body-sm text-mist">Total project duration</label>
+                    <select className={INPUT_CLASS} value={duration} onChange={(e) => setDuration(e.target.value)}>
+                      {PROJECT_DURATION_OPTIONS.map((o) => (
+                        <option key={o.value} value={o.label} className="bg-carbon">
+                          {o.label}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 </div>
               </div>

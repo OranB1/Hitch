@@ -19,6 +19,16 @@ export const EXPERIENCE_LEVEL_OPTIONS: { value: ExperienceLevel; label: string }
 
 export type OpportunityStatus = "open" | "closed" | "filled";
 
+export type ProjectDuration = "under_2_weeks" | "2_4_weeks" | "1_3_months" | "3_6_months" | "6_plus_months";
+
+export const PROJECT_DURATION_OPTIONS: { value: ProjectDuration; label: string }[] = [
+  { value: "under_2_weeks", label: "Under 2 weeks" },
+  { value: "2_4_weeks", label: "2–4 weeks" },
+  { value: "1_3_months", label: "1–3 months" },
+  { value: "3_6_months", label: "3–6 months" },
+  { value: "6_plus_months", label: "6+ months" },
+];
+
 // Shared vocabulary used on both sides of the marketplace: a student's profile and a posting's
 // required/preferred criteria are built from the same option lists, so matching can be exact
 // rather than fuzzy free-text comparison.

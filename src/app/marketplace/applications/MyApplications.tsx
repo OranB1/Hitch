@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
 import { toastQueue } from "@/components/Toast";
+import ConfirmDialog from "@/components/ConfirmDialog";
 import { TASK_TYPE_OPTIONS } from "@/lib/data/marketplace-options";
 import type { Tables } from "@/lib/supabase/database.types";
 
@@ -37,6 +38,8 @@ export default function MyApplications() {
   const [user, setUser] = useState<User | null>(null);
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
+  const [withdrawTarget, setWithdrawTarget] = useState<string | null>(null);
+  const [contactEmails, setContactEmails] = useState<Map<string, string | null>>(new Map());
 
   useEffect(() => {
     async function init() {
@@ -61,8 +64,20 @@ export default function MyApplications() {
     init();
   }, [supabase, router]);
 
+  useEffect(() => {
+    const accepted = applications.filter((a) => a.status === "accepted" && !contactEmails.has(a.id));
+    if (accepted.length === 0) return;
+    (async () => {
+      for (const a of accepted) {
+        const { data } = await supabase.rpc("get_accepted_contact_email", { p_application_id: a.id });
+        setContactEmails((prev) => new Map(prev).set(a.id, data ?? null));
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [applications]);
+
   async function withdraw(applicationId: string) {
-    if (!window.confirm("Withdraw this application?")) return;
+    setWithdrawTarget(null);
     setApplications((prev) => prev.map((a) => (a.id === applicationId ? { ...a, status: "withdrawn" } : a)));
     const { error } = await supabase.from("opportunity_applications").update({ status: "withdrawn" }).eq("id", applicationId);
     if (error) {
@@ -97,7 +112,7 @@ export default function MyApplications() {
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="font-[510] text-paper">{a.opportunities?.title ?? "Opportunity no longer available"}</p>
-              <p className="mt-1 text-caption text-fog">
+              <p className="mt-1 text-body-sm text-fog">
                 {[
                   a.opportunities?.is_remote ? "Remote / virtual" : a.opportunities?.hospital_trust,
                   a.opportunities?.task_type &&
@@ -115,9 +130,23 @@ export default function MyApplications() {
             </span>
           </div>
           {a.cover_note && <p className="mt-3 text-body-sm text-mist">{a.cover_note}</p>}
+          {a.status === "accepted" && (
+            <div className="mt-3 rounded-inputs border border-pulse-green/40 bg-pulse-green/[0.06] p-3">
+              {contactEmails.get(a.id) ? (
+                <p className="text-body-sm text-mist">
+                  Reach out to the poster directly:{" "}
+                  <a href={`mailto:${contactEmails.get(a.id)}`} className="font-[510] underline hover:text-paper">
+                    {contactEmails.get(a.id)}
+                  </a>
+                </p>
+              ) : (
+                <p className="text-caption text-ash">Loading contact details…</p>
+              )}
+            </div>
+          )}
           {(a.status === "submitted" || a.status === "shortlisted") && (
             <button
-              onClick={() => withdraw(a.id)}
+              onClick={() => setWithdrawTarget(a.id)}
               className="mt-3 rounded-buttons border border-graphite px-3 py-1.5 text-[13px] text-mist hover:border-smoke"
             >
               Withdraw
@@ -125,6 +154,15 @@ export default function MyApplications() {
           )}
         </div>
       ))}
+
+      <ConfirmDialog
+        open={withdrawTarget !== null}
+        title="Withdraw this application?"
+        confirmLabel="Withdraw"
+        destructive
+        onConfirm={() => withdrawTarget && withdraw(withdrawTarget)}
+        onCancel={() => setWithdrawTarget(null)}
+      />
     </div>
   );
 }

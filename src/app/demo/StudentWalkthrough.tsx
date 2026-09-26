@@ -274,15 +274,20 @@ export default function StudentWalkthrough({
                       <p className="mt-3 text-body-sm text-mist">{selected.opportunity.description}</p>
                       {selected.match.checks.length > 0 && (
                         <ul className="mt-4 space-y-1 border-t border-graphite pt-3">
-                          {selected.match.checks.map((c) => (
-                            <li key={c.label} className="flex items-center gap-2 text-body-sm">
-                              <span className={c.met ? "text-pulse-green" : "text-ash"}>{c.met ? "✓" : "○"}</span>
-                              <span className={c.met ? "text-mist" : "text-ash"}>
-                                {c.label}
-                                {c.required && <span className="ml-1 text-label text-ash">(required)</span>}
-                              </span>
-                            </li>
-                          ))}
+                          {selected.match.checks.map((c) => {
+                            const unmetRequired = c.required && !c.met;
+                            return (
+                              <li key={c.label} className="flex items-center gap-2 text-body-sm">
+                                <span className={c.met ? "text-pulse-green" : unmetRequired ? "text-coral-red" : "text-ash"}>
+                                  {c.met ? "✓" : "○"}
+                                </span>
+                                <span className={c.met ? "text-mist" : unmetRequired ? "text-coral-red" : "text-ash"}>
+                                  {c.label}
+                                  {c.required && <span className="ml-1 text-label text-ash">(required)</span>}
+                                </span>
+                              </li>
+                            );
+                          })}
                         </ul>
                       )}
                     </div>

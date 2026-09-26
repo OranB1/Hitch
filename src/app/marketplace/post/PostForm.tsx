@@ -9,16 +9,18 @@ import {
   EXPERIENCE_LEVEL_OPTIONS,
   SKILL_OPTIONS,
   AVAILABILITY_OPTIONS,
+  PROJECT_DURATION_OPTIONS,
   type TaskType,
   type ExperienceLevel,
   type Skill,
   type AvailabilityHours,
+  type ProjectDuration,
 } from "@/lib/data/marketplace-options";
-import { PRIORITY_SPECIALTIES } from "@/lib/data/all-specialty-ratios";
+import { PRIORITY_SPECIALTIES, SECONDARY_SPECIALTIES } from "@/lib/data/all-specialty-ratios";
 import { UK_DEANERIES } from "@/lib/data/deaneries";
 import { STAGE_OPTIONS } from "@/lib/data/onboarding-options";
 
-const SPECIALTY_OPTIONS = [...PRIORITY_SPECIALTIES, "Not specific"];
+const SPECIALTY_OPTIONS = [...PRIORITY_SPECIALTIES, ...SECONDARY_SPECIALTIES.map((s) => s.name), "Not specific"];
 
 const INPUT_CLASS =
   "mt-1 w-full rounded-inputs border border-graphite bg-black/[0.025] px-[14px] py-[12px] text-[14px] text-mist focus:border-mist focus:outline-none";
@@ -44,6 +46,7 @@ export default function PostForm() {
   const [preferredSkills, setPreferredSkills] = useState<Skill[]>([]);
   const [experienceLevel, setExperienceLevel] = useState<ExperienceLevel | "">("");
   const [estimatedCommitment, setEstimatedCommitment] = useState<AvailabilityHours | "">("");
+  const [projectDuration, setProjectDuration] = useState<ProjectDuration | "">("");
   const [deadline, setDeadline] = useState("");
 
   function toggleSkill(list: Skill[], setList: (v: Skill[]) => void, skill: Skill) {
@@ -106,6 +109,7 @@ export default function PostForm() {
         preferred_skills: preferredSkills.length ? preferredSkills : null,
         experience_level: experienceLevel,
         estimated_commitment: estimatedCommitment,
+        project_duration: projectDuration || null,
         deadline: deadline || null,
       })
       .select("id")
@@ -309,14 +313,32 @@ export default function PostForm() {
             </select>
           </div>
           <div>
-            <label className="block text-body-sm text-mist">Deadline to apply</label>
-            <input
-              type="date"
-              value={deadline}
-              onChange={(e) => setDeadline(e.target.value)}
+            <label className="block text-body-sm text-mist">Total project duration</label>
+            <select
               className={INPUT_CLASS}
-            />
+              value={projectDuration}
+              onChange={(e) => setProjectDuration(e.target.value as ProjectDuration | "")}
+            >
+              <option value="" className="bg-carbon">
+                Not specified
+              </option>
+              {PROJECT_DURATION_OPTIONS.map((o) => (
+                <option key={o.value} value={o.value} className="bg-carbon">
+                  {o.label}
+                </option>
+              ))}
+            </select>
           </div>
+        </div>
+
+        <div>
+          <label className="block text-body-sm text-mist">Deadline to apply</label>
+          <input
+            type="date"
+            value={deadline}
+            onChange={(e) => setDeadline(e.target.value)}
+            className={INPUT_CLASS}
+          />
         </div>
       </div>
 
