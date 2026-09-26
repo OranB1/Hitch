@@ -8,6 +8,7 @@ import { toastQueue } from "@/components/Toast";
 import { TASK_TYPE_OPTIONS, SKILL_OPTIONS, type TaskType, type Skill } from "@/lib/data/marketplace-options";
 import { stageLabel } from "@/lib/data/onboarding-options";
 import { getPartneredHospitals, computeMatch, type MatchProfile } from "@/lib/marketplace";
+import { notifyPosterOfNewApplication } from "@/lib/notifications";
 import type { Tables } from "@/lib/supabase/database.types";
 
 type Opportunity = Tables<"opportunities">;
@@ -177,6 +178,7 @@ export default function MarketplaceBrowser() {
       setApplyError(error.message);
       return;
     }
+    notifyPosterOfNewApplication(selected.id);
     setAppliedIds((prev) => new Set(prev).add(selected.id));
     setCoverNote("");
     toastQueue.add({

@@ -8,6 +8,7 @@ import { toastQueue } from "@/components/Toast";
 import { TASK_TYPE_OPTIONS, QI_EXPERIENCE_OPTIONS, type Skill, type OpportunityStatus } from "@/lib/data/marketplace-options";
 import { medSchoolYearLabel } from "@/lib/data/onboarding-options";
 import { computeMatch, type MatchProfile } from "@/lib/marketplace";
+import { notifyApplicantOfStatusChange } from "@/lib/notifications";
 import type { Tables } from "@/lib/supabase/database.types";
 
 type Opportunity = Tables<"opportunities">;
@@ -144,6 +145,7 @@ export default function MyPostings() {
   async function updateStatus(applicationId: string, status: string) {
     setApplications((prev) => prev.map((a) => (a.id === applicationId ? { ...a, status } : a)));
     await supabase.from("opportunity_applications").update({ status }).eq("id", applicationId);
+    notifyApplicantOfStatusChange(applicationId, status);
   }
 
   async function updatePostingStatus(postingId: string, status: OpportunityStatus) {

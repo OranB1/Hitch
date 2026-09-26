@@ -229,6 +229,7 @@ export default function OnboardingWizard() {
 
       await supabase.from("profiles").upsert({
         id: user.id,
+        email: user.email,
         role: form.role,
         med_school: form.role === "medical_student" ? form.medSchool : null,
         year_of_study: form.role === "medical_student" ? form.yearOfStudy : null,
