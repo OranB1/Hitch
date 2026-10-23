@@ -54,7 +54,7 @@ export default function ConfirmForm() {
     return (
       <div className="mt-8 rounded-cards bg-coral-red/10 p-4 text-body-sm text-coral-red shadow-[0_0_0_0.5px_var(--color-coral-red)_inset]">
         {errorMessage} This can happen if the link expired, was already used, or was opened by
-        your email provider's security scanner before you clicked it. Request a new one.
+        your email provider&apos;s security scanner before you clicked it. Request a new one.
       </div>
     );
   }

@@ -26,7 +26,7 @@ import {
   type OnboardingRole,
 } from "@/lib/data/onboarding-options";
 import { UK_DEANERIES } from "@/lib/data/deaneries";
-import { PRIORITY_SPECIALTIES } from "@/lib/data/all-specialty-ratios";
+import { SPECIALTIES } from "@/lib/data/specialties";
 import {
   SKILL_OPTIONS,
   QI_EXPERIENCE_OPTIONS,
@@ -38,8 +38,8 @@ import {
   type AvailabilityHours,
 } from "@/lib/data/marketplace-options";
 
-const SPECIALTY_OPTIONS = [...PRIORITY_SPECIALTIES, "Other", "Not sure yet"];
-const CURRENT_SPECIALTY_OPTIONS = [...PRIORITY_SPECIALTIES, "Other"];
+const SPECIALTY_OPTIONS = [...SPECIALTIES, "Other", "Not sure yet"];
+const CURRENT_SPECIALTY_OPTIONS = [...SPECIALTIES, "Other"];
 
 type Role = OnboardingRole["value"];
 

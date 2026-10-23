@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import type { User } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
 import { toastQueue } from "@/components/Toast";
 import ConfirmDialog from "@/components/ConfirmDialog";
@@ -75,7 +74,6 @@ const POSTING_STATUS_LABELS: Record<OpportunityStatus, string> = {
 export default function MyPostings() {
   const supabase = useMemo(() => createClient(), []);
   const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
   const [postings, setPostings] = useState<Opportunity[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [applications, setApplications] = useState<Application[]>([]);
@@ -93,8 +91,6 @@ export default function MyPostings() {
         router.replace("/login");
         return;
       }
-      setUser(currentUser);
-
       const { data: opps } = await supabase
         .from("opportunities")
         .select("*")

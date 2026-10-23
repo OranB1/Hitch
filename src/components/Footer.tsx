@@ -2,22 +2,18 @@ import Link from "next/link";
 
 const FOOTER_NAV = [
   {
-    label: "Marketplace",
+    label: "Opportunities",
     items: [
       { label: "Browse opportunities", href: "/marketplace" },
       { label: "Post an opportunity", href: "/marketplace/post" },
-      { label: "About", href: "/about" },
-      { label: "Contact", href: "/contact" },
+      { label: "See a demo", href: "/demo" },
     ],
   },
   {
-    label: "More tools",
+    label: "Hitch",
     items: [
-      { label: "All Specialties", href: "/specialties" },
-      { label: "Offer likelihood", href: "/imt-likelihood" },
-      { label: "Portfolio scoring", href: "/portfolio/imt" },
-      { label: "Deadline planner", href: "/plan" },
-      { label: "Sources", href: "/sources" },
+      { label: "About", href: "/about" },
+      { label: "Contact", href: "/contact" },
     ],
   },
 ];

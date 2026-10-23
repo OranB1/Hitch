@@ -1,19 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { isDemoMode, setDemoMode } from "@/lib/demoMode";
 
-export default function DemoModeButton() {
-  const [active, setActive] = useState(false);
+// localStorage is an external store, so it's read through useSyncExternalStore rather than an
+// effect — the server snapshot is `false`, which is what SSR renders, so there's no mismatch.
+function subscribe(onChange: () => void) {
+  window.addEventListener("storage", onChange);
+  return () => window.removeEventListener("storage", onChange);
+}
 
-  useEffect(() => {
-    setActive(isDemoMode());
-  }, []);
+export default function DemoModeButton() {
+  const active = useSyncExternalStore(subscribe, isDemoMode, () => false);
 
   function toggle() {
-    const next = !active;
-    setDemoMode(next);
-    setActive(next);
+    setDemoMode(!active);
     window.location.reload();
   }
 

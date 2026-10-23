@@ -16,11 +16,11 @@ import {
   type AvailabilityHours,
   type ProjectDuration,
 } from "@/lib/data/marketplace-options";
-import { PRIORITY_SPECIALTIES, SECONDARY_SPECIALTIES } from "@/lib/data/all-specialty-ratios";
+import { SPECIALTIES } from "@/lib/data/specialties";
 import { UK_DEANERIES } from "@/lib/data/deaneries";
 import { STAGE_OPTIONS } from "@/lib/data/onboarding-options";
 
-const SPECIALTY_OPTIONS = [...PRIORITY_SPECIALTIES, ...SECONDARY_SPECIALTIES.map((s) => s.name), "Not specific"];
+const SPECIALTY_OPTIONS = [...SPECIALTIES, "Not specific"];
 
 const INPUT_CLASS =
   "mt-1 w-full rounded-inputs border border-graphite bg-black/[0.025] px-[14px] py-[12px] text-[14px] text-mist focus:border-mist focus:outline-none";
