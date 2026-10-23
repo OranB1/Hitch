@@ -13,14 +13,18 @@
   --color-obsidian: #fbe8d2; /* rare warm accent card (score totals, sticky emphasis) */
   --color-graphite: #e7ded0; /* hairline border */
   --color-smoke: #d3c6b2; /* stronger border / hover */
-  --color-ash: #786d5c; /* tertiary text, captions, labels — 5:1 on white, was 3.2:1 (illegible) */
-  --color-fog: #6f6555; /* secondary text */
+  /* Text tones are spaced by contrast ratio so the hierarchy is legible, not just compliant.
+     On the void canvas: paper 15.9:1, mist 10.9:1, fog 7.3:1, ash 5.8:1. fog and ash were
+     previously 5.1:1 and 4.6:1, which technically passed AA but sat in the same warm brown
+     family as the background, so body copy and captions read as washed out. */
+  --color-ash: #675d4c; /* tertiary text, captions, labels */
+  --color-fog: #574e40; /* secondary text, body copy */
   --color-mist: #3b352b; /* primary body/UI text */
   --color-bone: #1f1a14; /* dark ink fill (pill button) */
   --color-paper: #1c1712; /* heading ink */
   --color-acid-lime: #3457c9; /* primary accent (was bright lime on dark) */
   --color-pulse-green: #1a7a3f;
-  --color-coral-red: #c94343;
+  --color-coral-red: #b93838; /* 5.1:1 on void; was #c94343 at 4.3:1, under the AA floor */
   --color-signal-teal: #05808f;
   --color-iris-violet: #4d4fce;
   --color-lavender: #7a49cf;
