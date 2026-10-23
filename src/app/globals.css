@@ -13,15 +13,16 @@
   --color-obsidian: #fbe8d2; /* rare warm accent card (score totals, sticky emphasis) */
   --color-graphite: #e7ded0; /* hairline border */
   --color-smoke: #d3c6b2; /* stronger border / hover */
-  /* Text tones are spaced by contrast ratio so the hierarchy is legible, not just compliant.
-     On the void canvas: paper 15.9:1, mist 10.9:1, fog 7.3:1, ash 5.8:1. fog and ash were
-     previously 5.1:1 and 4.6:1, which technically passed AA but sat in the same warm brown
-     family as the background, so body copy and captions read as washed out. */
-  --color-ash: #675d4c; /* tertiary text, captions, labels */
-  --color-fog: #574e40; /* secondary text, body copy */
-  --color-mist: #3b352b; /* primary body/UI text */
+  /* Text tones are near-neutral on purpose. The canvas is a warm cream (chroma 13), and these
+     used to be *browner* than the paper they sat on (fog 23, ash 27), so text and background
+     occupied the same hue family and the copy read as muddy however dark it got. Contrast alone
+     could not fix that; the fix is hue separation, so chroma here is held at 10 or below while
+     the canvas stays warm. Contrast on void: paper 15.2:1, mist 13.3:1, fog 8.8:1, ash 6.5:1. */
+  --color-ash: #5a5650; /* tertiary text, captions, labels */
+  --color-fog: #46433e; /* secondary text, supporting descriptions */
+  --color-mist: #2a2724; /* primary text, long-form reading copy */
   --color-bone: #1f1a14; /* dark ink fill (pill button) */
-  --color-paper: #1c1712; /* heading ink */
+  --color-paper: #1b1917; /* heading ink */
   --color-acid-lime: #3457c9; /* primary accent (was bright lime on dark) */
   --color-pulse-green: #1a7a3f;
   --color-coral-red: #b93838; /* 5.1:1 on void; was #c94343 at 4.3:1, under the AA floor */

@@ -83,7 +83,7 @@ export default function Home() {
             <h1 className="mt-4 text-[36px] leading-[1.15] tracking-[-0.3px] font-serif font-normal text-paper sm:text-heading-lg">
               Get your QIP, audit, or research project actually done.
             </h1>
-            <p className="mt-6 max-w-lg text-body text-fog">
+            <p className="mt-6 max-w-lg text-body text-mist">
               A structured way for hospitals and consultants to find willing, matched student and
               trainee help, and for students and foundation doctors to find real opportunities,
               not just whoever they happen to know.
