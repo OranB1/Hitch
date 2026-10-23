@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { ArrowLeft, User, Search, Send, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/Button";
 import { computeMatch, type OpportunityForMatch } from "@/lib/marketplace";
@@ -130,6 +130,7 @@ export default function StudentWalkthrough({
   }, [featured]);
 
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const reducedMotion = useReducedMotion();
   const selected = listings[selectedIndex];
 
   function goNext() {
@@ -243,24 +244,39 @@ export default function StudentWalkthrough({
                       <button
                         key={opportunity.title}
                         onClick={() => setSelectedIndex(i)}
-                        className={`w-full rounded-inputs border p-3 text-left transition-colors ${
-                          i === selectedIndex
-                            ? "border-acid-lime bg-acid-lime/5"
-                            : "border-graphite bg-black/[0.015] hover:border-smoke"
+                        className={`relative w-full rounded-inputs border bg-black/[0.015] p-3 text-left transition-colors ${
+                          i === selectedIndex ? "border-transparent" : "border-graphite hover:border-smoke"
                         }`}
                       >
-                        <div className="flex items-start justify-between gap-2">
-                          <p className="text-caption font-[510] text-paper">{opportunity.title}</p>
+                        {i === selectedIndex && (
+                          <motion.span
+                            layoutId="demo-listing-selection"
+                            className="absolute inset-0 rounded-inputs border border-acid-lime bg-acid-lime/5"
+                            transition={reducedMotion ? { duration: 0 } : { type: "spring", stiffness: 380, damping: 32 }}
+                          />
+                        )}
+                        <div className="relative">
+                          <div className="flex items-start justify-between gap-2">
+                            <p className="text-caption font-[510] text-paper">{opportunity.title}</p>
+                          </div>
+                          <span className="mt-1 inline-block rounded-badges bg-acid-lime/15 px-[6px] text-label font-[510] text-acid-lime">
+                            {match.percent}% match
+                          </span>
                         </div>
-                        <span className="mt-1 inline-block rounded-badges bg-acid-lime/15 px-[6px] text-label font-[510] text-acid-lime">
-                          {match.percent}% match
-                        </span>
                       </button>
                     ))}
                   </div>
 
+                  <AnimatePresence mode="wait" initial={false}>
                   {selected && (
-                    <div className="rounded-inputs border border-graphite bg-black/[0.015] p-4">
+                    <motion.div
+                      key={selected.opportunity.title}
+                      initial={{ opacity: 0, y: reducedMotion ? 0 : 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: reducedMotion ? 0 : -6 }}
+                      transition={{ duration: reducedMotion ? 0 : 0.18, ease: [0.22, 1, 0.36, 1] }}
+                      className="rounded-inputs border border-graphite bg-black/[0.015] p-4"
+                    >
                       <div className="flex items-start justify-between gap-2">
                         <p className="font-[510] text-paper">{selected.opportunity.title}</p>
                         <span className="shrink-0 rounded-badges bg-acid-lime/15 px-[6px] text-label font-[510] text-acid-lime">
@@ -290,8 +306,9 @@ export default function StudentWalkthrough({
                           })}
                         </ul>
                       )}
-                    </div>
+                    </motion.div>
                   )}
+                  </AnimatePresence>
                 </div>
               </div>
             )}

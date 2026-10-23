@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import Link from "next/link";
 import type { User } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
@@ -59,6 +60,7 @@ export default function MarketplaceBrowser() {
   const [postersById, setPostersById] = useState<Map<string, PosterProfile>>(new Map());
   const [applicationsByOpportunity, setApplicationsByOpportunity] = useState<Map<string, MyApplication>>(new Map());
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const reducedMotion = useReducedMotion();
   const [loading, setLoading] = useState(true);
   const [contactEmails, setContactEmails] = useState<Map<string, string | null>>(new Map());
 
@@ -291,42 +293,60 @@ export default function MarketplaceBrowser() {
           <div className="space-y-2">
             {sorted.map((o) => {
               const application = applicationsByOpportunity.get(o.id);
+              const isSelected = selected?.id === o.id;
               return (
                 <button
                   key={o.id}
                   onClick={() => setSelectedId(o.id)}
-                  className={`w-full rounded-cards border p-4 text-left transition-colors ${
-                    selected?.id === o.id ? "border-acid-lime bg-acid-lime/5" : "border-graphite bg-carbon hover:border-smoke"
+                  className={`relative w-full rounded-cards border bg-carbon p-4 text-left transition-colors ${
+                    isSelected ? "border-transparent" : "border-graphite hover:border-smoke"
                   }`}
                 >
-                  <div className="flex items-start justify-between gap-2">
-                    <p className="font-[510] text-paper">{o.title}</p>
-                    {user && (
-                      <span className="shrink-0 rounded-badges bg-acid-lime/15 px-[6px] text-label font-[510] text-acid-lime">
-                        {matchByOpportunity.get(o.id)?.percent ?? 0}% match
+                  {isSelected && (
+                    <motion.span
+                      layoutId="marketplace-selection"
+                      className="absolute inset-0 rounded-cards border border-acid-lime bg-acid-lime/5"
+                      transition={reducedMotion ? { duration: 0 } : { type: "spring", stiffness: 380, damping: 32 }}
+                    />
+                  )}
+                  <div className="relative">
+                    <div className="flex items-start justify-between gap-2">
+                      <p className="font-[510] text-paper">{o.title}</p>
+                      {user && (
+                        <span className="shrink-0 rounded-badges bg-acid-lime/15 px-[6px] text-label font-[510] text-acid-lime">
+                          {matchByOpportunity.get(o.id)?.percent ?? 0}% match
+                        </span>
+                      )}
+                    </div>
+                    <p className="mt-1 text-body-sm text-fog">
+                      {o.is_remote ? "Remote / virtual" : o.hospital_trust ?? "Location not specified"}
+                    </p>
+                    <div className="mt-2 flex flex-wrap gap-1">
+                      <span className="rounded-badges bg-black/[0.045] px-[6px] text-label text-fog">
+                        {TASK_TYPE_OPTIONS.find((t) => t.value === o.task_type)?.label ?? o.task_type}
                       </span>
-                    )}
-                  </div>
-                  <p className="mt-1 text-body-sm text-fog">
-                    {o.is_remote ? "Remote / virtual" : o.hospital_trust ?? "Location not specified"}
-                  </p>
-                  <div className="mt-2 flex flex-wrap gap-1">
-                    <span className="rounded-badges bg-black/[0.045] px-[6px] text-label text-fog">
-                      {TASK_TYPE_OPTIONS.find((t) => t.value === o.task_type)?.label ?? o.task_type}
-                    </span>
-                    {application && (
-                      <span className={`rounded-badges px-[6px] text-label ${STATUS_PILL[application.status] ?? "bg-black/[0.045] text-fog"}`}>
-                        {STATUS_LABEL[application.status] ?? application.status}
-                      </span>
-                    )}
+                      {application && (
+                        <span className={`rounded-badges px-[6px] text-label ${STATUS_PILL[application.status] ?? "bg-black/[0.045] text-fog"}`}>
+                          {STATUS_LABEL[application.status] ?? application.status}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </button>
               );
             })}
           </div>
 
-          {selected && (
-            <div className="h-fit rounded-cards bg-carbon p-6 shadow-subtle">
+          <AnimatePresence mode="wait" initial={false}>
+            {selected && (
+            <motion.div
+              key={selected.id}
+              initial={{ opacity: 0, y: reducedMotion ? 0 : 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: reducedMotion ? 0 : -6 }}
+              transition={{ duration: reducedMotion ? 0 : 0.18, ease: [0.22, 1, 0.36, 1] }}
+              className="h-fit rounded-cards bg-carbon p-6 shadow-subtle"
+            >
               <h2 className="text-[20px] font-[510] tracking-[-0.24px] text-paper">{selected.title}</h2>
               <p className="mt-1 text-body-sm text-fog">
                 {selected.is_remote ? "Remote / virtual" : selected.hospital_trust ?? "Location not specified"}
@@ -471,8 +491,9 @@ export default function MarketplaceBrowser() {
                   </div>
                 )}
               </div>
-            </div>
-          )}
+            </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       )}
     </div>
