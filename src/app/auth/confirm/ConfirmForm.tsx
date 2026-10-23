@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import type { EmailOtpType } from "@supabase/supabase-js";
 
-// Deliberately requires an explicit click before calling verifyOtp — the token is single-use,
+// Deliberately requires an explicit click before calling verifyOtp: the token is single-use,
 // and email security scanners (e.g. Microsoft Defender "Safe Links" on most university/NHS
 // Microsoft 365 tenants) auto-GET every link in an inbound email to check it for malware. If we
 // verified on page load, the scanner's visit would consume the token before the real user ever
@@ -62,7 +62,7 @@ export default function ConfirmForm() {
   return (
     <div className="mt-8 rounded-cards bg-carbon p-6 shadow-subtle">
       <p className="text-body-sm text-fog">
-        Click below to finish signing in. We wait for this click on purpose — some university and
+        Click below to finish signing in. We wait for this click on purpose, because some university and
         NHS email systems auto-scan links for security, which would otherwise use up a one-time
         sign-in link before you ever saw it.
       </p>

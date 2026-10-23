@@ -10,7 +10,7 @@ const STATUS_COPY: Record<string, { subject: string; body: (opportunityTitle: st
   },
   accepted: {
     subject: "Your application was accepted",
-    body: (title) => `Good news — your application for "${title}" was accepted on Hitch. The poster will be in touch.`,
+    body: (title) => `Good news: your application for "${title}" was accepted on Hitch. The poster will be in touch.`,
   },
   rejected: {
     subject: "Update on your application",
@@ -21,7 +21,7 @@ const STATUS_COPY: Record<string, { subject: string; body: (opportunityTitle: st
 async function sendNotificationEmail({ to, subject, text }: { to: string; subject: string; text: string }) {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
-    console.warn("RESEND_API_KEY not set — skipping notification email:", subject);
+    console.warn("RESEND_API_KEY not set. Skipping notification email:", subject);
     return;
   }
   try {
@@ -33,7 +33,7 @@ async function sendNotificationEmail({ to, subject, text }: { to: string; subjec
       text,
     });
   } catch (err) {
-    // Notifications are best-effort — a delivery failure shouldn't surface as an app error.
+    // Notifications are best-effort: a delivery failure shouldn't surface as an app error.
     console.error("Failed to send notification email:", err);
   }
 }

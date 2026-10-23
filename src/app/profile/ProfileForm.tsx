@@ -209,7 +209,7 @@ export default function ProfileForm() {
             <div>
               <p className="text-body-sm text-mist">About you</p>
               <p className="mt-0.5 text-caption text-ash">
-                Posters see this when you apply — answering all three helps them compare applicants fairly.
+                Posters see this when you apply. Answering all three helps them compare applicants fairly.
               </p>
             </div>
 
@@ -232,7 +232,7 @@ export default function ProfileForm() {
                 onChange={(e) => setAboutExperience(e.target.value)}
                 onBlur={() => handleSaveAbout("about_experience", aboutExperience)}
                 rows={2}
-                placeholder="e.g. audits, QIPs, research, or anything else relevant — even if informal"
+                placeholder="e.g. audits, QIPs, research, or anything else relevant, even if informal"
                 className="mt-1 w-full rounded-inputs border border-graphite bg-black/[0.025] px-[14px] py-[12px] text-[14px] text-mist focus:border-mist focus:outline-none"
               />
             </div>
@@ -279,7 +279,7 @@ export default function ProfileForm() {
         <div className="rounded-cards bg-carbon p-6 shadow-subtle">
           <p className="text-body-sm text-mist">Posting as {fullName || "yourself"}</p>
           <p className="mt-1 text-caption text-ash">
-            As a consultant or registrar, applicants see your name when you post an opportunity — no CV or applicant
+            As a consultant or registrar, applicants see your name when you post an opportunity. No CV or applicant
             bio needed here.
           </p>
         </div>

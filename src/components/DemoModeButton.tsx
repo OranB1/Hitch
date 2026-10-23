@@ -4,7 +4,7 @@ import { useSyncExternalStore } from "react";
 import { isDemoMode, setDemoMode } from "@/lib/demoMode";
 
 // localStorage is an external store, so it's read through useSyncExternalStore rather than an
-// effect — the server snapshot is `false`, which is what SSR renders, so there's no mismatch.
+// effect. The server snapshot is `false`, which is what SSR renders, so there's no mismatch.
 function subscribe(onChange: () => void) {
   window.addEventListener("storage", onChange);
   return () => window.removeEventListener("storage", onChange);

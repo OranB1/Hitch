@@ -23,7 +23,7 @@ export async function proxy(request: NextRequest) {
     }
   );
 
-  // Refreshes the auth session cookie if needed — required reading, not unused,
+  // Refreshes the auth session cookie if needed. Required reading, not unused,
   // per Supabase's SSR guidance (do not remove this call).
   await supabase.auth.getUser();
 

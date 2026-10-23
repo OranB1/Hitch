@@ -262,7 +262,7 @@ export default function OnboardingWizard() {
 
     toastQueue.add({
       title: "You're all set",
-      description: "Your profile is ready — let's find you an opportunity.",
+      description: "Your profile is ready. Let's find you an opportunity.",
     });
 
     router.push("/marketplace");
@@ -277,7 +277,7 @@ export default function OnboardingWizard() {
       <div className={`${CARD} mt-8`}>
         <h2 className="text-[17px] font-[510] text-paper">You&apos;re set up</h2>
         <p className="mt-2 text-body-sm text-fog">
-          You can post a QIP, audit, or research opportunity now — students and foundation
+          You can post a QIP, audit, or research opportunity now. Students and foundation
           doctors will see it and apply directly.
         </p>
         <button
@@ -294,7 +294,7 @@ export default function OnboardingWizard() {
     <div className="mt-8">
       {demo && (
         <p className="mb-2 inline-block rounded-badges bg-acid-lime/15 px-[6px] text-label text-acid-lime">
-          Demo mode — nothing here is saved
+          Demo mode: nothing here is saved
         </p>
       )}
       <div className="flex items-center gap-3">
@@ -430,7 +430,7 @@ export default function OnboardingWizard() {
             )}
 
             {currentStep === "hospital_trust" && (
-              <StepShell question="Which hospital or trust?" hint="Optional — helps with local opportunity matching later.">
+              <StepShell question="Which hospital or trust?" hint="Optional. Helps with local opportunity matching later.">
                 <input
                   type="text"
                   value={form.hospitalTrust}
@@ -459,7 +459,7 @@ export default function OnboardingWizard() {
                   type="text"
                   value={form.gmcNumber}
                   onChange={(e) => update("gmcNumber", e.target.value)}
-                  placeholder="Optional — a public register number, shown to applicants as a trust signal"
+                  placeholder="Optional: a public register number, shown to applicants as a trust signal"
                   className={SELECT_CLASS}
                 />
               </StepShell>
@@ -515,7 +515,7 @@ export default function OnboardingWizard() {
             {currentStep === "skills" && (
               <StepShell
                 question="Which of these can you already do?"
-                hint="Optional — helps you match with the right opportunities. Pick as many as apply."
+                hint="Optional. Helps you match with the right opportunities. Pick as many as apply."
               >
                 <div className="flex flex-wrap gap-2">
                   {SKILL_OPTIONS.map((o) => {

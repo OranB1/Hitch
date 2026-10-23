@@ -55,7 +55,7 @@ function skillLabel(value: string): string {
   return SKILL_OPTIONS.find((s) => s.value === value)?.label ?? value;
 }
 
-// Explainable, deterministic weighted score — no opaque ranking. Each criterion the opportunity
+// Explainable, deterministic weighted score, no opaque ranking. Each criterion the opportunity
 // actually specifies contributes its listed weight; unspecified criteria are dropped and the
 // remaining weights renormalized to 100%, so a sparse posting isn't penalised for fields it
 // never asked about.
@@ -64,7 +64,7 @@ export function computeMatch(opportunity: OpportunityForMatch, profile: MatchPro
   let earnedWeight = 0;
   let totalWeight = 0;
 
-  // Specialty interest — 15%
+  // Specialty interest: 15%
   if (opportunity.specialty) {
     const studentSpecialty = profile.targetSpecialty ?? profile.currentSpecialty;
     const met = !!studentSpecialty && studentSpecialty.toLowerCase() === opportunity.specialty.toLowerCase();
@@ -73,7 +73,7 @@ export function computeMatch(opportunity: OpportunityForMatch, profile: MatchPro
     if (met) earnedWeight += 15;
   }
 
-  // Relevant skills — 30%, required skills weighted 2x preferred within that budget
+  // Relevant skills: 30%, required skills weighted 2x preferred within that budget
   const required = opportunity.required_skills ?? [];
   const preferred = opportunity.preferred_skills ?? [];
   if (required.length || preferred.length) {
@@ -96,7 +96,7 @@ export function computeMatch(opportunity: OpportunityForMatch, profile: MatchPro
     if (skillWeight > 0) earnedWeight += (skillEarned / skillWeight) * 30;
   }
 
-  // Previous experience — 20%
+  // Previous experience: 20%
   if (opportunity.experience_level && opportunity.experience_level in EXPERIENCE_LEVEL_THRESHOLD) {
     const threshold = EXPERIENCE_LEVEL_THRESHOLD[opportunity.experience_level];
     const qiRank = profile.qiExperience ? QI_EXPERIENCE_RANK[profile.qiExperience] : 0;
@@ -118,7 +118,7 @@ export function computeMatch(opportunity: OpportunityForMatch, profile: MatchPro
     if (met) earnedWeight += 20;
   }
 
-  // Availability — 20%
+  // Availability: 20%
   if (opportunity.estimated_commitment && opportunity.estimated_commitment in AVAILABILITY_RANK) {
     const requiredRank = AVAILABILITY_RANK[opportunity.estimated_commitment as AvailabilityHours];
     const studentRank = profile.availabilityHours ? AVAILABILITY_RANK[profile.availabilityHours] : -1;
@@ -128,7 +128,7 @@ export function computeMatch(opportunity: OpportunityForMatch, profile: MatchPro
     if (met) earnedWeight += 20;
   }
 
-  // Location — 15%
+  // Location: 15%
   if (opportunity.hospital_trust || opportunity.deanery_region) {
     const hospitalMet =
       !!opportunity.hospital_trust &&
@@ -145,7 +145,7 @@ export function computeMatch(opportunity: OpportunityForMatch, profile: MatchPro
     if (met) earnedWeight += 15;
   }
 
-  // Minimum stage — 10%, compared ordinally (a combined med-school-year + foundation-year scale)
+  // Minimum stage: 10%, compared ordinally (a combined med-school-year + foundation-year scale)
   // rather than by free-text substring, since "3rd year" never substring-matches a stored "3".
   if (opportunity.min_year_of_study && opportunity.min_year_of_study in STAGE_RANK) {
     const minRank = STAGE_RANK[opportunity.min_year_of_study as Stage];

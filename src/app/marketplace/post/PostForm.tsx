@@ -86,7 +86,7 @@ export default function PostForm() {
       return;
     }
     if (requiredSkills.length === 0) {
-      setError("Pick at least one required skill — this is what students are matched against.");
+      setError("Pick at least one required skill. This is what students are matched against.");
       return;
     }
 
@@ -171,7 +171,7 @@ export default function PostForm() {
       <div className="rounded-cards bg-carbon p-6 shadow-subtle space-y-4">
         <p className="text-caption text-ash">
           The more you specify here, the better a student can judge whether this is right for
-          them — and the more accurately we can match them against it.
+          them, and the more accurately we can match them against it.
         </p>
 
         <div>
@@ -263,14 +263,14 @@ export default function PostForm() {
         <div>
           <label className="block text-body-sm text-mist">Required skills *</label>
           <p className="mt-0.5 text-caption text-ash">
-            Pick at least one — what a student truly can&apos;t do the task without.
+            Pick at least one: what a student truly can&apos;t do the task without.
           </p>
           <SkillChips selected={requiredSkills} onToggle={(s) => toggleSkill(requiredSkills, setRequiredSkills, s)} />
         </div>
 
         <div>
           <label className="block text-body-sm text-mist">Preferred skills</label>
-          <p className="mt-0.5 text-caption text-ash">Nice-to-haves — these boost match ranking but don&apos;t exclude anyone.</p>
+          <p className="mt-0.5 text-caption text-ash">Nice-to-haves: these boost match ranking but don&apos;t exclude anyone.</p>
           <SkillChips selected={preferredSkills} onToggle={(s) => toggleSkill(preferredSkills, setPreferredSkills, s)} />
         </div>
 

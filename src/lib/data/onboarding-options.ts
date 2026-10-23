@@ -4,7 +4,7 @@ export type DoctorStage = {
 };
 
 // F3/F4 included since not every foundation doctor goes straight into specialty training after
-// F2. "In specialty training" is deliberately generic (not "IMT Year 1/2/3") — a doctor could be
+// F2. "In specialty training" is deliberately generic (not "IMT Year 1/2/3"): a doctor could be
 // in any specialty's training programme, which is captured separately via currentSpecialty.
 export const DOCTOR_STAGES: DoctorStage[] = [
   { value: "F1", label: "Foundation Year 1 (F1)" },

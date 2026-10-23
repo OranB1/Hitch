@@ -15,7 +15,7 @@ export default function ContactForm() {
   if (state.status === "success") {
     return (
       <div className="mt-8 rounded-cards bg-pulse-green/10 p-4 text-body-sm text-pulse-green shadow-[0_0_0_0.5px_var(--color-pulse-green)_inset]">
-        Thanks — we&apos;ve got your message and will get back to you soon.
+        Thanks, we&apos;ve got your message and will get back to you soon.
       </div>
     );
   }

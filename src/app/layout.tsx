@@ -21,7 +21,7 @@ const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
 });
 
-const TITLE = "Hitch — Get your QIP, audit, or research project done.";
+const TITLE = "Hitch: Get your QIP, audit, or research project done.";
 const DESCRIPTION =
   "A structured marketplace matching hospitals and consultants with medical students and foundation doctors for QIPs, audits, research, and presentations.";
 

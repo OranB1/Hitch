@@ -48,7 +48,7 @@ const OTHER_OPPORTUNITIES: (OpportunityForMatch & { title: string; description: 
   {
     title: "Audit of antibiotic prescribing in the emergency department",
     description:
-      "Reviewing compliance with local antimicrobial guidelines for community-acquired pneumonia. Good first audit — full training and supervision provided.",
+      "Reviewing compliance with local antimicrobial guidelines for community-acquired pneumonia. Good first audit: full training and supervision provided.",
     taskType: "audit",
     specialty: null,
     hospital_trust: "Charing Cross Hospital",
@@ -102,7 +102,7 @@ export default function StudentWalkthrough({
   const step = STEPS[stepIndex];
   const StepIcon = STEP_ICON[step];
   const [coverNote, setCoverNote] = useState(
-    "I've been involved in a VTE-prevention QI project on my current placement and I'm confident with Excel and basic statistics — happy to help with data collection or the re-audit."
+    "I've been involved in a VTE-prevention QI project on my current placement and I'm confident with Excel and basic statistics, happy to help with data collection or the re-audit."
   );
 
   const featured = useMemo(() => {
@@ -157,7 +157,7 @@ export default function StudentWalkthrough({
 
       <div className="mt-4 inline-flex items-center gap-2 rounded-pills bg-black/[0.045] px-3 py-[6px] text-label text-fog">
         <span className="h-1.5 w-1.5 rounded-full bg-iris-violet" />
-        Demo — nothing you enter here is saved
+        Demo: nothing you enter here is saved
       </div>
 
       <h1 className="mt-4 text-heading-sm font-serif font-normal text-paper">
@@ -165,8 +165,8 @@ export default function StudentWalkthrough({
       </h1>
       <p className="mt-2 text-body-sm text-fog">
         {postedOpportunity
-          ? "The opportunity you just posted is now visible here, matched against a student profile — exactly as it would appear for real."
-          : "This is what a medical student or foundation doctor sees when they open Hitch — no account needed to look around."}
+          ? "The opportunity you just posted is now visible here, matched against a student profile, exactly as it would appear for real."
+          : "This is what a medical student or foundation doctor sees when they open Hitch. No account needed to look around."}
       </p>
 
       {step !== "applied" && (
@@ -199,7 +199,7 @@ export default function StudentWalkthrough({
               <div>
                 <p className="text-[20px] font-[510] tracking-[-0.24px] text-paper">Your profile</p>
                 <p className="mt-1 text-caption text-ash">
-                  Structured once, used for every match — this is what posters see when you apply.
+                  Structured once, used for every match. This is what posters see when you apply.
                 </p>
                 <div className="mt-5 flex items-center gap-4 rounded-inputs border border-graphite bg-black/[0.02] p-4">
                   <div className="h-12 w-12 shrink-0 rounded-pills bg-acid-lime/15 flex items-center justify-center text-[17px] font-[510] text-acid-lime">
@@ -317,7 +317,7 @@ export default function StudentWalkthrough({
               <div>
                 <p className="text-[20px] font-[510] tracking-[-0.24px] text-paper">Apply to {selected.opportunity.title}</p>
                 <p className="mt-1 text-caption text-ash">
-                  Your profile is attached automatically — just add a short note.
+                  Your profile is attached automatically. Just add a short note.
                 </p>
                 <textarea
                   rows={4}
@@ -341,7 +341,7 @@ export default function StudentWalkthrough({
                 <div className="mt-6 rounded-cards border border-dashed border-graphite p-5">
                   <p className="text-[14px] font-[510] text-paper">What the poster sees on their end</p>
                   <p className="mt-1 text-caption text-ash">
-                    A ranked shortlist instead of a pile of emails — {DEMO_STUDENT_NAME.split(" ")[0]}&apos;s
+                    A ranked shortlist instead of a pile of emails. {DEMO_STUDENT_NAME.split(" ")[0]}&apos;s
                     application lands right at the top.
                   </p>
                   <div className="mt-4 space-y-2">

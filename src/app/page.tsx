@@ -13,19 +13,24 @@ const MOCK_MATCH_CHECKS = [
 
 const STATS = [
   {
-    value: "57.9%",
-    label: "of F1s who start an audit never complete it",
-    source: "UK junior doctors' experience of clinical audit, Foundation Programme",
+    value: "30%",
+    label: "of audits foundation doctors start are ever completed",
+    source: "Cai et al., UK junior doctors' experience of clinical audit, BJMP 2009",
+    href: "https://www.bjmp.org/content/uk-junior-doctors-experience-clinical-audit-foundation-programme",
   },
   {
-    value: "68%",
-    label: "of medical students say not knowing what's out there is their single biggest barrier",
-    source: "SMART survey, 1,774 medical students across 40 UK medical schools",
+    value: "69%",
+    label:
+      "of medical students want to do more research, and the barrier they name most often is simply not knowing what is available",
+    source: "SMART study, 1,774 students across 40 UK medical schools, BMC Medical Education 2023",
+    href: "https://doi.org/10.1186/s12909-023-04881-2",
   },
   {
-    value: "50%",
-    label: "of medical student-led QI projects achieve a significant improvement — and every one of those held at follow-up",
-    source: "Scoping review of medical student QI projects",
+    value: "19",
+    label:
+      "students paired with audit supervisors in a UK pilot, which improved confidence and got projects disseminated locally and nationally",
+    source: "Kumar et al., Clinical Audit Platform for Students, Postgraduate Medical Journal 2021",
+    href: "https://doi.org/10.1136/postgradmedj-2020-138426",
   },
 ];
 
@@ -33,12 +38,12 @@ const HOW_IT_WORKS = [
   {
     step: "1",
     title: "Post",
-    body: "A consultant, registrar, or QI team lists a QIP, audit, research task, or presentation opportunity — required vs. preferred criteria, estimated commitment, and deadline.",
+    body: "A consultant, registrar, or QI team lists a QIP, audit, research task, or presentation opportunity: required vs. preferred criteria, estimated commitment, and deadline.",
   },
   {
     step: "2",
     title: "Match",
-    body: "Students and foundation doctors see an explainable match score against their own structured profile — no CV trawling, no relying on who they happen to know.",
+    body: "Students and foundation doctors see an explainable match score against their own structured profile. No CV trawling, no relying on who they happen to know.",
   },
   {
     step: "3",
@@ -59,7 +64,7 @@ const EXPLORE_CARDS = [
     href: "/marketplace/post",
     audience: "Consultants, registrars & QI teams",
     title: "Post an opportunity",
-    body: "Get help with the project that's been sitting on your list — data collection, literature review, patient recruitment, or a QI cycle you don't have time to run alone.",
+    body: "Get help with the project that's been sitting on your list: data collection, literature review, patient recruitment, or a QI cycle you don't have time to run alone.",
     cta: "Post an opportunity",
   },
 ];
@@ -80,7 +85,7 @@ export default function Home() {
             </h1>
             <p className="mt-6 max-w-lg text-body text-fog">
               A structured way for hospitals and consultants to find willing, matched student and
-              trainee help — and for students and foundation doctors to find real opportunities,
+              trainee help, and for students and foundation doctors to find real opportunities,
               not just whoever they happen to know.
             </p>
           </Reveal>
@@ -130,7 +135,7 @@ export default function Home() {
               ))}
             </ul>
             <p className="mt-4 text-caption text-ash">
-              Illustrative example — real postings show your own match score.
+              Illustrative example. Real postings show your own match score.
             </p>
           </div>
         </Reveal>
@@ -142,7 +147,14 @@ export default function Home() {
             <div className="h-full rounded-cards bg-carbon p-6 shadow-subtle">
               <p className="text-heading-sm font-serif font-normal text-paper">{s.value}</p>
               <p className="mt-2 text-body-sm text-mist">{s.label}</p>
-              <p className="mt-3 text-caption text-ash">{s.source}</p>
+              <a
+                href={s.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-3 inline-block text-caption text-ash underline decoration-smoke underline-offset-2 transition-colors hover:text-fog"
+              >
+                {s.source}
+              </a>
             </div>
           </Reveal>
         ))}

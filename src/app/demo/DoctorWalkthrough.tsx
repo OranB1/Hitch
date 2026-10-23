@@ -44,7 +44,7 @@ const STEP_ICON: Record<Step, React.ComponentType<{ size?: number }>> = {
   posted: Eye,
 };
 
-// Fictional trusts and figures — deliberately not naming any real NHS trust here, since this is
+// Fictional trusts and figures: deliberately not naming any real NHS trust here, since this is
 // an illustrative "coming soon" mockup, not real data.
 const CROSS_TRUST_TEASER = [
   {
@@ -163,7 +163,7 @@ export default function DoctorWalkthrough({
 
       <div className="mt-4 inline-flex items-center gap-2 rounded-pills bg-black/[0.045] px-3 py-[6px] text-label text-fog">
         <span className="h-1.5 w-1.5 rounded-full bg-iris-violet" />
-        Demo — nothing you enter here is saved
+        Demo: nothing you enter here is saved
       </div>
 
       <h1 className="mt-4 text-heading-sm font-serif font-normal text-paper">
@@ -171,7 +171,7 @@ export default function DoctorWalkthrough({
       </h1>
       <p className="mt-2 text-body-sm text-fog">
         This is exactly what it looks like for a consultant, registrar, or QI lead to post a real
-        opportunity on Hitch — try changing the fields below, it&apos;s the real posting form,
+        opportunity on Hitch. Try changing the fields below, it&apos;s the real posting form,
         just without needing to sign in.
       </p>
 
@@ -205,7 +205,7 @@ export default function DoctorWalkthrough({
               <div>
                 <p className="text-[20px] font-[510] tracking-[-0.24px] text-paper">Who&apos;s posting</p>
                 <p className="mt-1 text-caption text-ash">
-                  Pulled automatically from your Hitch profile — nothing to fill in here.
+                  Pulled automatically from your Hitch profile. Nothing to fill in here.
                 </p>
                 <div className="mt-5 flex items-center gap-4 rounded-inputs border border-graphite bg-black/[0.02] p-4">
                   <div className="h-12 w-12 shrink-0 rounded-pills bg-iris-violet/15 flex items-center justify-center text-[17px] font-[510] text-iris-violet">
@@ -223,7 +223,7 @@ export default function DoctorWalkthrough({
               <div>
                 <p className="text-[20px] font-[510] tracking-[-0.24px] text-paper">Where will this be done?</p>
                 <p className="mt-1 text-caption text-ash">
-                  Helps students find opportunities local to them — try editing this to your own trust.
+                  Helps students find opportunities local to them. Try editing this to your own trust.
                 </p>
                 <div className="mt-3 flex gap-2">
                   <button
@@ -314,7 +314,7 @@ export default function DoctorWalkthrough({
                 </div>
                 <div>
                   <p className="text-[20px] font-[510] tracking-[-0.24px] text-paper">Preferred skills</p>
-                  <p className="mt-1 text-caption text-ash">Nice-to-haves — boost ranking, don&apos;t exclude anyone.</p>
+                  <p className="mt-1 text-caption text-ash">Nice-to-haves: boost ranking, don&apos;t exclude anyone.</p>
                   <div className="mt-3 flex flex-wrap gap-2">
                     {SKILL_OPTIONS.map((o) => (
                       <button
@@ -463,7 +463,7 @@ export default function DoctorWalkthrough({
                 >
                   <p className="text-[14px] font-[510] text-paper">See how a student finds this →</p>
                   <p className="mt-0.5 text-caption text-fog">
-                    Switch to the applicant view — this exact posting will be waiting for them.
+                    Switch to the applicant view. This exact posting will be waiting for them.
                   </p>
                 </button>
 

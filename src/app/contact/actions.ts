@@ -38,15 +38,15 @@ export async function submitContactForm(
         to: CONTACT_EMAIL_TO,
         replyTo: email,
         subject: `New contact message from ${name}`,
-        text: `${message}\n\n— ${name} (${email})`,
+        text: `${message}\n\nFrom ${name} (${email})`,
       });
     } catch (err) {
-      // The message is already saved in Supabase above — a delivery failure here shouldn't
+      // The message is already saved in Supabase above. A delivery failure here shouldn't
       // fail the submission, it just means this one gets caught up on manually.
       console.error("Failed to send contact email:", err);
     }
   } else {
-    console.warn("RESEND_API_KEY not set — contact message saved to Supabase but no email was sent.");
+    console.warn("RESEND_API_KEY not set. Contact message saved to Supabase but no email was sent.");
   }
 
   return { status: "success" };

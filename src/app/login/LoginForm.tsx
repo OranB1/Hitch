@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 
-// Matches Supabase's own per-user email rate limit — resending sooner would just fail, so the
+// Matches Supabase's own per-user email rate limit. Resending sooner would just fail, so the
 // button stays disabled until a retry can actually succeed.
 const RESEND_COOLDOWN_SECONDS = 60;
 
@@ -62,7 +62,7 @@ export default function LoginForm() {
         <div className="rounded-cards bg-carbon p-4 shadow-subtle">
           <p className="text-body-sm text-fog">
             University and NHS email systems often scan and queue new messages before they reach
-            your inbox, so this can take a few minutes — check your spam/junk folder too.
+            your inbox, so this can take a few minutes. Check your spam/junk folder too.
           </p>
           {errorMessage && <p className="mt-2 text-body-sm text-coral-red">{errorMessage}</p>}
           <button
@@ -94,7 +94,7 @@ export default function LoginForm() {
           className="mt-1 w-full rounded-inputs border border-graphite bg-black/[0.025] px-[14px] py-[12px] text-[14px] text-mist focus:border-mist focus:outline-none"
         />
         <p className="mt-1 text-caption text-ash">
-          Must end in .ac.uk, nhs.net, or nhs.uk — this is currently for UK medical students and doctors only.
+          Must end in .ac.uk, nhs.net, or nhs.uk. This is currently for UK medical students and doctors only.
         </p>
       </div>
 

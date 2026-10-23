@@ -1,6 +1,6 @@
 // Specialty names offered across onboarding (a user's interest) and the marketplace posting form
 // (what a project sits under). This used to be split into "priority" vs "secondary" lists, which
-// tracked which specialties had a portfolio scorer built — that distinction died with the scorers,
+// tracked which specialties had a portfolio scorer built, and that distinction died with the scorers,
 // so it's one flat list now.
 export const SPECIALTIES = [
   "General Practice",

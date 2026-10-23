@@ -183,7 +183,7 @@ export default function MarketplaceBrowser() {
     return map;
   }, [filtered, profile]);
 
-  // Ranked by match % descending, as advertised — filtering happens above, ordering happens here.
+  // Ranked by match % descending, as advertised. Filtering happens above, ordering happens here.
   const sorted = useMemo(() => {
     return [...filtered].sort((a, b) => (matchByOpportunity.get(b.id)?.percent ?? 0) - (matchByOpportunity.get(a.id)?.percent ?? 0));
   }, [filtered, matchByOpportunity]);
@@ -286,7 +286,7 @@ export default function MarketplaceBrowser() {
       {sorted.length === 0 ? (
         <div className="mt-6 rounded-cards bg-carbon p-6 shadow-subtle text-body-sm text-fog">
           No open opportunities match right now
-          {restrictToPartners && hasPartnershipData ? " — try turning off the partner-hospital filter." : "."}
+          {restrictToPartners && hasPartnershipData ? ". Try turning off the partner-hospital filter." : "."}
         </div>
       ) : (
         <div className="mt-6 grid gap-6 lg:grid-cols-[380px_1fr]">
@@ -385,7 +385,7 @@ export default function MarketplaceBrowser() {
                     </span>
                   </div>
                   <p className="mt-1 text-caption text-ash">
-                    Based on what the poster&apos;s looking for — a guide, not a gate. You can apply regardless of your score.
+                    Based on what the poster&apos;s looking for: a guide, not a gate. You can apply regardless of your score.
                   </p>
                   <ul className="mt-2 space-y-1">
                     {selectedMatch.checks.map((c) => {
@@ -470,7 +470,7 @@ export default function MarketplaceBrowser() {
                   <div>
                     {hasUnmetRequired && (
                       <p className="mb-3 rounded-inputs bg-coral-red/10 p-3 text-body-sm text-coral-red shadow-[0_0_0_0.5px_var(--color-coral-red)_inset]">
-                        You&apos;re missing a required item for this opportunity — you can still apply, but the poster is looking for candidates who have it.
+                        You&apos;re missing a required item for this opportunity. You can still apply, but the poster is looking for candidates who have it.
                       </p>
                     )}
                     <textarea

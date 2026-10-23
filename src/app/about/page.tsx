@@ -10,7 +10,7 @@ function LinkedInIcon({ size = 14 }: { size?: number }) {
   );
 }
 
-// `photo` is a path under /public — drop the headshots in as /team/<name>.jpg and fill it in.
+// `photo` is a path under /public. Drop the headshots in as /team/<name>.jpg and fill it in.
 // Until then each card falls back to the person's initials.
 const FOUNDERS: {
   name: string;
@@ -22,7 +22,7 @@ const FOUNDERS: {
   {
     name: "Oran Barak",
     role: "Co-founder",
-    bio: "[A couple of sentences about background and why they're building Hitch.]",
+    bio: "Medical student at Leeds, starting an MPhil in Translating Medical Device and Advanced Therapy Research at Cambridge. Led the clinical side of NeoTherm, a neonatal sepsis sensor that won MIT's healthcare hackathon and is now being piloted at Cohen Children's Medical Center in New York. Hitch came out of his own experience. He wanted to get into research but kept rotating onto a new specialty before he could build the relationship, and with no medics in the family, there was nobody to show him how it worked. Watching peers hit the same wall as training got more competitive made the problem obvious: it isn't appetite, it's access.",
     linkedin: "https://www.linkedin.com/in/oran-barak/",
   },
   {
@@ -46,20 +46,24 @@ export default function AboutPage() {
       <section className="max-w-2xl">
         <h1 className="text-heading-sm font-serif font-normal text-paper">About Hitch</h1>
         <p className="mt-6 text-body text-fog">
-          Most QIPs and audits don&apos;t fail from a lack of ideas or appetite — they stall
-          because the consultant with a backlog and the student who wants hands-on experience
-          never find each other. Opportunities move through word of mouth, so who you happen to
-          know ends up mattering more than how keen you are. We built Hitch to fix that: a
-          structured place for hospitals and consultants to post real QIP, audit, research, and
-          teaching opportunities, and for students and foundation doctors to find and apply to
-          them directly.
+          Clinical projects in the NHS start far more often than they finish. In one Foundation
+          Programme study, only 30% of audits F1 doctors attempted were completed, and 58% of
+          respondents hadn&apos;t completed a single one. The appetite isn&apos;t the problem. A
+          survey of 1,774 medical students found 69% wanted to do more research, and the obstacle
+          they named most often was simply not knowing what was available.
         </p>
         <p className="mt-4 text-body text-fog">
-          Hitch is built by junior doctors and medical students, for junior doctors and
-          medical students — starting with structured matching on skills, experience, and
-          availability, so posters see a ranked, explainable shortlist instead of a pile of
-          unstructured emails, and applicants get matched on merit rather than proximity to a
-          consultant.
+          Both sides are stuck in the same gap. Opportunities travel by word of mouth, so who you
+          happen to know matters more than how keen you are. And because students and junior
+          doctors rotate every few months, projects lose their people partway through and quietly
+          stall, with the work rarely written down anywhere a successor could pick it up.
+        </p>
+        <p className="mt-4 text-body text-fog">
+          Hitch is a structured place for clinical teams to post real QIP, audit and research
+          opportunities, and for students and foundation doctors to find them on merit rather than
+          proximity. Making ongoing work visible also means teams can see what is already running,
+          build on it instead of repeating it, and hand a project on when the person running it
+          rotates away.
         </p>
       </section>
 
@@ -97,6 +101,11 @@ export default function AboutPage() {
             </Reveal>
           ))}
         </div>
+        <p className="mt-6 max-w-2xl text-body-sm text-fog">
+          We have spoken to or surveyed around 150 doctors and medical students while building
+          Hitch. The project is supported by Imperial, with a pilot in progress at Chelsea and
+          Westminster Hospital.
+        </p>
       </section>
     </main>
   );

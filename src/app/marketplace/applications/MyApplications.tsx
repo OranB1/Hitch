@@ -25,7 +25,7 @@ const STATUS_STYLES: Record<string, string> = {
 };
 
 const STATUS_LABELS: Record<string, string> = {
-  submitted: "Applied — no response yet",
+  submitted: "Applied, no response yet",
   shortlisted: "Shortlisted",
   accepted: "Accepted",
   rejected: "Not this time",
@@ -96,9 +96,9 @@ export default function MyApplications() {
   if (applications.length === 0) {
     return (
       <div className="mt-8 rounded-cards bg-carbon p-6 shadow-subtle text-body-sm text-fog">
-        You haven&apos;t applied to anything yet —{" "}
+        You haven&apos;t applied to anything yet.{" "}
         <Link href="/marketplace" className="font-[510] text-mist underline hover:text-paper">
-          browse open opportunities
+          Browse open opportunities
         </Link>
         .
       </div>

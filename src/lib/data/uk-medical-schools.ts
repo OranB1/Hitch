@@ -1,6 +1,6 @@
 // UK medical schools offering a primary medical qualification (MBBS/MBChB/BM), 2026.
 // Best-available compiled list, cross-referenced across multiple current sources (GMC's own
-// list page returned 403 to automated fetch at time of writing) — includes recent additions
+// list page returned 403 to automated fetch at time of writing): includes recent additions
 // (Kent & Medway, Brunel, Chester, Pears Cumbria, etc.). "Other / not listed" is a deliberate
 // escape hatch for anything missed or newly opened.
 
