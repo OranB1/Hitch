@@ -14,6 +14,45 @@ import type { Tables } from "@/lib/supabase/database.types";
 
 type Opportunity = Tables<"opportunities">;
 
+type SortKey = "match" | "newest" | "closing";
+
+const SKILL_LABEL = new Map(SKILL_OPTIONS.map((s) => [s.value, s.label]));
+
+// Whichever of hours, length and closing date a posting actually has. Anything missing is left
+// out rather than shown as an empty or "not specified" field.
+function cardFacts(o: Opportunity) {
+  const facts: string[] = [];
+  if (o.estimated_commitment) facts.push(o.estimated_commitment);
+  if (o.project_duration) {
+    facts.push(PROJECT_DURATION_OPTIONS.find((d) => d.value === o.project_duration)?.label ?? o.project_duration);
+  }
+  if (o.deadline) {
+    facts.push(
+      `Apply by ${new Date(o.deadline).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}`
+    );
+  }
+  return facts;
+}
+
+// Searches the text a student would actually type: the title, the body, where it is, and the
+// skills, matched on both the stored value ("literature_review") and the label a human sees.
+function searchHaystack(o: Opportunity) {
+  const skills = [...(o.required_skills ?? []), ...(o.preferred_skills ?? [])];
+  return [
+    o.title,
+    o.description,
+    o.hospital_trust,
+    o.specialty,
+    o.deanery_region,
+    o.is_remote ? "remote virtual" : "",
+    ...skills,
+    ...skills.map((s) => SKILL_LABEL.get(s as Skill) ?? ""),
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+}
+
 // Mirrors the real two-column layout so the page doesn't jump when results arrive.
 function ListingsSkeleton() {
   return (
@@ -103,6 +142,8 @@ export default function MarketplaceBrowser() {
   const [restrictToPartners, setRestrictToPartners] = useState(true);
   const [beginnerFriendlyOnly, setBeginnerFriendlyOnly] = useState(false);
   const [locationFilter, setLocationFilter] = useState<"all" | "near_me" | "remote">("all");
+  const [search, setSearch] = useState("");
+  const [sortBy, setSortBy] = useState<SortKey>("match");
 
   // Resets to the broadest view rather than to initial state: restrictToPartners starts on, so
   // "clear" has to switch it off or the widest result set is still hidden.
@@ -111,6 +152,8 @@ export default function MarketplaceBrowser() {
     setLocationFilter("all");
     setBeginnerFriendlyOnly(false);
     setRestrictToPartners(false);
+    setSearch("");
+    setSortBy("match");
   }
 
   const [coverNote, setCoverNote] = useState("");
@@ -195,6 +238,12 @@ export default function MarketplaceBrowser() {
   const partneredHospitals = useMemo(() => getPartneredHospitals(profile.medSchool), [profile.medSchool]);
   const hasPartnershipData = partneredHospitals.length > 0;
 
+  // Every word must appear somewhere, so "remote paediatrics" narrows rather than widens.
+  const searchTerms = useMemo(
+    () => search.trim().toLowerCase().split(/\s+/).filter(Boolean),
+    [search]
+  );
+
   const filtered = useMemo(() => {
     return opportunities.filter((o) => {
       if (taskTypeFilter && o.task_type !== taskTypeFilter) return false;
@@ -203,6 +252,7 @@ export default function MarketplaceBrowser() {
         if (!onList) return false;
       }
       if (beginnerFriendlyOnly && o.experience_level !== "no_experience_needed") return false;
+      if (searchTerms.length && !searchTerms.every((t) => searchHaystack(o).includes(t))) return false;
       if (locationFilter === "remote" && !o.is_remote) return false;
       if (locationFilter === "near_me") {
         if (o.is_remote) return false;
@@ -223,6 +273,7 @@ export default function MarketplaceBrowser() {
     locationFilter,
     profile.hospitalTrust,
     profile.preferredRegion,
+    searchTerms,
   ]);
 
   const matchByOpportunity = useMemo(() => {
@@ -231,10 +282,36 @@ export default function MarketplaceBrowser() {
     return map;
   }, [filtered, profile]);
 
-  // Ranked by match % descending, as advertised. Filtering happens above, ordering happens here.
+  // Match ranking needs a profile to rank against, so signed-out visitors get newest instead of
+  // an order derived from an empty profile. The picker hides "best match" for them too.
+  const effectiveSort: SortKey = !user && sortBy === "match" ? "newest" : sortBy;
+
+  const anyFilterActive =
+    search.trim() !== "" ||
+    taskTypeFilter !== "" ||
+    locationFilter !== "all" ||
+    beginnerFriendlyOnly ||
+    (restrictToPartners && hasPartnershipData) ||
+    effectiveSort !== (user ? "match" : "newest");
+
   const sorted = useMemo(() => {
-    return [...filtered].sort((a, b) => (matchByOpportunity.get(b.id)?.percent ?? 0) - (matchByOpportunity.get(a.id)?.percent ?? 0));
-  }, [filtered, matchByOpportunity]);
+    const list = [...filtered];
+    if (effectiveSort === "newest") {
+      return list.sort((a, b) => (a.created_at < b.created_at ? 1 : a.created_at > b.created_at ? -1 : 0));
+    }
+    if (effectiveSort === "closing") {
+      // Postings without a deadline aren't closing at all, so they sort to the bottom.
+      return list.sort((a, b) => {
+        if (!a.deadline && !b.deadline) return 0;
+        if (!a.deadline) return 1;
+        if (!b.deadline) return -1;
+        return a.deadline < b.deadline ? -1 : a.deadline > b.deadline ? 1 : 0;
+      });
+    }
+    return list.sort(
+      (a, b) => (matchByOpportunity.get(b.id)?.percent ?? 0) - (matchByOpportunity.get(a.id)?.percent ?? 0)
+    );
+  }, [filtered, matchByOpportunity, effectiveSort]);
 
   const selected = sorted.find((o) => o.id === selectedId) ?? sorted[0] ?? null;
   const selectedMatch = selected ? (matchByOpportunity.get(selected.id) ?? computeMatch(selected, profile)) : null;
@@ -305,6 +382,15 @@ export default function MarketplaceBrowser() {
   return (
     <div className="mt-8">
       <div className="flex flex-wrap items-center gap-3">
+        <input
+          type="search"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search title, description, hospital or skill"
+          aria-label="Search opportunities"
+          className={`${INPUT_CLASS} w-full min-w-0 sm:w-auto sm:flex-1 sm:max-w-[320px]`}
+        />
+
         <select
           className={INPUT_CLASS}
           value={taskTypeFilter}
@@ -347,7 +433,36 @@ export default function MarketplaceBrowser() {
           />
           Beginner friendly only
         </label>
+
+        <select
+          className={INPUT_CLASS}
+          value={effectiveSort}
+          onChange={(e) => setSortBy(e.target.value as SortKey)}
+          aria-label="Sort opportunities"
+        >
+          {user && <option value="match" className="bg-carbon">Best match</option>}
+          <option value="newest" className="bg-carbon">Newest</option>
+          <option value="closing" className="bg-carbon">Closing soonest</option>
+        </select>
       </div>
+
+      {opportunities.length > 0 && (
+        <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2">
+          <p className="text-body-sm text-fog">
+            {sorted.length === opportunities.length
+              ? `${opportunities.length} open ${opportunities.length === 1 ? "opportunity" : "opportunities"}`
+              : `${sorted.length} of ${opportunities.length} ${opportunities.length === 1 ? "opportunity" : "opportunities"}`}
+          </p>
+          {anyFilterActive && (
+            <button
+              onClick={clearFilters}
+              className="text-[13px] font-[510] text-mist underline underline-offset-2 transition-colors hover:text-paper"
+            >
+              Clear filters
+            </button>
+          )}
+        </div>
+      )}
 
       {!user && opportunities.length > 0 && (
         <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-cards border border-graphite bg-black/[0.02] px-5 py-4">
@@ -436,9 +551,14 @@ export default function MarketplaceBrowser() {
                         </span>
                       )}
                     </div>
-                    <p className="mt-1 text-body-sm text-fog">
-                      {o.is_remote ? "Remote / virtual" : o.hospital_trust ?? "Location not specified"}
-                    </p>
+                    {(o.is_remote || o.hospital_trust) && (
+                      <p className="mt-1 text-body-sm text-fog">
+                        {o.is_remote ? "Remote / virtual" : o.hospital_trust}
+                      </p>
+                    )}
+                    {cardFacts(o).length > 0 && (
+                      <p className="mt-1 text-caption text-ash">{cardFacts(o).join(" · ")}</p>
+                    )}
                     <div className="mt-2 flex flex-wrap gap-1">
                       <span className="rounded-badges bg-black/[0.045] px-[6px] text-label text-fog">
                         {TASK_TYPE_OPTIONS.find((t) => t.value === o.task_type)?.label ?? o.task_type}
