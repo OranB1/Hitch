@@ -13,6 +13,40 @@ import { notifyPosterOfNewApplication } from "@/lib/notifications";
 import type { Tables } from "@/lib/supabase/database.types";
 
 type Opportunity = Tables<"opportunities">;
+
+// Mirrors the real two-column layout so the page doesn't jump when results arrive.
+function ListingsSkeleton() {
+  return (
+    <div className="mt-8" aria-busy="true" aria-live="polite">
+      <span className="sr-only">Loading opportunities</span>
+      <div className="flex flex-wrap items-center gap-3">
+        {[112, 128, 96].map((w) => (
+          <div key={w} className="h-[42px] animate-pulse rounded-inputs bg-black/[0.045]" style={{ width: w }} />
+        ))}
+      </div>
+      <div className="mt-6 grid gap-6 lg:grid-cols-[380px_1fr]">
+        <div className="space-y-2">
+          {[0, 1, 2, 3].map((i) => (
+            <div key={i} className="rounded-cards border border-graphite bg-carbon p-4">
+              <div className="h-[15px] w-3/4 animate-pulse rounded-small bg-black/[0.055]" />
+              <div className="mt-2 h-[13px] w-1/2 animate-pulse rounded-small bg-black/[0.035]" />
+              <div className="mt-3 h-[18px] w-24 animate-pulse rounded-badges bg-black/[0.035]" />
+            </div>
+          ))}
+        </div>
+        <div className="h-fit rounded-cards bg-carbon p-6 shadow-subtle">
+          <div className="h-[22px] w-2/3 animate-pulse rounded-small bg-black/[0.055]" />
+          <div className="mt-3 h-[13px] w-1/3 animate-pulse rounded-small bg-black/[0.035]" />
+          <div className="mt-6 space-y-2 border-t border-graphite pt-4">
+            {[0, 1, 2, 3].map((i) => (
+              <div key={i} className="h-[13px] animate-pulse rounded-small bg-black/[0.035]" style={{ width: `${90 - i * 12}%` }} />
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 type PosterProfile = {
   full_name: string | null;
   department: string | null;
@@ -62,12 +96,22 @@ export default function MarketplaceBrowser() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const reducedMotion = useReducedMotion();
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [contactEmails, setContactEmails] = useState<Map<string, string | null>>(new Map());
 
   const [taskTypeFilter, setTaskTypeFilter] = useState<TaskType | "">("");
   const [restrictToPartners, setRestrictToPartners] = useState(true);
   const [beginnerFriendlyOnly, setBeginnerFriendlyOnly] = useState(false);
   const [locationFilter, setLocationFilter] = useState<"all" | "near_me" | "remote">("all");
+
+  // Resets to the broadest view rather than to initial state: restrictToPartners starts on, so
+  // "clear" has to switch it off or the widest result set is still hidden.
+  function clearFilters() {
+    setTaskTypeFilter("");
+    setLocationFilter("all");
+    setBeginnerFriendlyOnly(false);
+    setRestrictToPartners(false);
+  }
 
   const [coverNote, setCoverNote] = useState("");
   const [applying, setApplying] = useState(false);
@@ -119,11 +163,12 @@ export default function MarketplaceBrowser() {
         }
       }
 
-      const { data: opps } = await supabase
+      const { data: opps, error: oppsError } = await supabase
         .from("opportunities")
         .select("*")
         .eq("status", "open")
         .order("created_at", { ascending: false });
+      if (oppsError) throw oppsError;
       if (opps) {
         setOpportunities(opps);
         if (opps.length) setSelectedId(opps[0].id);
@@ -139,9 +184,12 @@ export default function MarketplaceBrowser() {
           }
         }
       }
-      setLoading(false);
     }
-    init();
+    // Without this the listings query rejecting (dropped connection, cold start) would leave the
+    // page on its loading state forever, with no way back.
+    init()
+      .catch(() => setLoadError(true))
+      .finally(() => setLoading(false));
   }, [supabase]);
 
   const partneredHospitals = useMemo(() => getPartneredHospitals(profile.medSchool), [profile.medSchool]);
@@ -233,7 +281,25 @@ export default function MarketplaceBrowser() {
   }
 
   if (loading) {
-    return <div className="mt-8 rounded-cards bg-carbon p-6 shadow-subtle text-body-sm text-fog">Loading…</div>;
+    return <ListingsSkeleton />;
+  }
+
+  if (loadError) {
+    return (
+      <div className="mt-8 rounded-cards bg-carbon p-6 shadow-subtle">
+        <p className="font-[510] text-paper">We couldn&apos;t load opportunities</p>
+        <p className="mt-2 max-w-md text-body-sm text-fog">
+          Something went wrong fetching the list. This is usually a connection problem rather than
+          anything you did.
+        </p>
+        <button
+          onClick={() => window.location.reload()}
+          className="mt-4 rounded-buttons bg-acid-lime px-4 py-[10px] text-[14px] font-[510] tracking-[-0.011em] text-void transition-opacity hover:opacity-90"
+        >
+          Try again
+        </button>
+      </div>
+    );
   }
 
   return (
@@ -283,11 +349,63 @@ export default function MarketplaceBrowser() {
         </label>
       </div>
 
-      {sorted.length === 0 ? (
-        <div className="mt-6 rounded-cards bg-carbon p-6 shadow-subtle text-body-sm text-fog">
-          No open opportunities match right now
-          {restrictToPartners && hasPartnershipData ? ". Try turning off the partner-hospital filter." : "."}
+      {!user && opportunities.length > 0 && (
+        <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-cards border border-graphite bg-black/[0.02] px-5 py-4">
+          <div>
+            <p className="text-body-sm font-[510] text-paper">Sign in to see how well each one matches you</p>
+            <p className="mt-1 max-w-xl text-caption text-fog">
+              Hitch scores every opportunity against your year, specialty interest, skills and
+              availability, and ranks the list by fit. You can browse everything without an account.
+            </p>
+          </div>
+          <Link
+            href="/login"
+            className="shrink-0 rounded-buttons bg-acid-lime px-4 py-[10px] text-[14px] font-[510] tracking-[-0.011em] text-void transition-opacity hover:opacity-90"
+          >
+            Sign in
+          </Link>
         </div>
+      )}
+
+      {sorted.length === 0 ? (
+        opportunities.length === 0 ? (
+          <div className="mt-6 rounded-cards bg-carbon p-8 text-center shadow-subtle">
+            <p className="font-[510] text-paper">No open opportunities yet</p>
+            <p className="mx-auto mt-2 max-w-md text-body-sm text-fog">
+              Nothing has been posted so far. Opportunities appear here as soon as a consultant,
+              registrar or QI team posts one.
+            </p>
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+              <Link
+                href="/marketplace/post"
+                className="rounded-buttons bg-acid-lime px-4 py-[10px] text-[14px] font-[510] tracking-[-0.011em] text-void transition-opacity hover:opacity-90"
+              >
+                Post an opportunity
+              </Link>
+              <Link
+                href="/demo"
+                className="rounded-buttons border border-graphite px-4 py-[10px] text-[14px] font-[510] text-mist transition-colors hover:border-smoke hover:text-paper"
+              >
+                Try the demo
+              </Link>
+            </div>
+          </div>
+        ) : (
+          <div className="mt-6 rounded-cards bg-carbon p-8 text-center shadow-subtle">
+            <p className="font-[510] text-paper">No opportunities match these filters</p>
+            <p className="mx-auto mt-2 max-w-md text-body-sm text-fog">
+              {opportunities.length === 1
+                ? "There is 1 open opportunity, but it doesn't match what you've selected."
+                : `There are ${opportunities.length} open opportunities, but none match what you've selected.`}
+            </p>
+            <button
+              onClick={clearFilters}
+              className="mt-6 rounded-buttons bg-acid-lime px-4 py-[10px] text-[14px] font-[510] tracking-[-0.011em] text-void transition-opacity hover:opacity-90"
+            >
+              Clear filters
+            </button>
+          </div>
+        )
       ) : (
         <div className="mt-6 grid gap-6 lg:grid-cols-[380px_1fr]">
           <div className="space-y-2">
@@ -378,31 +496,66 @@ export default function MarketplaceBrowser() {
 
               {selectedMatch && selectedMatch.checks.length > 0 && (
                 <div className="mt-6 border-t-[0.5px] border-graphite pt-4">
-                  <div className="flex items-center gap-2">
-                    <p className="text-caption font-[510] text-fog">How this lines up with your profile</p>
-                    <span className="rounded-badges bg-acid-lime/15 px-[6px] text-label font-[510] text-acid-lime">
-                      {selectedMatch.percent}% match
-                    </span>
-                  </div>
-                  <p className="mt-1 text-caption text-ash">
-                    Based on what the poster&apos;s looking for: a guide, not a gate. You can apply regardless of your score.
-                  </p>
-                  <ul className="mt-2 space-y-1">
-                    {selectedMatch.checks.map((c) => {
-                      const unmetRequired = c.required && !c.met;
-                      return (
-                        <li key={c.label} className="flex items-center gap-2 text-body-sm">
-                          <span className={c.met ? "text-pulse-green" : unmetRequired ? "text-coral-red" : "text-ash"}>
-                            {c.met ? "✓" : "○"}
-                          </span>
-                          <span className={c.met ? "text-mist" : unmetRequired ? "text-coral-red" : "text-ash"}>
-                            {c.label}
-                            {c.required && <span className="ml-1 text-label text-ash">(required)</span>}
-                          </span>
-                        </li>
-                      );
-                    })}
-                  </ul>
+                  {user ? (
+                    <>
+                      <div className="flex items-center gap-2">
+                        <p className="text-caption font-[510] text-fog">How this lines up with your profile</p>
+                        <span className="rounded-badges bg-acid-lime/15 px-[6px] text-label font-[510] text-acid-lime">
+                          {selectedMatch.percent}% match
+                        </span>
+                      </div>
+                      <p className="mt-1 text-caption text-ash">
+                        Based on what the poster&apos;s looking for: a guide, not a gate. You can apply regardless of your score.
+                      </p>
+                      <ul className="mt-2 space-y-1">
+                        {selectedMatch.checks.map((c) => {
+                          const unmetRequired = c.required && !c.met;
+                          return (
+                            <li key={c.label} className="flex items-center gap-2 text-body-sm">
+                              <span className={c.met ? "text-pulse-green" : unmetRequired ? "text-coral-red" : "text-ash"}>
+                                {c.met ? "✓" : "○"}
+                              </span>
+                              <span className={c.met ? "text-mist" : unmetRequired ? "text-coral-red" : "text-ash"}>
+                                {c.label}
+                                {c.required && <span className="ml-1 text-label text-ash">(required)</span>}
+                              </span>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </>
+                  ) : (
+                    /* Signed out there is no profile to compare against, so scoring it would be
+                       meaningless. Show the poster's criteria plainly instead. */
+                    <>
+                      <p className="text-caption font-[510] text-fog">What this poster is looking for</p>
+                      <ul className="mt-2 space-y-1">
+                        {selectedMatch.checks.map((c) => (
+                          <li key={c.label} className="flex items-center gap-2 text-body-sm text-mist">
+                            <span className="text-ash">·</span>
+                            <span>
+                              {c.label}
+                              {c.required && <span className="ml-1 text-label text-ash">(required)</span>}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                      <div className="mt-4 rounded-inputs border border-graphite bg-black/[0.02] p-3">
+                        <p className="text-body-sm font-[510] text-paper">See how well you match</p>
+                        <p className="mt-1 text-caption text-fog">
+                          Sign in and Hitch scores every opportunity against your year, specialty
+                          interest, skills and availability, so you can see where you fit before
+                          you apply.
+                        </p>
+                        <Link
+                          href="/login"
+                          className="mt-3 inline-block rounded-buttons bg-acid-lime px-4 py-[8px] text-[13px] font-[510] tracking-[-0.011em] text-void transition-opacity hover:opacity-90"
+                        >
+                          Sign in to see your match
+                        </Link>
+                      </div>
+                    </>
+                  )}
                 </div>
               )}
 
