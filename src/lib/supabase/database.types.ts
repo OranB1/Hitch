@@ -207,7 +207,6 @@ export type Database = {
           about_goals: string | null
           about_motivation: string | null
           availability_hours: string | null
-          avatar_url: string | null
           bio: string | null
           created_at: string
           current_specialty: string | null
@@ -218,7 +217,6 @@ export type Database = {
           department: string | null
           email: string | null
           full_name: string | null
-          gmc_number: string | null
           grade: string | null
           hospital_trust: string | null
           id: string
@@ -239,7 +237,6 @@ export type Database = {
           about_goals?: string | null
           about_motivation?: string | null
           availability_hours?: string | null
-          avatar_url?: string | null
           bio?: string | null
           created_at?: string
           current_specialty?: string | null
@@ -250,7 +247,6 @@ export type Database = {
           department?: string | null
           email?: string | null
           full_name?: string | null
-          gmc_number?: string | null
           grade?: string | null
           hospital_trust?: string | null
           id: string
@@ -271,7 +267,6 @@ export type Database = {
           about_goals?: string | null
           about_motivation?: string | null
           availability_hours?: string | null
-          avatar_url?: string | null
           bio?: string | null
           created_at?: string
           current_specialty?: string | null
@@ -282,7 +277,6 @@ export type Database = {
           department?: string | null
           email?: string | null
           full_name?: string | null
-          gmc_number?: string | null
           grade?: string | null
           hospital_trust?: string | null
           id?: string
@@ -299,6 +293,35 @@ export type Database = {
           year_of_study?: string | null
         }
         Relationships: []
+      }
+      saved_listings: {
+        Row: {
+          created_at: string
+          opportunity_id: string
+          state: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          opportunity_id: string
+          state: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          opportunity_id?: string
+          state?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saved_listings_opportunity_id_fkey"
+            columns: ["opportunity_id"]
+            isOneToOne: false
+            referencedRelation: "opportunities"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

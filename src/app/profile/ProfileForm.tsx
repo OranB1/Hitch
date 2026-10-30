@@ -20,12 +20,10 @@ export default function ProfileForm() {
   const [aboutMotivation, setAboutMotivation] = useState("");
   const [aboutExperience, setAboutExperience] = useState("");
   const [aboutGoals, setAboutGoals] = useState("");
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [cvFilename, setCvFilename] = useState<string | null>(null);
   const [cvPath, setCvPath] = useState<string | null>(null);
   const [cvUploadedAt, setCvUploadedAt] = useState<string | null>(null);
 
-  const avatarInputRef = useRef<HTMLInputElement>(null);
   const cvInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -41,7 +39,7 @@ export default function ProfileForm() {
 
       const { data: profile } = await supabase
         .from("profiles")
-        .select("full_name, role, about_motivation, about_experience, about_goals, avatar_url, cv_url, cv_filename, cv_uploaded_at")
+        .select("full_name, role, about_motivation, about_experience, about_goals, cv_url, cv_filename, cv_uploaded_at")
         .eq("id", currentUser.id)
         .maybeSingle();
 
@@ -51,7 +49,6 @@ export default function ProfileForm() {
         setAboutMotivation(profile.about_motivation ?? "");
         setAboutExperience(profile.about_experience ?? "");
         setAboutGoals(profile.about_goals ?? "");
-        setAvatarUrl(profile.avatar_url);
         setCvPath(profile.cv_url);
         setCvFilename(profile.cv_filename);
         setCvUploadedAt(profile.cv_uploaded_at);
@@ -60,33 +57,6 @@ export default function ProfileForm() {
     }
     init();
   }, [supabase, router]);
-
-  async function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file || !user) return;
-    setSaving(true);
-    setMessage(null);
-
-    const ext = file.name.split(".").pop();
-    const path = `${user.id}/avatar.${ext}`;
-    const { error: uploadError } = await supabase.storage
-      .from("avatars")
-      .upload(path, file, { upsert: true });
-
-    if (uploadError) {
-      setMessage(uploadError.message);
-      setSaving(false);
-      return;
-    }
-
-    const { data } = supabase.storage.from("avatars").getPublicUrl(path);
-    const publicUrl = `${data.publicUrl}?t=${Date.now()}`; // bust cache on re-upload
-
-    await supabase.from("profiles").update({ avatar_url: publicUrl }).eq("id", user.id);
-    setAvatarUrl(publicUrl);
-    setSaving(false);
-    setMessage("Photo updated.");
-  }
 
   async function handleCvChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -171,36 +141,6 @@ export default function ProfileForm() {
           placeholder="Shown to posters when you apply"
           className="mt-1 w-full rounded-inputs border border-graphite bg-black/[0.025] px-[14px] py-[12px] text-[14px] text-mist focus:border-mist focus:outline-none"
         />
-      </div>
-
-      <div className="rounded-cards bg-carbon p-6 shadow-subtle">
-        <p className="text-body-sm text-mist">Photo</p>
-        <div className="mt-3 flex items-center gap-4">
-          <div className="h-16 w-16 shrink-0 overflow-hidden rounded-pills bg-black/[0.045]">
-            {avatarUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={avatarUrl} alt="Profile photo" className="h-full w-full object-cover" />
-            ) : (
-              <div className="flex h-full w-full items-center justify-center text-caption text-ash">No photo</div>
-            )}
-          </div>
-          <div>
-            <input
-              ref={avatarInputRef}
-              type="file"
-              accept="image/png,image/jpeg,image/webp"
-              onChange={handleAvatarChange}
-              className="hidden"
-            />
-            <button
-              onClick={() => avatarInputRef.current?.click()}
-              disabled={saving}
-              className="rounded-buttons border border-graphite px-4 py-2 text-[13px] text-mist hover:border-smoke disabled:opacity-50"
-            >
-              {avatarUrl ? "Change photo" : "Upload photo"}
-            </button>
-          </div>
-        </div>
       </div>
 
       {isApplicant ? (

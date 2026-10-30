@@ -17,7 +17,6 @@ type ApplicantProfile = {
   about_motivation: string | null;
   about_experience: string | null;
   about_goals: string | null;
-  avatar_url: string | null;
   cv_url: string | null;
   cv_filename: string | null;
   med_school: string | null;
@@ -130,7 +129,7 @@ export default function MyPostings() {
       const { data: profiles } = await supabase
         .from("profiles")
         .select(
-          "id, full_name, about_motivation, about_experience, about_goals, avatar_url, cv_url, cv_filename, med_school, target_specialty, current_specialty, hospital_trust, preferred_region, year_of_study, grade, skills, qi_experience, research_experience, availability_hours"
+          "id, full_name, about_motivation, about_experience, about_goals, cv_url, cv_filename, med_school, target_specialty, current_specialty, hospital_trust, preferred_region, year_of_study, grade, skills, qi_experience, research_experience, availability_hours"
         )
         .in("id", applicantIds);
 
@@ -300,12 +299,6 @@ export default function MyPostings() {
                 <div key={a.id} className="rounded-cards bg-carbon p-4 shadow-subtle">
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex items-start gap-3">
-                      <div className="h-10 w-10 shrink-0 overflow-hidden rounded-pills bg-black/[0.045]">
-                        {a.applicantProfile?.avatar_url ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img src={a.applicantProfile.avatar_url} alt="" className="h-full w-full object-cover" />
-                        ) : null}
-                      </div>
                       <div>
                         <div className="flex items-center gap-2">
                           <p className="font-[510] text-paper">{a.applicantProfile?.full_name || "Unnamed applicant"}</p>

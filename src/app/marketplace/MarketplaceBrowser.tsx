@@ -144,9 +144,43 @@ export default function MarketplaceBrowser() {
   const [locationFilter, setLocationFilter] = useState<"all" | "near_me" | "remote">("all");
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState<SortKey>("match");
+  const [listingState, setListingState] = useState<Map<string, "saved" | "hidden">>(new Map());
+  const [showSavedOnly, setShowSavedOnly] = useState(false);
+  const [showHidden, setShowHidden] = useState(false);
 
   // Resets to the broadest view rather than to initial state: restrictToPartners starts on, so
   // "clear" has to switch it off or the widest result set is still hidden.
+  // Optimistic: the row is written in the background so the board reacts immediately. On failure
+  // the previous state is put back rather than leaving the UI claiming something that isn't saved.
+  async function setListing(opportunityId: string, next: "saved" | "hidden" | null) {
+    if (!user) return;
+    const previous = listingState.get(opportunityId) ?? null;
+    setListingState((m) => {
+      const copy = new Map(m);
+      if (next) copy.set(opportunityId, next);
+      else copy.delete(opportunityId);
+      return copy;
+    });
+
+    const query = next
+      ? supabase.from("saved_listings").upsert(
+          { user_id: user.id, opportunity_id: opportunityId, state: next },
+          { onConflict: "user_id,opportunity_id" }
+        )
+      : supabase.from("saved_listings").delete().eq("user_id", user.id).eq("opportunity_id", opportunityId);
+
+    const { error } = await query;
+    if (error) {
+      setListingState((m) => {
+        const copy = new Map(m);
+        if (previous) copy.set(opportunityId, previous);
+        else copy.delete(opportunityId);
+        return copy;
+      });
+      toastQueue.add({ title: "Couldn't update that", description: "Please try again." });
+    }
+  }
+
   function clearFilters() {
     setTaskTypeFilter("");
     setLocationFilter("all");
@@ -192,6 +226,14 @@ export default function MarketplaceBrowser() {
             cvUrl: p.cv_url,
             role: p.role,
           });
+        }
+
+        const { data: saved } = await supabase
+          .from("saved_listings")
+          .select("opportunity_id, state")
+          .eq("user_id", currentUser.id);
+        if (saved) {
+          setListingState(new Map(saved.map((s) => [s.opportunity_id, s.state as "saved" | "hidden"])));
         }
 
         const { data: myApplications } = await supabase
@@ -253,6 +295,9 @@ export default function MarketplaceBrowser() {
       }
       if (beginnerFriendlyOnly && o.experience_level !== "no_experience_needed") return false;
       if (searchTerms.length && !searchTerms.every((t) => searchHaystack(o).includes(t))) return false;
+      const state = listingState.get(o.id);
+      if (showSavedOnly && state !== "saved") return false;
+      if (state === "hidden" && !showHidden) return false;
       if (locationFilter === "remote" && !o.is_remote) return false;
       if (locationFilter === "near_me") {
         if (o.is_remote) return false;
@@ -274,6 +319,9 @@ export default function MarketplaceBrowser() {
     profile.hospitalTrust,
     profile.preferredRegion,
     searchTerms,
+    listingState,
+    showSavedOnly,
+    showHidden,
   ]);
 
   const matchByOpportunity = useMemo(() => {
@@ -285,6 +333,9 @@ export default function MarketplaceBrowser() {
   // Match ranking needs a profile to rank against, so signed-out visitors get newest instead of
   // an order derived from an empty profile. The picker hides "best match" for them too.
   const effectiveSort: SortKey = !user && sortBy === "match" ? "newest" : sortBy;
+
+  const savedCount = useMemo(() => [...listingState.values()].filter((s) => s === "saved").length, [listingState]);
+  const hiddenCount = useMemo(() => [...listingState.values()].filter((s) => s === "hidden").length, [listingState]);
 
   const anyFilterActive =
     search.trim() !== "" ||
@@ -461,6 +512,26 @@ export default function MarketplaceBrowser() {
               Clear filters
             </button>
           )}
+          {user && savedCount > 0 && (
+            <button
+              onClick={() => setShowSavedOnly((v) => !v)}
+              className={`rounded-badges px-[8px] py-[2px] text-[13px] font-[510] transition-colors ${
+                showSavedOnly ? "bg-acid-lime/15 text-acid-lime" : "text-mist hover:text-paper"
+              }`}
+            >
+              {showSavedOnly ? `Showing ${savedCount} saved` : `Saved (${savedCount})`}
+            </button>
+          )}
+          {user && hiddenCount > 0 && (
+            <button
+              onClick={() => setShowHidden((v) => !v)}
+              className="text-[13px] font-[510] text-ash underline underline-offset-2 transition-colors hover:text-fog"
+            >
+              {showHidden
+                ? "Stop showing hidden"
+                : `${hiddenCount} hidden · show`}
+            </button>
+          )}
         </div>
       )}
 
@@ -611,6 +682,31 @@ export default function MarketplaceBrowser() {
                   </p>
                 );
               })()}
+
+              {user && (
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <button
+                    onClick={() =>
+                      setListing(selected.id, listingState.get(selected.id) === "saved" ? null : "saved")
+                    }
+                    className={`rounded-buttons border px-3 py-[6px] text-[13px] font-[510] transition-colors ${
+                      listingState.get(selected.id) === "saved"
+                        ? "border-acid-lime bg-acid-lime/10 text-acid-lime"
+                        : "border-graphite text-mist hover:border-smoke hover:text-paper"
+                    }`}
+                  >
+                    {listingState.get(selected.id) === "saved" ? "Saved" : "Save"}
+                  </button>
+                  <button
+                    onClick={() =>
+                      setListing(selected.id, listingState.get(selected.id) === "hidden" ? null : "hidden")
+                    }
+                    className="rounded-buttons border border-graphite px-3 py-[6px] text-[13px] font-[510] text-mist transition-colors hover:border-smoke hover:text-paper"
+                  >
+                    {listingState.get(selected.id) === "hidden" ? "Unhide" : "Hide"}
+                  </button>
+                </div>
+              )}
 
               <p className="mt-4 whitespace-pre-wrap text-body-sm text-mist">{selected.description}</p>
 
