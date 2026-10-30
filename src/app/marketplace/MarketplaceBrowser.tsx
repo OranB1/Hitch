@@ -464,6 +464,16 @@ export default function MarketplaceBrowser() {
         </div>
       )}
 
+      {opportunities.length > 0 && (
+        <div className="mt-6 rounded-cards border border-graphite bg-black/[0.02] px-5 py-3">
+          <p className="text-body-sm text-mist">
+            <span className="font-[510] text-paper">These are example opportunities.</span>{" "}
+            Hitch isn&apos;t open for applications yet. They&apos;re here to show how the board works
+            once real projects are posted.
+          </p>
+        </div>
+      )}
+
       {!user && opportunities.length > 0 && (
         <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-cards border border-graphite bg-black/[0.02] px-5 py-4">
           <div>

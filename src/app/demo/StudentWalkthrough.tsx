@@ -59,7 +59,7 @@ const FALLBACK_OPPORTUNITY: DemoListing = {
     "Second cycle of a QIP re-auditing VTE risk assessment completion within 14 hours of admission, following a poster intervention last cycle. Looking for a student to help with data collection, re-audit, and write-up.",
   taskType: "qip",
   specialty: null,
-  hospital_trust: "Northbridge General Hospital",
+  hospital_trust: "Hammersmith Hospital",
   deanery_region: null,
   min_year_of_study: null,
   required_skills: ["data_collection"],
@@ -77,7 +77,7 @@ const OTHER_OPPORTUNITIES: DemoListing[] = [
       "Reviewing compliance with local antimicrobial guidelines for community-acquired pneumonia. Good first audit: full training and supervision provided.",
     taskType: "audit",
     specialty: null,
-    hospital_trust: "Eastvale Hospital",
+    hospital_trust: "Chelsea and Westminster Hospital",
     deanery_region: null,
     min_year_of_study: null,
     required_skills: ["governance_training"],
@@ -93,7 +93,7 @@ const OTHER_OPPORTUNITIES: DemoListing[] = [
       "Screening abstracts and extracting data for a systematic review on pre-operative exercise programmes. Co-authorship on the resulting paper.",
     taskType: "research",
     specialty: null,
-    hospital_trust: "Northbridge General Hospital",
+    hospital_trust: "Charing Cross Hospital",
     deanery_region: null,
     min_year_of_study: null,
     required_skills: ["literature_review"],
@@ -215,7 +215,7 @@ export default function StudentWalkthrough({
 
       <div className="mt-4 inline-flex items-center gap-2 rounded-pills bg-black/[0.045] px-3 py-[6px] text-label text-fog">
         <span className="h-1.5 w-1.5 rounded-full bg-iris-violet" />
-        Demo: nothing you enter here is saved
+        Demo: example opportunities, nothing you enter here is saved
       </div>
 
       <h1 className="mt-4 text-heading-sm font-serif font-normal text-paper">

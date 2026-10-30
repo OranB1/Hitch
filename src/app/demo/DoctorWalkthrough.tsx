@@ -95,7 +95,7 @@ export default function DoctorWalkthrough({
   const step = STEPS[stepIndex];
   const StepIcon = STEP_ICON[step];
 
-  const [hospitalTrust, setHospitalTrust] = useState("Northbridge General Hospital");
+  const [hospitalTrust, setHospitalTrust] = useState("Charing Cross Hospital");
   const [isRemote, setIsRemote] = useState(false);
   const [taskType, setTaskType] = useState<TaskType>("qip");
   const [title, setTitle] = useState("Reducing missed VTE risk assessments on the cardiology ward");
@@ -163,7 +163,7 @@ export default function DoctorWalkthrough({
 
       <div className="mt-4 inline-flex items-center gap-2 rounded-pills bg-black/[0.045] px-3 py-[6px] text-label text-fog">
         <span className="h-1.5 w-1.5 rounded-full bg-iris-violet" />
-        Demo: nothing you enter here is saved
+        Demo: example opportunities, nothing you enter here is saved
       </div>
 
       <h1 className="mt-4 text-heading-sm font-serif font-normal text-paper">
@@ -249,7 +249,7 @@ export default function DoctorWalkthrough({
                     type="text"
                     value={hospitalTrust}
                     onChange={(e) => setHospitalTrust(e.target.value)}
-                    placeholder={isRemote ? "Optional for remote work" : "e.g. Northbridge General Hospital"}
+                    placeholder={isRemote ? "Optional for remote work" : "e.g. St Mary's Hospital"}
                     className={INPUT_CLASS}
                   />
                 </div>
