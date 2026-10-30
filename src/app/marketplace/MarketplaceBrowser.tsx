@@ -86,12 +86,12 @@ function ListingsSkeleton() {
     </div>
   );
 }
+// Deliberately no name, photo or GMC number. A posting is attributed to a department and a
+// hospital, not to an identifiable individual, so browsing the board does not expose who posted
+// what. The poster's email is still revealed to an applicant once they are accepted.
 type PosterProfile = {
-  full_name: string | null;
   department: string | null;
   hospital_trust: string | null;
-  avatar_url: string | null;
-  gmc_number: string | null;
 };
 type MyApplication = { id: string; status: string };
 
@@ -220,7 +220,7 @@ export default function MarketplaceBrowser() {
         if (posterIds.length) {
           const { data: posters } = await supabase
             .from("profiles")
-            .select("id, full_name, department, hospital_trust, avatar_url, gmc_number")
+            .select("id, department, hospital_trust")
             .in("id", posterIds);
           if (posters) {
             setPostersById(new Map(posters.map((p) => [p.id, p])));
@@ -593,22 +593,12 @@ export default function MarketplaceBrowser() {
               {(() => {
                 const poster = postersById.get(selected.poster_id);
                 if (!poster) return null;
+                const postedFrom = [poster.department, poster.hospital_trust].filter(Boolean).join(" · ");
+                if (!postedFrom) return null;
                 return (
-                  <div className="mt-3 flex items-center gap-2">
-                    <div className="h-7 w-7 shrink-0 overflow-hidden rounded-pills bg-black/[0.045]">
-                      {poster.avatar_url ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={poster.avatar_url} alt="" className="h-full w-full object-cover" />
-                      ) : null}
-                    </div>
-                    <p className="text-body-sm text-fog">
-                      Posted by{" "}
-                      <span className="text-mist">{poster.full_name || "a Hitch member"}</span>
-                      {[poster.department, poster.hospital_trust].filter(Boolean).length > 0 &&
-                        ` · ${[poster.department, poster.hospital_trust].filter(Boolean).join(", ")}`}
-                      {poster.gmc_number && ` · GMC ${poster.gmc_number}`}
-                    </p>
-                  </div>
+                  <p className="mt-3 text-body-sm text-fog">
+                    Posted from <span className="text-mist">{postedFrom}</span>
+                  </p>
                 );
               })()}
 

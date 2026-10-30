@@ -95,7 +95,7 @@ export default function DoctorWalkthrough({
   const step = STEPS[stepIndex];
   const StepIcon = STEP_ICON[step];
 
-  const [hospitalTrust, setHospitalTrust] = useState("Chelsea and Westminster Hospital NHS Foundation Trust");
+  const [hospitalTrust, setHospitalTrust] = useState("Northbridge General Hospital");
   const [isRemote, setIsRemote] = useState(false);
   const [taskType, setTaskType] = useState<TaskType>("qip");
   const [title, setTitle] = useState("Reducing missed VTE risk assessments on the cardiology ward");
@@ -249,7 +249,7 @@ export default function DoctorWalkthrough({
                     type="text"
                     value={hospitalTrust}
                     onChange={(e) => setHospitalTrust(e.target.value)}
-                    placeholder={isRemote ? "Optional for remote work" : "e.g. St Mary's Hospital"}
+                    placeholder={isRemote ? "Optional for remote work" : "e.g. Northbridge General Hospital"}
                     className={INPUT_CLASS}
                   />
                 </div>

@@ -53,7 +53,6 @@ type FormState = {
   currentSpecialtyYear: string;
   hospitalTrust: string;
   department: string;
-  gmcNumber: string;
   targetSpecialty: string;
   qiExperience: QiExperience | "";
   researchExperience: ResearchExperience | "";
@@ -71,7 +70,6 @@ const EMPTY_FORM: FormState = {
   currentSpecialtyYear: "",
   hospitalTrust: "",
   department: "",
-  gmcNumber: "",
   targetSpecialty: "",
   qiExperience: "",
   researchExperience: "",
@@ -94,7 +92,7 @@ function stepsForRole(role: Role | null, grade: string): string[] {
     return [...base, "hospital_trust", "target_specialty", ...MATCHING_STEPS];
   }
   if (role === "consultant_registrar") {
-    return ["role", "preferred_region", "hospital_trust", "department", "gmc_number"];
+    return ["role", "preferred_region", "hospital_trust", "department"];
   }
   return ["role"];
 }
@@ -178,8 +176,6 @@ export default function OnboardingWizard() {
         return true; // optional / skippable
       case "department":
         return form.department.trim() !== "";
-      case "gmc_number":
-        return true; // optional / skippable
       case "target_specialty":
         return form.targetSpecialty !== "";
       case "qi_experience":
@@ -243,7 +239,6 @@ export default function OnboardingWizard() {
         current_specialty_year: inSpecialtyTraining ? form.currentSpecialtyYear : null,
         hospital_trust: form.role !== "medical_student" ? form.hospitalTrust || null : null,
         department: form.role === "consultant_registrar" ? form.department : null,
-        gmc_number: form.role === "consultant_registrar" ? form.gmcNumber || null : null,
         target_specialty: form.role !== "consultant_registrar" ? form.targetSpecialty : null,
         qi_experience: form.role !== "consultant_registrar" ? form.qiExperience || null : null,
         research_experience: form.role !== "consultant_registrar" ? form.researchExperience || null : null,
@@ -448,18 +443,6 @@ export default function OnboardingWizard() {
                   value={form.department}
                   onChange={(e) => update("department", e.target.value)}
                   placeholder="e.g. Internal Medicine, General Surgery, Paediatrics"
-                  className={SELECT_CLASS}
-                />
-              </StepShell>
-            )}
-
-            {currentStep === "gmc_number" && (
-              <StepShell question="What's your GMC number?">
-                <input
-                  type="text"
-                  value={form.gmcNumber}
-                  onChange={(e) => update("gmcNumber", e.target.value)}
-                  placeholder="Optional: a public register number, shown to applicants as a trust signal"
                   className={SELECT_CLASS}
                 />
               </StepShell>

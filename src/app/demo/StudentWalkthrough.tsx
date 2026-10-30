@@ -6,9 +6,25 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { ArrowLeft, User, Search, Send, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/Button";
 import { computeMatch, type OpportunityForMatch } from "@/lib/marketplace";
-import { SKILL_OPTIONS, TASK_TYPE_OPTIONS } from "@/lib/data/marketplace-options";
+import {
+  SKILL_OPTIONS,
+  TASK_TYPE_OPTIONS,
+  PROJECT_DURATION_OPTIONS,
+  type ProjectDuration,
+} from "@/lib/data/marketplace-options";
 import { DEMO_STUDENT_NAME, DEMO_STUDENT_SUBTITLE, DEMO_STUDENT_PROFILE } from "./demoStudentProfile";
 import type { PostedOpportunity } from "./types";
+
+const SKILL_LABEL = new Map(SKILL_OPTIONS.map((s) => [s.value as string, s.label]));
+
+// Same rule as the real dashboard: show the facts a posting has, omit the ones it doesn't.
+function listingFacts(o: { estimated_commitment: string | null; projectDuration?: ProjectDuration; deadline?: string }) {
+  const facts: string[] = [];
+  if (o.estimated_commitment) facts.push(o.estimated_commitment);
+  if (o.projectDuration) facts.push(PROJECT_DURATION_OPTIONS.find((d) => d.value === o.projectDuration)?.label ?? o.projectDuration);
+  if (o.deadline) facts.push(`Apply by ${new Date(o.deadline).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}`);
+  return facts;
+}
 
 const STEPS = ["profile", "browse", "apply", "applied"] as const;
 type Step = (typeof STEPS)[number];
@@ -29,35 +45,47 @@ const STEP_ICON: Record<Step, React.ComponentType<{ size?: number }>> = {
 
 const CARD = "rounded-cards bg-carbon p-6 shadow-subtle sm:p-8";
 
-const FALLBACK_OPPORTUNITY: OpportunityForMatch & { title: string; description: string; taskType: string } = {
+type DemoListing = OpportunityForMatch & {
+  title: string;
+  description: string;
+  taskType: string;
+  projectDuration?: ProjectDuration;
+  deadline?: string;
+};
+
+const FALLBACK_OPPORTUNITY: DemoListing = {
   title: "Reducing missed VTE risk assessments on the cardiology ward",
   description:
     "Second cycle of a QIP re-auditing VTE risk assessment completion within 14 hours of admission, following a poster intervention last cycle. Looking for a student to help with data collection, re-audit, and write-up.",
   taskType: "qip",
   specialty: null,
-  hospital_trust: "Chelsea and Westminster Hospital NHS Foundation Trust",
+  hospital_trust: "Northbridge General Hospital",
   deanery_region: null,
   min_year_of_study: null,
   required_skills: ["data_collection"],
   preferred_skills: ["excel", "statistics"],
   experience_level: "some_experience",
   estimated_commitment: "2-5h",
+  projectDuration: "1_3_months",
+  deadline: "2026-12-05",
 };
 
-const OTHER_OPPORTUNITIES: (OpportunityForMatch & { title: string; description: string; taskType: string })[] = [
+const OTHER_OPPORTUNITIES: DemoListing[] = [
   {
     title: "Audit of antibiotic prescribing in the emergency department",
     description:
       "Reviewing compliance with local antimicrobial guidelines for community-acquired pneumonia. Good first audit: full training and supervision provided.",
     taskType: "audit",
     specialty: null,
-    hospital_trust: "Charing Cross Hospital",
+    hospital_trust: "Eastvale Hospital",
     deanery_region: null,
     min_year_of_study: null,
     required_skills: ["governance_training"],
     preferred_skills: ["literature_review"],
     experience_level: "no_experience_needed",
     estimated_commitment: "2-5h",
+    projectDuration: "2_4_weeks",
+    deadline: "2026-11-21",
   },
   {
     title: "Systematic review support: prehabilitation before cardiac surgery",
@@ -65,13 +93,14 @@ const OTHER_OPPORTUNITIES: (OpportunityForMatch & { title: string; description: 
       "Screening abstracts and extracting data for a systematic review on pre-operative exercise programmes. Co-authorship on the resulting paper.",
     taskType: "research",
     specialty: null,
-    hospital_trust: "Royal Brompton Hospital",
+    hospital_trust: "Northbridge General Hospital",
     deanery_region: null,
     min_year_of_study: null,
     required_skills: ["literature_review"],
     preferred_skills: ["manuscript_writing"],
     experience_level: "some_experience",
     estimated_commitment: "5-10h",
+    projectDuration: "3_6_months",
   },
 ];
 
@@ -122,16 +151,45 @@ export default function StudentWalkthrough({
     };
   }, [postedOpportunity]);
 
-  const listings = useMemo(() => {
-    const all = [featured, ...OTHER_OPPORTUNITIES];
-    return all
-      .map((o) => ({ opportunity: o, match: computeMatch(o, DEMO_STUDENT_PROFILE) }))
-      .sort((a, b) => b.match.percent - a.match.percent);
+  const [search, setSearch] = useState("");
+  const [sortBy, setSortBy] = useState<"match" | "closing">("match");
+
+  const allListings = useMemo(() => {
+    return [featured, ...OTHER_OPPORTUNITIES].map((o) => ({
+      opportunity: o,
+      match: computeMatch(o, DEMO_STUDENT_PROFILE),
+    }));
   }, [featured]);
+
+  const listings = useMemo(() => {
+    const terms = search.trim().toLowerCase().split(/\s+/).filter(Boolean);
+    const filtered = allListings.filter(({ opportunity: o }) => {
+      if (!terms.length) return true;
+      const skills = [...(o.required_skills ?? []), ...(o.preferred_skills ?? [])];
+      const hay = [o.title, o.description, o.hospital_trust, ...skills, ...skills.map((s) => SKILL_LABEL.get(s) ?? "")]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+      return terms.every((t) => hay.includes(t));
+    });
+    if (sortBy === "closing") {
+      return [...filtered].sort((a, b) => {
+        const x = a.opportunity.deadline, y = b.opportunity.deadline;
+        if (!x && !y) return 0;
+        if (!x) return 1;
+        if (!y) return -1;
+        return x < y ? -1 : x > y ? 1 : 0;
+      });
+    }
+    return [...filtered].sort((a, b) => b.match.percent - a.match.percent);
+  }, [allListings, search, sortBy]);
 
   const [selectedIndex, setSelectedIndex] = useState(0);
   const reducedMotion = useReducedMotion();
-  const selected = listings[selectedIndex];
+  // Searching can shrink the list under the current selection, so clamp rather than letting it
+  // point past the end and lose the selected card entirely.
+  const safeIndex = Math.min(selectedIndex, Math.max(listings.length - 1, 0));
+  const selected = listings[safeIndex];
 
   function goNext() {
     setDirection(1);
@@ -236,7 +294,34 @@ export default function StudentWalkthrough({
             {step === "browse" && (
               <div>
                 <p className="text-[20px] font-[510] tracking-[-0.24px] text-paper">Open opportunities</p>
-                <p className="mt-1 text-caption text-ash">Ranked by how well they match your profile.</p>
+                <p className="mt-1 text-caption text-ash">
+                  {sortBy === "match" ? "Ranked by how well they match your profile." : "Ordered by which closes first."}
+                </p>
+
+                <div className="mt-3 flex flex-wrap items-center gap-2">
+                  <input
+                    type="search"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder="Search opportunities"
+                    aria-label="Search opportunities"
+                    className="w-full min-w-0 rounded-inputs border border-graphite bg-black/[0.025] px-3 py-2 text-[13px] text-mist focus:border-mist focus:outline-none sm:w-auto sm:flex-1"
+                  />
+                  <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value as "match" | "closing")}
+                    aria-label="Sort opportunities"
+                    className="rounded-inputs border border-graphite bg-black/[0.025] px-3 py-2 text-[13px] text-mist focus:border-mist focus:outline-none"
+                  >
+                    <option value="match" className="bg-carbon">Best match</option>
+                    <option value="closing" className="bg-carbon">Closing soonest</option>
+                  </select>
+                </div>
+                <p className="mt-2 text-caption text-ash">
+                  {listings.length === allListings.length
+                    ? `${allListings.length} opportunities`
+                    : `${listings.length} of ${allListings.length} opportunities`}
+                </p>
 
                 <div className="mt-4 grid gap-4 sm:grid-cols-[220px_1fr]">
                   <div className="space-y-2">
@@ -245,10 +330,10 @@ export default function StudentWalkthrough({
                         key={opportunity.title}
                         onClick={() => setSelectedIndex(i)}
                         className={`relative w-full rounded-inputs border bg-black/[0.015] p-3 text-left transition-colors ${
-                          i === selectedIndex ? "border-transparent" : "border-graphite hover:border-smoke"
+                          i === safeIndex ? "border-transparent" : "border-graphite hover:border-smoke"
                         }`}
                       >
-                        {i === selectedIndex && (
+                        {i === safeIndex && (
                           <motion.span
                             layoutId="demo-listing-selection"
                             className="absolute inset-0 rounded-inputs border border-acid-lime bg-acid-lime/5"
@@ -259,12 +344,20 @@ export default function StudentWalkthrough({
                           <div className="flex items-start justify-between gap-2">
                             <p className="text-caption font-[510] text-paper">{opportunity.title}</p>
                           </div>
+                          {listingFacts(opportunity).length > 0 && (
+                            <p className="mt-1 text-label text-ash">{listingFacts(opportunity).join(" · ")}</p>
+                          )}
                           <span className="mt-1 inline-block rounded-badges bg-acid-lime/15 px-[6px] text-label font-[510] text-acid-lime">
                             {match.percent}% match
                           </span>
                         </div>
                       </button>
                     ))}
+                    {listings.length === 0 && (
+                      <p className="rounded-inputs border border-graphite bg-black/[0.015] p-3 text-caption text-fog">
+                        Nothing matches that search. Clear it to see all {allListings.length} again.
+                      </p>
+                    )}
                   </div>
 
                   <AnimatePresence mode="wait" initial={false}>
