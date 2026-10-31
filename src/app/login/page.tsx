@@ -1,4 +1,7 @@
+import type { Metadata } from "next";
 import LoginForm from "./LoginForm";
+
+export const metadata: Metadata = { title: "Sign in" };
 
 const POSTING_STEPS = [
   { lead: "Describe the project", rest: "and the skills it needs." },
@@ -18,7 +21,7 @@ export default async function LoginPage({
   const forPosting = (await searchParams).next === "post";
 
   return (
-    <main className="mx-auto w-full max-w-md flex-1 px-6 py-16">
+    <main id="main" className="mx-auto w-full max-w-md flex-1 px-6 py-16">
       <h1 className="text-heading-sm font-serif font-normal text-paper">
         {forPosting ? "Sign in to post an opportunity" : "Sign in"}
       </h1>

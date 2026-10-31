@@ -1,8 +1,11 @@
+import type { Metadata } from "next";
 import ContactForm from "./ContactForm";
+
+export const metadata: Metadata = { title: "Contact" };
 
 export default function ContactPage() {
   return (
-    <main className="mx-auto w-full max-w-2xl flex-1 px-6 py-16">
+    <main id="main" className="mx-auto w-full max-w-2xl flex-1 px-6 py-16">
       <div className="text-center">
         <span className="text-label font-[510] text-acid-lime">Contact us</span>
         <h1 className="mt-3 text-heading-sm font-serif font-normal text-paper">Get in touch</h1>

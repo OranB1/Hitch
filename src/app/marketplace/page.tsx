@@ -1,9 +1,12 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import MarketplaceBrowser from "./MarketplaceBrowser";
 
+export const metadata: Metadata = { title: "Opportunities" };
+
 export default function MarketplacePage() {
   return (
-    <main className="mx-auto w-full max-w-[1200px] flex-1 px-6 py-10 md:py-16">
+    <main id="main" className="mx-auto w-full max-w-[1200px] flex-1 px-6 py-10 md:py-16">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <h1 className="text-heading-sm font-serif font-normal text-paper">Opportunities</h1>

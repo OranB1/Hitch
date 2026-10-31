@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import { Reveal } from "@/components/Reveal";
 
@@ -40,25 +41,27 @@ function initials(name: string) {
     .join("");
 }
 
+export const metadata: Metadata = { title: "About" };
+
 export default function AboutPage() {
   return (
-    <main className="mx-auto w-full max-w-[1200px] flex-1 px-6 py-16">
+    <main id="main" className="mx-auto w-full max-w-[1200px] flex-1 px-6 py-16">
       <section className="max-w-2xl">
         <h1 className="text-heading-sm font-serif font-normal text-paper">About Hitch</h1>
-        <p className="mt-6 text-body text-mist">
+        <p className="mt-6 max-w-[65ch] text-body text-mist">
           Clinical projects in the NHS start far more often than they finish. In one Foundation
           Programme study, only 30% of audits F1 doctors attempted were completed, and 58% of
           respondents hadn&apos;t completed a single one. The appetite isn&apos;t the problem. A
           survey of 1,774 medical students found 69% wanted to do more research, and the obstacle
           they named most often was simply not knowing what was available.
         </p>
-        <p className="mt-4 text-body text-mist">
+        <p className="mt-4 max-w-[65ch] text-body text-mist">
           Both sides are stuck in the same gap. Opportunities travel by word of mouth, so who you
           happen to know matters more than how keen you are. And because students and junior
           doctors rotate every few months, projects lose their people partway through and quietly
           stall, with the work rarely written down anywhere a successor could pick it up.
         </p>
-        <p className="mt-4 text-body text-mist">
+        <p className="mt-4 max-w-[65ch] text-body text-mist">
           Hitch is a structured place for clinical teams to post real QIP, audit and research
           opportunities, and for students and foundation doctors to find them on merit rather than
           proximity. Making ongoing work visible also means teams can see what is already running,
@@ -93,7 +96,7 @@ export default function AboutPage() {
                   href={f.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-4 inline-flex items-center gap-[6px] text-[13px] font-[510] text-mist transition-colors hover:text-paper"
+                  className="mt-2 inline-flex min-h-[44px] items-center gap-[6px] text-[13px] font-[510] text-mist transition-colors hover:text-paper"
                 >
                   <LinkedInIcon /> LinkedIn
                 </a>
@@ -101,7 +104,7 @@ export default function AboutPage() {
             </Reveal>
           ))}
         </div>
-        <p className="mt-6 max-w-2xl text-body-sm text-fog">
+        <p className="mt-6 max-w-[65ch] text-body-sm text-fog">
           We have spoken to or surveyed around 150 doctors and medical students while building
           Hitch. The project is supported by Imperial, and a pilot at Chelsea and Westminster
           Hospital is pending.

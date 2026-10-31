@@ -27,7 +27,7 @@ const DESCRIPTION =
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://hitch.health"),
-  title: TITLE,
+  title: { default: TITLE, template: "%s | Hitch" },
   description: DESCRIPTION,
   icons: {
     icon: [
@@ -61,6 +61,12 @@ export default function RootLayout({
       className={`${inter.variable} ${sourceSerif.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-void text-mist">
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-buttons focus:bg-paper focus:px-4 focus:py-3 focus:text-[14px] focus:text-void"
+        >
+          Skip to content
+        </a>
         <NavBar />
         {children}
         <Footer />

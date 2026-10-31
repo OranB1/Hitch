@@ -153,7 +153,7 @@ export default function DoctorWalkthrough({
   ).percent;
 
   return (
-    <main className="mx-auto w-full max-w-2xl flex-1 px-6 py-16">
+    <main id="main" className="mx-auto w-full max-w-2xl flex-1 px-6 py-16">
       <button
         onClick={onExit}
         className="inline-flex items-center gap-1 text-caption text-ash transition-colors hover:text-fog"
@@ -524,7 +524,7 @@ export default function DoctorWalkthrough({
 
       {step !== "posted" && (
         <p className="mt-4 text-center text-caption text-ash">
-          <Link href="/" className="underline hover:text-fog">
+          <Link href="/" className="inline-flex min-h-[44px] items-center underline hover:text-fog">
             Skip the demo, go to Hitch
           </Link>
         </p>

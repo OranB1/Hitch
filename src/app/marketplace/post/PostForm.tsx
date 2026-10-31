@@ -23,7 +23,7 @@ import { STAGE_OPTIONS } from "@/lib/data/onboarding-options";
 const SPECIALTY_OPTIONS = [...SPECIALTIES, "Not specific"];
 
 const INPUT_CLASS =
-  "mt-1 w-full rounded-inputs border border-graphite bg-black/[0.025] px-[14px] py-[12px] text-[14px] text-mist focus:border-mist focus:outline-none";
+  "mt-1 w-full rounded-inputs border border-graphite bg-black/[0.025] px-[14px] py-[12px] text-[16px] text-mist focus:border-mist focus:outline-none";
 
 export default function PostForm() {
   const supabase = useMemo(() => createClient(), []);
@@ -133,8 +133,9 @@ export default function PostForm() {
     <form onSubmit={handleSubmit} className="mt-8 space-y-4">
       <div className="rounded-cards bg-carbon p-6 shadow-subtle space-y-4">
         <div>
-          <label className="block text-body-sm text-mist">Title</label>
+          <label htmlFor="post-title" className="block text-body-sm text-mist">Title</label>
           <input
+            id="post-title"
             type="text"
             required
             value={title}
@@ -145,8 +146,9 @@ export default function PostForm() {
         </div>
 
         <div>
-          <label className="block text-body-sm text-mist">Description</label>
+          <label htmlFor="post-description" className="block text-body-sm text-mist">Description</label>
           <textarea
+            id="post-description"
             required
             rows={4}
             value={description}
@@ -157,8 +159,9 @@ export default function PostForm() {
         </div>
 
         <div>
-          <label className="block text-body-sm text-mist">Type</label>
-          <select className={INPUT_CLASS} value={taskType} onChange={(e) => setTaskType(e.target.value as TaskType)}>
+          <label htmlFor="post-type" className="block text-body-sm text-mist">Type</label>
+          <select
+            id="post-type" className={INPUT_CLASS} value={taskType} onChange={(e) => setTaskType(e.target.value as TaskType)}>
             {TASK_TYPE_OPTIONS.map((o) => (
               <option key={o.value} value={o.value} className="bg-carbon">
                 {o.label}
@@ -175,12 +178,13 @@ export default function PostForm() {
         </p>
 
         <div>
-          <label className="block text-body-sm text-mist">Where will this be done?</label>
-          <div className="mt-2 flex gap-2">
+          <p id="post-where" className="block text-body-sm text-mist">Where will this be done?</p>
+          <div role="group" aria-labelledby="post-where" className="mt-2 flex gap-2">
             <button
               type="button"
+              aria-pressed={!isRemote}
               onClick={() => setIsRemote(false)}
-              className={`rounded-pills border px-3 py-[7px] text-[13px] transition-colors ${
+              className={`min-h-[44px] rounded-pills border px-3 py-[7px] text-[13px] transition-colors ${
                 !isRemote ? "border-acid-lime bg-acid-lime/10 text-paper" : "border-graphite text-mist hover:border-smoke"
               }`}
             >
@@ -188,8 +192,9 @@ export default function PostForm() {
             </button>
             <button
               type="button"
+              aria-pressed={isRemote}
               onClick={() => setIsRemote(true)}
-              className={`rounded-pills border px-3 py-[7px] text-[13px] transition-colors ${
+              className={`min-h-[44px] rounded-pills border px-3 py-[7px] text-[13px] transition-colors ${
                 isRemote ? "border-acid-lime bg-acid-lime/10 text-paper" : "border-graphite text-mist hover:border-smoke"
               }`}
             >
@@ -199,8 +204,9 @@ export default function PostForm() {
         </div>
 
         <div>
-          <label className="block text-body-sm text-mist">Specialty</label>
-          <select className={INPUT_CLASS} value={specialty} onChange={(e) => setSpecialty(e.target.value)}>
+          <label htmlFor="post-specialty" className="block text-body-sm text-mist">Specialty</label>
+          <select
+            id="post-specialty" className={INPUT_CLASS} value={specialty} onChange={(e) => setSpecialty(e.target.value)}>
             <option value="" className="bg-carbon">
               Not specified
             </option>
@@ -214,10 +220,11 @@ export default function PostForm() {
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
-            <label className="block text-body-sm text-mist">
+            <label htmlFor="post-hospital" className="block text-body-sm text-mist">
               Hospital / trust{!isRemote && <span className="text-coral-red"> *</span>}
             </label>
             <input
+            id="post-hospital"
               type="text"
               required={!isRemote}
               value={hospitalTrust}
@@ -227,8 +234,9 @@ export default function PostForm() {
             />
           </div>
           <div>
-            <label className="block text-body-sm text-mist">Deanery / region</label>
-            <select className={INPUT_CLASS} value={deaneryRegion} onChange={(e) => setDeaneryRegion(e.target.value)}>
+            <label htmlFor="post-deanery" className="block text-body-sm text-mist">Deanery / region</label>
+            <select
+            id="post-deanery" className={INPUT_CLASS} value={deaneryRegion} onChange={(e) => setDeaneryRegion(e.target.value)}>
               <option value="" className="bg-carbon">
                 Not specified
               </option>
@@ -242,8 +250,9 @@ export default function PostForm() {
         </div>
 
         <div>
-          <label className="block text-body-sm text-mist">Minimum year / stage *</label>
+          <label htmlFor="post-stage" className="block text-body-sm text-mist">Minimum year / stage *</label>
           <select
+            id="post-stage"
             required
             className={INPUT_CLASS}
             value={minYearOfStudy}
@@ -261,22 +270,23 @@ export default function PostForm() {
         </div>
 
         <div>
-          <label className="block text-body-sm text-mist">Required skills *</label>
+          <p id="post-required" className="block text-body-sm text-mist">Required skills *</p>
           <p className="mt-0.5 text-caption text-ash">
             Pick at least one: what a student truly can&apos;t do the task without.
           </p>
-          <SkillChips selected={requiredSkills} onToggle={(s) => toggleSkill(requiredSkills, setRequiredSkills, s)} />
+          <SkillChips labelledBy="post-required" selected={requiredSkills} onToggle={(s) => toggleSkill(requiredSkills, setRequiredSkills, s)} />
         </div>
 
         <div>
-          <label className="block text-body-sm text-mist">Preferred skills</label>
+          <p id="post-preferred" className="block text-body-sm text-mist">Preferred skills</p>
           <p className="mt-0.5 text-caption text-ash">Nice-to-haves: these boost match ranking but don&apos;t exclude anyone.</p>
-          <SkillChips selected={preferredSkills} onToggle={(s) => toggleSkill(preferredSkills, setPreferredSkills, s)} />
+          <SkillChips labelledBy="post-preferred" selected={preferredSkills} onToggle={(s) => toggleSkill(preferredSkills, setPreferredSkills, s)} />
         </div>
 
         <div>
-          <label className="block text-body-sm text-mist">Experience level *</label>
+          <label htmlFor="post-experience" className="block text-body-sm text-mist">Experience level *</label>
           <select
+            id="post-experience"
             required
             className={INPUT_CLASS}
             value={experienceLevel}
@@ -295,8 +305,9 @@ export default function PostForm() {
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
-            <label className="block text-body-sm text-mist">Estimated commitment *</label>
+            <label htmlFor="post-commitment" className="block text-body-sm text-mist">Estimated commitment *</label>
             <select
+            id="post-commitment"
               required
               className={INPUT_CLASS}
               value={estimatedCommitment}
@@ -313,8 +324,9 @@ export default function PostForm() {
             </select>
           </div>
           <div>
-            <label className="block text-body-sm text-mist">Total project duration</label>
+            <label htmlFor="post-duration" className="block text-body-sm text-mist">Total project duration</label>
             <select
+            id="post-duration"
               className={INPUT_CLASS}
               value={projectDuration}
               onChange={(e) => setProjectDuration(e.target.value as ProjectDuration | "")}
@@ -332,8 +344,9 @@ export default function PostForm() {
         </div>
 
         <div>
-          <label className="block text-body-sm text-mist">Deadline to apply</label>
+          <label htmlFor="post-deadline" className="block text-body-sm text-mist">Deadline to apply</label>
           <input
+            id="post-deadline"
             type="date"
             value={deadline}
             onChange={(e) => setDeadline(e.target.value)}
@@ -359,17 +372,26 @@ export default function PostForm() {
   );
 }
 
-function SkillChips({ selected, onToggle }: { selected: Skill[]; onToggle: (skill: Skill) => void }) {
+function SkillChips({
+  labelledBy,
+  selected,
+  onToggle,
+}: {
+  labelledBy: string;
+  selected: Skill[];
+  onToggle: (skill: Skill) => void;
+}) {
   return (
-    <div className="mt-2 flex flex-wrap gap-2">
+    <div role="group" aria-labelledby={labelledBy} className="mt-2 flex flex-wrap gap-2">
       {SKILL_OPTIONS.map((o) => {
         const active = selected.includes(o.value);
         return (
           <button
             key={o.value}
             type="button"
+            aria-pressed={active}
             onClick={() => onToggle(o.value)}
-            className={`rounded-pills border px-3 py-[6px] text-[13px] transition-colors ${
+            className={`min-h-[44px] rounded-pills border px-3 py-[6px] text-[13px] transition-colors ${
               active ? "border-acid-lime bg-acid-lime/10 text-paper" : "border-graphite text-mist hover:border-smoke"
             }`}
           >

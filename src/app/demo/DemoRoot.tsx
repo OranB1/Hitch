@@ -28,7 +28,7 @@ export default function DemoRoot() {
   }
 
   return (
-    <main className="mx-auto w-full max-w-3xl flex-1 px-6 py-16">
+    <main id="main" className="mx-auto w-full max-w-3xl flex-1 px-6 py-16">
       <div className="inline-flex items-center gap-2 rounded-pills bg-black/[0.045] px-3 py-[6px] text-label text-fog">
         <span className="h-1.5 w-1.5 rounded-full bg-iris-violet" />
         Demo: the opportunities shown are examples, nothing you enter is saved, and no account is needed
@@ -76,7 +76,7 @@ export default function DemoRoot() {
       </div>
 
       <p className="mt-8 text-center text-caption text-ash">
-        <Link href="/" className="underline hover:text-fog">
+        <Link href="/" className="inline-flex min-h-[44px] items-center underline hover:text-fog">
           Skip the demo, go to Hitch
         </Link>
       </p>

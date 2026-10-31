@@ -22,14 +22,14 @@ export default function Footer() {
   return (
     <footer className="border-t-[0.5px] border-graphite bg-void">
       <div className="mx-auto max-w-[1200px] px-6 py-12">
-        <nav className="grid grid-cols-2 gap-8 sm:grid-cols-4">
+        <nav aria-label="Footer" className="grid grid-cols-2 gap-8 sm:grid-cols-4">
           {FOOTER_NAV.map((category) => (
             <div key={category.label}>
               <h2 className="text-label font-[510] text-ash">{category.label}</h2>
-              <ul className="mt-4 flex flex-col gap-3">
+              <ul className="mt-2 flex flex-col">
                 {category.items.map((item) => (
                   <li key={item.label}>
-                    <Link href={item.href} className="text-body-sm text-mist transition-colors hover:text-paper">
+                    <Link href={item.href} className="inline-flex min-h-[44px] items-center text-body-sm text-mist transition-colors hover:text-paper">
                       {item.label}
                     </Link>
                   </li>

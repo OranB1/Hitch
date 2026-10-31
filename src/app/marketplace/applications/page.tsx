@@ -3,7 +3,7 @@ import MyApplications from "./MyApplications";
 
 export default function MyApplicationsPage() {
   return (
-    <main className="mx-auto w-full max-w-[1200px] flex-1 px-6 py-16">
+    <main id="main" className="mx-auto w-full max-w-[1200px] flex-1 px-6 py-16">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-heading-sm font-serif font-normal text-paper">My applications</h1>

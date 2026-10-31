@@ -64,7 +64,7 @@ const EXPLORE_CARDS = [
 
 export default function Home() {
   return (
-    <main className="mx-auto w-full max-w-[1200px] flex-1 px-6 py-24">
+    <main id="main" className="mx-auto w-full max-w-[1200px] flex-1 px-6 py-24">
       <section className="lg:flex lg:items-center lg:gap-16">
         <div className="max-w-2xl lg:flex-1">
           <Reveal>

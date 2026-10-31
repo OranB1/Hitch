@@ -5,7 +5,7 @@ import { Button } from "@/components/Button";
 import { submitContactForm, type ContactFormState } from "./actions";
 
 const INPUT_CLASS =
-  "mt-1 w-full rounded-inputs border border-graphite bg-black/[0.025] px-[14px] py-[12px] text-[14px] text-mist focus:border-mist focus:outline-none";
+  "mt-1 w-full rounded-inputs border border-graphite bg-black/[0.025] px-[14px] py-[12px] text-[16px] text-mist focus:border-mist focus:outline-none";
 
 const initialState: ContactFormState = { status: "idle" };
 
@@ -23,16 +23,16 @@ export default function ContactForm() {
   return (
     <form action={formAction} className="mt-8 space-y-4 rounded-cards bg-carbon p-6 shadow-subtle">
       <div>
-        <label className="block text-body-sm text-mist">Name</label>
-        <input name="name" required className={INPUT_CLASS} placeholder="Your name" />
+        <label htmlFor="contact-name" className="block text-body-sm text-mist">Name</label>
+        <input id="contact-name" name="name" required className={INPUT_CLASS} placeholder="Your name" />
       </div>
       <div>
-        <label className="block text-body-sm text-mist">Email</label>
-        <input name="email" type="email" required className={INPUT_CLASS} placeholder="you@example.com" />
+        <label htmlFor="contact-email" className="block text-body-sm text-mist">Email</label>
+        <input id="contact-email" name="email" type="email" required className={INPUT_CLASS} placeholder="you@example.com" />
       </div>
       <div>
-        <label className="block text-body-sm text-mist">Message</label>
-        <textarea name="message" required rows={5} className={INPUT_CLASS} placeholder="How can we help?" />
+        <label htmlFor="contact-message" className="block text-body-sm text-mist">Message</label>
+        <textarea id="contact-message" name="message" required rows={5} className={INPUT_CLASS} placeholder="How can we help?" />
       </div>
 
       {state.status === "error" && (
