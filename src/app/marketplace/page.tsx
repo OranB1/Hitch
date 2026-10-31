@@ -18,7 +18,7 @@ export default function MarketplacePage() {
           </Link>
           <Link
             href="/marketplace/post"
-            className="inline-flex min-h-[44px] flex-1 items-center justify-center whitespace-nowrap rounded-buttons bg-acid-lime px-4 text-[14px] font-[510] tracking-[-0.011em] text-void transition-opacity hover:opacity-90 md:flex-none"
+            className="inline-flex min-h-[44px] flex-1 items-center justify-center whitespace-nowrap rounded-buttons border border-graphite px-4 text-[14px] font-[510] tracking-[-0.011em] text-paper hover:border-smoke md:flex-none"
           >
             Post an opportunity
           </Link>
