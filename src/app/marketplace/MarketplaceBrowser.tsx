@@ -109,7 +109,7 @@ const STATUS_LABEL: Record<string, string> = {
 };
 
 const INPUT_CLASS =
-  "rounded-inputs border border-graphite bg-black/[0.025] px-3 py-2 text-[13px] text-mist focus:border-mist focus:outline-none";
+  "min-h-[44px] rounded-inputs border border-graphite bg-black/[0.025] px-3 py-2 text-[13px] text-mist focus:border-mist focus:outline-none";
 
 export default function MarketplaceBrowser() {
   const supabase = useMemo(() => createClient(), []);
@@ -445,6 +445,7 @@ export default function MarketplaceBrowser() {
         <select
           className={INPUT_CLASS}
           value={taskTypeFilter}
+          aria-label="Filter by opportunity type"
           onChange={(e) => setTaskTypeFilter(e.target.value as TaskType | "")}
         >
           <option value="" className="bg-carbon">All types</option>
@@ -456,6 +457,7 @@ export default function MarketplaceBrowser() {
         <select
           className={INPUT_CLASS}
           value={locationFilter}
+          aria-label="Filter by location"
           onChange={(e) => setLocationFilter(e.target.value as "all" | "near_me" | "remote")}
         >
           <option value="all" className="bg-carbon">All locations</option>
@@ -464,23 +466,23 @@ export default function MarketplaceBrowser() {
         </select>
 
         {hasPartnershipData && (
-          <label className="flex cursor-pointer items-center gap-2 text-[13px] text-mist">
+          <label className="flex min-h-[44px] cursor-pointer items-center gap-2 text-[13px] text-mist">
             <input
               type="checkbox"
               checked={restrictToPartners}
               onChange={(e) => setRestrictToPartners(e.target.checked)}
-              className="accent-acid-lime"
+              className="h-[18px] w-[18px] accent-acid-lime"
             />
             Only {profile.medSchool}&apos;s partner hospitals
           </label>
         )}
 
-        <label className="flex cursor-pointer items-center gap-2 text-[13px] text-mist">
+        <label className="flex min-h-[44px] cursor-pointer items-center gap-2 text-[13px] text-mist">
           <input
             type="checkbox"
             checked={beginnerFriendlyOnly}
             onChange={(e) => setBeginnerFriendlyOnly(e.target.checked)}
-            className="accent-acid-lime"
+            className="h-[18px] w-[18px] accent-acid-lime"
           />
           Beginner friendly only
         </label>
@@ -537,7 +539,7 @@ export default function MarketplaceBrowser() {
 
       {opportunities.length > 0 && (
         <div className="mt-6 rounded-cards border border-graphite bg-black/[0.02] px-5 py-3">
-          <p className="text-body-sm text-mist">
+          <p className="max-w-[60ch] text-body-sm text-mist">
             <span className="font-[510] text-paper">These are example opportunities.</span>{" "}
             Hitch isn&apos;t open for applications yet. They&apos;re here to show how the board works
             once real projects are posted.
@@ -549,14 +551,14 @@ export default function MarketplaceBrowser() {
         <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-cards border border-graphite bg-black/[0.02] px-5 py-4">
           <div>
             <p className="text-body-sm font-[510] text-paper">Sign in to see how well each one matches you</p>
-            <p className="mt-1 max-w-xl text-caption text-fog">
+            <p className="mt-1 max-w-[64ch] text-caption text-fog">
               Hitch scores every opportunity against your year, specialty interest, skills and
               availability, and ranks the list by fit. You can browse everything without an account.
             </p>
           </div>
           <Link
             href="/login"
-            className="shrink-0 rounded-buttons bg-acid-lime px-4 py-[10px] text-[14px] font-[510] tracking-[-0.011em] text-void transition-opacity hover:opacity-90"
+            className="inline-flex min-h-[44px] shrink-0 items-center rounded-buttons bg-acid-lime px-4 text-[14px] font-[510] tracking-[-0.011em] text-void transition-opacity hover:opacity-90"
           >
             Sign in
           </Link>
@@ -708,7 +710,7 @@ export default function MarketplaceBrowser() {
                 </div>
               )}
 
-              <p className="mt-4 whitespace-pre-wrap text-body-sm text-mist">{selected.description}</p>
+              <p className="mt-4 max-w-[70ch] whitespace-pre-wrap text-body-sm text-mist">{selected.description}</p>
 
               {selectedMatch && selectedMatch.checks.length > 0 && (
                 <div className="mt-6 border-t-[0.5px] border-graphite pt-4">
@@ -765,7 +767,7 @@ export default function MarketplaceBrowser() {
                         </p>
                         <Link
                           href="/login"
-                          className="mt-3 inline-block rounded-buttons bg-acid-lime px-4 py-[8px] text-[13px] font-[510] tracking-[-0.011em] text-void transition-opacity hover:opacity-90"
+                          className="mt-3 inline-flex min-h-[44px] items-center rounded-buttons bg-acid-lime px-4 text-[13px] font-[510] tracking-[-0.011em] text-void transition-opacity hover:opacity-90"
                         >
                           Sign in to see your match
                         </Link>
@@ -811,7 +813,7 @@ export default function MarketplaceBrowser() {
 
               <div className="mt-6 border-t-[0.5px] border-graphite pt-4">
                 {!user ? (
-                  <Link href="/login" className="text-[13px] font-[510] text-mist underline hover:text-paper">Sign in to apply</Link>
+                  <Link href="/login" className="inline-flex min-h-[44px] items-center text-[13px] font-[510] text-mist underline hover:text-paper">Sign in to apply</Link>
                 ) : selectedApplication?.status === "accepted" ? (
                   <div className="rounded-inputs border border-pulse-green/40 bg-pulse-green/[0.06] p-4">
                     <p className="text-body-sm font-[510] text-paper">You&apos;ve been accepted 🎉</p>

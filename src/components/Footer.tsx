@@ -25,7 +25,7 @@ export default function Footer() {
         <nav className="grid grid-cols-2 gap-8 sm:grid-cols-4">
           {FOOTER_NAV.map((category) => (
             <div key={category.label}>
-              <h4 className="text-label font-[510] text-ash">{category.label}</h4>
+              <h2 className="text-label font-[510] text-ash">{category.label}</h2>
               <ul className="mt-4 flex flex-col gap-3">
                 {category.items.map((item) => (
                   <li key={item.label}>

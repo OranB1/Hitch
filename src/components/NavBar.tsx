@@ -20,7 +20,7 @@ export default async function NavBar() {
   return (
     <header className="relative border-b-[0.5px] border-graphite bg-void">
       <nav className="mx-auto flex max-w-[1200px] items-center gap-6 px-6 py-4">
-        <Link href="/" className="flex items-center gap-2 font-serif text-[19px] text-paper">
+        <Link href="/" className="flex min-h-[44px] items-center gap-2 font-serif text-[19px] text-paper">
           <svg width={26} height={26} viewBox="0 0 48 48" fill="none" className="shrink-0">
             <path d="M4 4L24 4L24 16L34 16L34 32L24 32L24 44L4 44Z" fill="#1c1712" />
             <path d="M24 4L44 4L44 44L24 44L24 32L34 32L34 16L24 16Z" fill="#3457c9" />
