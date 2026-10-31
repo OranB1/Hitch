@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import Link from "next/link";
 import type { User } from "@supabase/supabase-js";
@@ -157,6 +157,11 @@ export default function MarketplaceBrowser() {
   const [locationFilter, setLocationFilter] = useState<"all" | "near_me" | "remote">("all");
   const [search, setSearch] = useState("");
   const [filtersOpen, setFiltersOpen] = useState(false);
+  // Below lg the detail pane is a full-screen sheet opened by tapping a card, rather than a column
+  // that sits ~3000px down the page. Only ever true on a narrow viewport.
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const openerRef = useRef<HTMLElement | null>(null);
+  const headingRef = useRef<HTMLHeadingElement | null>(null);
   const [sortBy, setSortBy] = useState<SortKey>("match");
   const [listingState, setListingState] = useState<Map<string, "saved" | "hidden">>(new Map());
   const [showSavedOnly, setShowSavedOnly] = useState(false);
@@ -374,6 +379,28 @@ export default function MarketplaceBrowser() {
     beginnerFriendlyOnly ||
     (restrictToPartners && hasPartnershipData) ||
     effectiveSort !== (user ? "match" : "newest");
+
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const wide = window.matchMedia("(min-width: 1024px)");
+    // Growing to desktop width turns the sheet back into the side column, so drop the open state.
+    const onWide = () => setMobileOpen(false);
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "Escape") return;
+      setMobileOpen(false);
+      openerRef.current?.focus();
+    };
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    headingRef.current?.focus();
+    wide.addEventListener("change", onWide);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      wide.removeEventListener("change", onWide);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [mobileOpen]);
 
   // Filters that live inside the mobile disclosure, so the closed button can say how many are on.
   const hiddenFilterCount =
@@ -658,7 +685,13 @@ export default function MarketplaceBrowser() {
               return (
                 <button
                   key={o.id}
-                  onClick={() => setSelectedId(o.id)}
+                  onClick={(e) => {
+                    setSelectedId(o.id);
+                    if (window.matchMedia("(max-width: 1023px)").matches) {
+                      openerRef.current = e.currentTarget;
+                      setMobileOpen(true);
+                    }
+                  }}
                   className={`relative w-full overflow-hidden rounded-cards border p-4 pl-[18px] text-left transition-colors ${
                     isSelected
                       ? "border-transparent bg-carbon"
@@ -743,9 +776,35 @@ export default function MarketplaceBrowser() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: reducedMotion ? 0 : -6 }}
               transition={{ duration: reducedMotion ? 0 : 0.18, ease: [0.22, 1, 0.36, 1] }}
-              className="h-fit rounded-cards bg-carbon p-6 shadow-subtle"
+              onAnimationComplete={() => {
+                if (mobileOpen) headingRef.current?.focus();
+              }}
+              role={mobileOpen ? "dialog" : undefined}
+              aria-modal={mobileOpen || undefined}
+              aria-label={mobileOpen ? selected.title : undefined}
+              className={`${
+                mobileOpen ? "fixed inset-0 z-40 overflow-y-auto overscroll-contain bg-carbon px-5 pb-8" : "hidden"
+              } lg:static lg:inset-auto lg:z-auto lg:block lg:h-fit lg:overflow-visible lg:rounded-cards lg:bg-carbon lg:p-6 lg:shadow-subtle`}
             >
-              <h2 className="text-[20px] font-[510] tracking-[-0.24px] text-paper">{selected.title}</h2>
+              <div className="sticky top-0 z-10 -mx-5 mb-4 flex items-center border-b-[0.5px] border-graphite bg-carbon px-3 py-1 lg:hidden">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileOpen(false);
+                    openerRef.current?.focus();
+                  }}
+                  className="inline-flex min-h-[44px] items-center gap-2 rounded-buttons px-2 text-[14px] font-[510] text-mist transition-colors hover:text-paper"
+                >
+                  <span aria-hidden>←</span> All opportunities
+                </button>
+              </div>
+              <h2
+                ref={headingRef}
+                tabIndex={-1}
+                className="text-[20px] font-[510] tracking-[-0.24px] text-paper focus:outline-none"
+              >
+                {selected.title}
+              </h2>
               <p className="mt-1 text-body-sm text-fog">
                 {selected.is_remote ? "Remote / virtual" : selected.hospital_trust ?? "Location not specified"}
               </p>
