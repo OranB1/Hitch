@@ -787,101 +787,99 @@ export default function MarketplaceBrowser() {
                 </div>
               )}
 
-              <p className="mt-4 max-w-[70ch] whitespace-pre-wrap text-body-sm text-mist">{selected.description}</p>
+              {(() => {
+                const facts: { label: string; value: string }[] = [];
+                if (selected.estimated_commitment) facts.push({ label: "Commitment", value: selected.estimated_commitment });
+                if (selected.project_duration) {
+                  facts.push({
+                    label: "Duration",
+                    value: PROJECT_DURATION_OPTIONS.find((d) => d.value === selected.project_duration)?.label ?? selected.project_duration,
+                  });
+                }
+                if (selected.deadline) {
+                  facts.push({
+                    label: "Apply by",
+                    value: new Date(selected.deadline).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }),
+                  });
+                }
+                if (selected.min_year_of_study) facts.push({ label: "Minimum stage", value: `${stageLabel(selected.min_year_of_study)}+` });
+                if (selected.experience_level) facts.push({ label: "Experience", value: selected.experience_level.replace(/_/g, " ") });
+                if (facts.length === 0) return null;
+                return (
+                  <dl className="mt-5 grid grid-cols-2 gap-px overflow-hidden rounded-inputs border border-graphite bg-graphite">
+                    {facts.map((f) => (
+                      <div key={f.label} className="bg-carbon px-3 py-2 sm:px-[14px]">
+                        <dt className="text-caption text-ash">{f.label}</dt>
+                        <dd className="mt-[2px] text-body-sm font-[510] text-paper first-letter:uppercase">{f.value}</dd>
+                      </div>
+                    ))}
+                    {/* An odd count would leave a graphite hole in the grid; fill it. */}
+                    {facts.length % 2 === 1 && <div aria-hidden className="bg-carbon" />}
+                  </dl>
+                );
+              })()}
+
+              <p className="mt-5 max-w-[70ch] whitespace-pre-wrap text-body-sm text-mist">{selected.description}</p>
 
               {selectedMatch && selectedMatch.checks.length > 0 && (
-                <div className="mt-6 border-t-[0.5px] border-graphite pt-4">
-                  {user ? (
-                    <>
-                      <div className="flex items-center gap-2">
-                        <p className="text-caption font-[510] text-fog">How this lines up with your profile</p>
-                        <span className="rounded-badges bg-acid-lime/15 px-[6px] text-label font-[510] text-acid-lime">
-                          {selectedMatch.percent}% match
-                        </span>
-                      </div>
-                      <p className="mt-1 text-caption text-ash">
-                        Based on what the poster&apos;s looking for: a guide, not a gate. You can apply regardless of your score.
-                      </p>
-                      <ul className="mt-2 space-y-1">
-                        {selectedMatch.checks.map((c) => {
-                          const unmetRequired = c.required && !c.met;
-                          return (
-                            <li key={c.label} className="flex items-center gap-2 text-body-sm">
-                              <span className={c.met ? "text-pulse-green" : unmetRequired ? "text-coral-red" : "text-ash"}>
-                                {c.met ? "✓" : "○"}
-                              </span>
-                              <span className={c.met ? "text-mist" : unmetRequired ? "text-coral-red" : "text-ash"}>
-                                {c.label}
-                                {c.required && <span className="ml-1 text-label text-ash">(required)</span>}
-                              </span>
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    </>
-                  ) : (
-                    /* Signed out there is no profile to compare against, so scoring it would be
-                       meaningless. Show the poster's criteria plainly instead. */
-                    <>
-                      <p className="text-caption font-[510] text-fog">What this poster is looking for</p>
-                      <ul className="mt-2 space-y-1">
-                        {selectedMatch.checks.map((c) => (
-                          <li key={c.label} className="flex items-center gap-2 text-body-sm text-mist">
-                            <span className="text-ash">·</span>
-                            <span>
-                              {c.label}
-                              {c.required && <span className="ml-1 text-label text-ash">(required)</span>}
-                            </span>
-                          </li>
-                        ))}
-                      </ul>
-                      <div className="mt-4 rounded-inputs border border-graphite bg-black/[0.02] p-3">
-                        <p className="text-body-sm font-[510] text-paper">See how well you match</p>
-                        <p className="mt-1 text-caption text-fog">
-                          Sign in and Hitch scores every opportunity against your year, specialty
-                          interest, skills and availability, so you can see where you fit before
-                          you apply.
-                        </p>
-                        <Link
-                          href="/login"
-                          className="mt-3 inline-flex min-h-[44px] items-center rounded-buttons bg-acid-lime px-4 text-[13px] font-[510] tracking-[-0.011em] text-void transition-opacity hover:opacity-90"
-                        >
-                          Sign in to see your match
-                        </Link>
-                      </div>
-                    </>
+                <section className="mt-6">
+                  <div className="flex flex-wrap items-center gap-2">
+                    {/* Signed out there is no profile to compare against, so scoring it would be
+                        meaningless: show the poster's criteria plainly, with neutral markers. */}
+                    <h3 className="text-body-sm font-[510] text-paper">
+                      {user ? "How this lines up with your profile" : "What this poster is looking for"}
+                    </h3>
+                    {user && (
+                      <span className="rounded-badges bg-acid-lime/15 px-[6px] text-label font-[510] text-acid-lime">
+                        {selectedMatch.percent}% match
+                      </span>
+                    )}
+                  </div>
+                  {user && (
+                    <p className="mt-1 text-caption leading-[1.5] text-ash">
+                      Based on what the poster&apos;s looking for: a guide, not a gate. You can apply regardless of your score.
+                    </p>
                   )}
-                </div>
+                  <ul className="mt-2">
+                    {selectedMatch.checks.map((c) => {
+                      const unmetRequired = c.required && !c.met;
+                      return (
+                        <li
+                          key={c.label}
+                          className="flex items-baseline gap-[10px] border-t-[0.5px] border-graphite py-2 text-body-sm first:border-t-0"
+                        >
+                          <span
+                            className={`w-4 shrink-0 text-center ${
+                              user ? (c.met ? "text-pulse-green" : unmetRequired ? "text-coral-red" : "text-ash") : "text-ash"
+                            }`}
+                          >
+                            {user ? (c.met ? "✓" : "○") : "·"}
+                          </span>
+                          <span className={user ? (c.met ? "text-mist" : unmetRequired ? "text-coral-red" : "text-ash") : "text-mist"}>
+                            {c.label}
+                          </span>
+                          {c.required && (
+                            <span className="ml-auto shrink-0 rounded-badges border border-smoke px-2 text-[13px] font-[510] text-paper">
+                              Required
+                            </span>
+                          )}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </section>
               )}
-
-              <div className="mt-6 grid gap-3 border-t-[0.5px] border-graphite pt-4 text-body-sm sm:grid-cols-2">
-                {selected.estimated_commitment && (
-                  <div><span className="text-fog">Commitment: </span><span className="text-mist">{selected.estimated_commitment}</span></div>
-                )}
-                {selected.project_duration && (
-                  <div><span className="text-fog">Duration: </span><span className="text-mist">{PROJECT_DURATION_OPTIONS.find((d) => d.value === selected.project_duration)?.label ?? selected.project_duration}</span></div>
-                )}
-                {selected.deadline && (
-                  <div><span className="text-fog">Apply by: </span><span className="text-mist">{new Date(selected.deadline).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}</span></div>
-                )}
-                {selected.min_year_of_study && (
-                  <div><span className="text-fog">Minimum stage: </span><span className="text-mist">{stageLabel(selected.min_year_of_study)}+</span></div>
-                )}
-                {selected.experience_level && (
-                  <div><span className="text-fog">Experience: </span><span className="text-mist">{selected.experience_level.replace(/_/g, " ")}</span></div>
-                )}
-              </div>
 
               {((selected.required_skills && selected.required_skills.length > 0) ||
                 (selected.preferred_skills && selected.preferred_skills.length > 0)) && (
-                <div className="mt-4 flex flex-wrap gap-1">
+                <div className="mt-4 flex flex-wrap gap-[6px]">
                   {selected.required_skills?.map((s) => (
-                    <span key={s} className="rounded-badges bg-iris-violet/15 px-[6px] text-label text-iris-violet">
+                    <span key={s} className="rounded-badges bg-iris-violet/15 px-2 py-[1px] text-[13px] text-iris-violet">
                       {SKILL_OPTIONS.find((o) => o.value === s)?.label ?? s}
                     </span>
                   ))}
                   {selected.preferred_skills?.map((s) => (
-                    <span key={s} className="rounded-badges bg-black/[0.045] px-[6px] text-label text-fog">
+                    <span key={s} className="rounded-badges bg-black/[0.045] px-2 py-[1px] text-[13px] text-fog">
                       {SKILL_OPTIONS.find((o) => o.value === s)?.label ?? s} (preferred)
                     </span>
                   ))}
@@ -890,7 +888,18 @@ export default function MarketplaceBrowser() {
 
               <div className="mt-6 border-t-[0.5px] border-graphite pt-4">
                 {!user ? (
-                  <Link href="/login" className="inline-flex min-h-[44px] items-center text-[13px] font-[510] text-mist underline hover:text-paper">Sign in to apply</Link>
+                  <div className="flex flex-wrap items-center gap-4">
+                    <p className="min-w-[220px] flex-1 text-caption leading-[1.5] text-fog">
+                      Sign in to apply. You&apos;ll also see how well each opportunity matches your year,
+                      specialty interest, skills and availability.
+                    </p>
+                    <Link
+                      href="/login"
+                      className="inline-flex min-h-[44px] w-full items-center justify-center rounded-buttons bg-acid-lime px-4 text-[14px] font-[510] tracking-[-0.011em] text-void transition-opacity hover:opacity-90 sm:w-auto"
+                    >
+                      Sign in to apply
+                    </Link>
+                  </div>
                 ) : selectedApplication?.status === "accepted" ? (
                   <div className="rounded-inputs border border-pulse-green/40 bg-pulse-green/[0.06] p-4">
                     <p className="text-body-sm font-[510] text-paper">You&apos;ve been accepted 🎉</p>
