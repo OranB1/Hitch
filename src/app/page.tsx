@@ -2,14 +2,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/Button";
 import { Reveal } from "@/components/Reveal";
-
-const MOCK_MATCH_CHECKS = [
-  { label: "Year 3+", met: true, required: true },
-  { label: "Interested in Endocrinology", met: true, required: false },
-  { label: "Excel / data management", met: true, required: false },
-  { label: "Available 3–5h/week", met: true, required: false },
-  { label: "Previous QI experience", met: false, required: false },
-];
+import HeroCarousel from "@/components/HeroCarousel";
 
 const STATS = [
   {
@@ -75,12 +68,7 @@ export default function Home() {
       <section className="lg:flex lg:items-center lg:gap-16">
         <div className="max-w-2xl lg:flex-1">
           <Reveal>
-            <span className="inline-flex items-center gap-2 rounded-pills bg-black/[0.045] px-3 py-[6px] text-label text-fog">
-              <span className="h-1.5 w-1.5 rounded-full bg-pulse-green" />
-              Live: QIP, audit & research matching
-            </span>
-
-            <h1 className="mt-4 text-[36px] leading-[1.15] tracking-[-0.3px] font-serif font-normal text-paper sm:text-heading-lg">
+            <h1 className="text-[36px] leading-[1.15] tracking-[-0.3px] font-serif font-normal text-paper sm:text-heading-lg">
               Get your QIP, audit, or research project actually done.
             </h1>
             <p className="mt-6 max-w-lg text-body text-mist">
@@ -112,32 +100,8 @@ export default function Home() {
           </Reveal>
         </div>
 
-        <Reveal delay={0.22} className="mt-16 lg:mt-0 lg:w-[380px] lg:shrink-0">
-          <div className="rounded-cards bg-carbon p-6 shadow-subtle">
-            <div className="flex items-start justify-between gap-2">
-              <div>
-                <p className="font-[510] text-paper">Improving inpatient insulin prescribing</p>
-                <p className="mt-1 text-caption text-fog">Endocrinology · QIP · 3 months · Hybrid</p>
-              </div>
-              <span className="shrink-0 rounded-badges bg-acid-lime/15 px-[6px] text-label font-[510] text-acid-lime">
-                92% match
-              </span>
-            </div>
-            <ul className="mt-4 space-y-2 border-t border-graphite pt-4">
-              {MOCK_MATCH_CHECKS.map((c) => (
-                <li key={c.label} className="flex items-center gap-2 text-body-sm">
-                  <span className={c.met ? "text-pulse-green" : "text-ash"}>{c.met ? "✓" : "○"}</span>
-                  <span className={c.met ? "text-mist" : "text-ash"}>
-                    {c.label}
-                    {c.required && <span className="ml-1 text-label text-ash">(required)</span>}
-                  </span>
-                </li>
-              ))}
-            </ul>
-            <p className="mt-4 text-caption text-ash">
-              Illustrative example. Real postings show your own match score.
-            </p>
-          </div>
+        <Reveal delay={0.22} className="mt-12 lg:mt-0 lg:w-[540px] lg:shrink-0 xl:w-[640px]">
+          <HeroCarousel />
         </Reveal>
       </section>
 

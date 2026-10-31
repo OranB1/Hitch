@@ -47,7 +47,7 @@
   --text-label: 12px;
   --text-label--line-height: 1.4;
   --text-caption: 13px;
-  --text-caption--line-height: 1.2;
+  --text-caption--line-height: 1.4;
   --text-body-sm: 15px;
   --text-body-sm--line-height: 1.6;
   --text-body-sm--letter-spacing: -0.165px;
@@ -104,6 +104,17 @@ body {
   color: var(--color-mist);
   font-family: var(--font-sans);
   font-feature-settings: "cv01" on, "ss03" on, "zero" on;
+}
+
+/* Placeholders were the browser default grey (~3:1); ash clears 4.5:1 on canvas and input fills. */
+::placeholder {
+  color: var(--color-ash);
+  opacity: 1;
+}
+
+/* Keeps a lone word off the last line of body copy. */
+p {
+  text-wrap: pretty;
 }
 
 @keyframes toast-in {
