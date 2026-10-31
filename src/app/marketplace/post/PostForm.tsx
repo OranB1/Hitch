@@ -59,7 +59,7 @@ export default function PostForm() {
         data: { user: currentUser },
       } = await supabase.auth.getUser();
       if (!currentUser) {
-        router.replace("/login");
+        router.replace("/login?next=post");
         return;
       }
       setUser(currentUser);

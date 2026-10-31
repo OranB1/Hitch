@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 // button stays disabled until a retry can actually succeed.
 const RESEND_COOLDOWN_SECONDS = 60;
 
-export default function LoginForm() {
+export default function LoginForm({ forPosting = false }: { forPosting?: boolean }) {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
@@ -68,7 +68,7 @@ export default function LoginForm() {
           <button
             onClick={handleResend}
             disabled={resending || cooldown > 0}
-            className="mt-3 rounded-buttons border border-graphite px-4 py-[10px] text-[14px] font-[510] tracking-[-0.011em] text-mist transition-colors hover:border-smoke hover:text-paper disabled:opacity-50"
+            className="mt-3 min-h-[44px] rounded-buttons border border-graphite px-4 py-[10px] text-[14px] font-[510] tracking-[-0.011em] text-mist transition-colors hover:border-smoke hover:text-paper disabled:opacity-50"
           >
             {resending
               ? "Sending…"
@@ -84,17 +84,22 @@ export default function LoginForm() {
   return (
     <form onSubmit={handleSubmit} className="mt-8 space-y-4 rounded-cards bg-carbon p-6 shadow-subtle">
       <div>
-        <label className="block text-body-sm text-mist">University or NHS email</label>
+        <label htmlFor="login-email" className="block text-body-sm text-mist">
+          {forPosting ? "Work email" : "University or NHS email"}
+        </label>
         <input
+          id="login-email"
           type="email"
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="you@imperial.ac.uk or you@nhs.net"
-          className="mt-1 w-full rounded-inputs border border-graphite bg-black/[0.025] px-[14px] py-[12px] text-[14px] text-mist focus:border-mist focus:outline-none"
+          placeholder={forPosting ? "you@nhs.net" : "you@imperial.ac.uk or you@nhs.net"}
+          className="mt-1 w-full rounded-inputs border border-graphite bg-black/[0.025] px-[14px] py-[12px] text-[16px] text-mist focus:border-mist focus:outline-none"
         />
         <p className="mt-1 text-caption text-ash">
-          Must end in .ac.uk, nhs.net, or nhs.uk. This is currently for UK medical students and doctors only.
+          {forPosting
+            ? "Use an address ending .nhs.net, .nhs.uk or .ac.uk. It stays private."
+            : "Must end in .ac.uk, nhs.net, or nhs.uk. This is currently for UK medical students and doctors only."}
         </p>
       </div>
 
@@ -107,9 +112,9 @@ export default function LoginForm() {
       <button
         type="submit"
         disabled={status === "sending"}
-        className="rounded-buttons bg-acid-lime px-4 py-[10px] text-[14px] font-[510] tracking-[-0.011em] text-void transition-opacity hover:opacity-90 disabled:opacity-50"
+        className="min-h-[44px] rounded-buttons bg-acid-lime px-5 py-[10px] text-[14px] font-[510] tracking-[-0.011em] text-void transition-opacity hover:opacity-90 disabled:opacity-50"
       >
-        {status === "sending" ? "Sending…" : "Send magic link"}
+        {status === "sending" ? "Sending…" : forPosting ? "Send sign-in link" : "Send magic link"}
       </button>
     </form>
   );
