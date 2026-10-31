@@ -16,12 +16,12 @@ const TILES = [
   {
     src: "/hero/audit.webp",
     backColor: "#bfdcdf",
-    title: "Audit example from General Surgery: re-audit of VTE risk assessment completed within a day of admission. Looking for data collection and Excel.",
+    title: "Audit example from General Surgery: re-audit of VTE risk assessment completed within a day of admission. Looking for Excel and statistics.",
   },
   {
     src: "/hero/research.webp",
     backColor: "#d3c8e6",
-    title: "Research example from Anaesthetics and Critical Care: retrospective review of outcomes after emergency laparotomy in older adults. Looking for literature review and statistics.",
+    title: "Research example from Anaesthetics and Critical Care: retrospective review of outcomes after emergency laparotomy in older adults. Looking for literature review and manuscript writing.",
   },
   {
     src: "/hero/teaching.webp",
