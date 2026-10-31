@@ -103,8 +103,8 @@ export default function AboutPage() {
         </div>
         <p className="mt-6 max-w-2xl text-body-sm text-fog">
           We have spoken to or surveyed around 150 doctors and medical students while building
-          Hitch. The project is supported by Imperial, with a pilot in progress at Chelsea and
-          Westminster Hospital.
+          Hitch. The project is supported by Imperial, and a pilot at Chelsea and Westminster
+          Hospital is pending.
         </p>
       </section>
     </main>
