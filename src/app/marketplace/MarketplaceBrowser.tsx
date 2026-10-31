@@ -156,6 +156,7 @@ export default function MarketplaceBrowser() {
   const [beginnerFriendlyOnly, setBeginnerFriendlyOnly] = useState(false);
   const [locationFilter, setLocationFilter] = useState<"all" | "near_me" | "remote">("all");
   const [search, setSearch] = useState("");
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const [sortBy, setSortBy] = useState<SortKey>("match");
   const [listingState, setListingState] = useState<Map<string, "saved" | "hidden">>(new Map());
   const [showSavedOnly, setShowSavedOnly] = useState(false);
@@ -374,6 +375,13 @@ export default function MarketplaceBrowser() {
     (restrictToPartners && hasPartnershipData) ||
     effectiveSort !== (user ? "match" : "newest");
 
+  // Filters that live inside the mobile disclosure, so the closed button can say how many are on.
+  const hiddenFilterCount =
+    (taskTypeFilter !== "" ? 1 : 0) +
+    (locationFilter !== "all" ? 1 : 0) +
+    (beginnerFriendlyOnly ? 1 : 0) +
+    (restrictToPartners && hasPartnershipData ? 1 : 0);
+
   const sorted = useMemo(() => {
     const list = [...filtered];
     if (effectiveSort === "newest") {
@@ -460,17 +468,45 @@ export default function MarketplaceBrowser() {
   }
 
   return (
-    <div className="mt-8">
-      <div className="flex flex-wrap items-center gap-3">
+    <div className="mt-6 md:mt-8">
+      <div className="flex flex-wrap items-center gap-2 md:gap-3">
         <input
           type="search"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search title, description, hospital or skill"
           aria-label="Search opportunities"
-          className={`${INPUT_CLASS} w-full min-w-0 sm:w-auto sm:flex-1 sm:max-w-[320px]`}
+          className={`${INPUT_CLASS} w-full min-w-0 md:w-auto md:flex-1 md:max-w-[320px]`}
         />
 
+        {/* Below md the type, location and checkbox filters collapse behind this button so the
+            list isn't pushed off the first screen; from md up the group is transparent
+            (display: contents) and the controls sit in the one row as before. */}
+        <button
+          type="button"
+          onClick={() => setFiltersOpen((v) => !v)}
+          aria-expanded={filtersOpen}
+          aria-controls="board-filters"
+          className={`${INPUT_CLASS} flex-1 text-center font-[510] md:hidden`}
+        >
+          {hiddenFilterCount > 0 ? `Filters (${hiddenFilterCount})` : "Filters"}
+        </button>
+
+        <select
+          className={`${INPUT_CLASS} min-w-0 flex-1 md:order-last md:flex-none`}
+          value={effectiveSort}
+          onChange={(e) => setSortBy(e.target.value as SortKey)}
+          aria-label="Sort opportunities"
+        >
+          {user && <option value="match" className="bg-carbon">Best match</option>}
+          <option value="newest" className="bg-carbon">Newest</option>
+          <option value="closing" className="bg-carbon">Closing soonest</option>
+        </select>
+
+        <div
+          id="board-filters"
+          className={`${filtersOpen ? "flex" : "hidden"} w-full flex-col gap-2 md:contents`}
+        >
         <select
           className={INPUT_CLASS}
           value={taskTypeFilter}
@@ -515,18 +551,26 @@ export default function MarketplaceBrowser() {
           />
           Beginner friendly only
         </label>
-
-        <select
-          className={INPUT_CLASS}
-          value={effectiveSort}
-          onChange={(e) => setSortBy(e.target.value as SortKey)}
-          aria-label="Sort opportunities"
-        >
-          {user && <option value="match" className="bg-carbon">Best match</option>}
-          <option value="newest" className="bg-carbon">Newest</option>
-          <option value="closing" className="bg-carbon">Closing soonest</option>
-        </select>
+        </div>
       </div>
+
+      {opportunities.length > 0 && (
+        <div className="mt-4 flex flex-col gap-3 rounded-cards border border-graphite bg-black/[0.02] px-4 py-3 md:flex-row md:items-center md:justify-between md:pl-5 md:pr-4">
+          <p className="max-w-[78ch] text-caption leading-[1.5] text-fog">
+            <span className="font-[510] text-paper">These are example opportunities.</span>{" "}
+            Hitch isn&apos;t open for applications yet. They&apos;re here to show how the board works
+            once real projects are posted.
+          </p>
+          {!user && (
+            <Link
+              href="/login"
+              className="inline-flex min-h-[44px] shrink-0 items-center justify-center rounded-buttons bg-acid-lime px-4 text-[14px] font-[510] tracking-[-0.011em] text-void transition-opacity hover:opacity-90"
+            >
+              Sign in to see your match
+            </Link>
+          )}
+        </div>
+      )}
 
       {opportunities.length > 0 && (
         <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2">
@@ -563,34 +607,6 @@ export default function MarketplaceBrowser() {
                 : `${hiddenCount} hidden · show`}
             </button>
           )}
-        </div>
-      )}
-
-      {opportunities.length > 0 && (
-        <div className="mt-6 rounded-cards border border-graphite bg-black/[0.02] px-5 py-3">
-          <p className="max-w-[60ch] text-body-sm text-mist">
-            <span className="font-[510] text-paper">These are example opportunities.</span>{" "}
-            Hitch isn&apos;t open for applications yet. They&apos;re here to show how the board works
-            once real projects are posted.
-          </p>
-        </div>
-      )}
-
-      {!user && opportunities.length > 0 && (
-        <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-cards border border-graphite bg-black/[0.02] px-5 py-4">
-          <div>
-            <p className="text-body-sm font-[510] text-paper">Sign in to see how well each one matches you</p>
-            <p className="mt-1 max-w-[64ch] text-caption text-fog">
-              Hitch scores every opportunity against your year, specialty interest, skills and
-              availability, and ranks the list by fit. You can browse everything without an account.
-            </p>
-          </div>
-          <Link
-            href="/login"
-            className="inline-flex min-h-[44px] shrink-0 items-center rounded-buttons bg-acid-lime px-4 text-[14px] font-[510] tracking-[-0.011em] text-void transition-opacity hover:opacity-90"
-          >
-            Sign in
-          </Link>
         </div>
       )}
 
@@ -634,7 +650,7 @@ export default function MarketplaceBrowser() {
           </div>
         )
       ) : (
-        <div className="mt-6 grid gap-6 lg:grid-cols-[380px_1fr]">
+        <div className="mt-4 grid gap-6 lg:grid-cols-[380px_1fr]">
           <div className="space-y-2">
             {sorted.map((o) => {
               const application = applicationsByOpportunity.get(o.id);
@@ -684,15 +700,15 @@ export default function MarketplaceBrowser() {
                     )}
                     <div className="mt-2 flex flex-wrap items-center gap-1">
                       <span
-                        className="inline-flex items-center gap-[5px] rounded-badges px-[6px] text-label font-[510]"
+                        className="inline-flex items-center gap-[6px] rounded-badges px-[8px] py-[2px] text-[14px] font-[510] leading-[1.3]"
                         style={{ color: taskTone(o.task_type).text, backgroundColor: taskTone(o.task_type).wash }}
                       >
-                        <span className="h-[5px] w-[5px] shrink-0 rounded-pills bg-current" />
+                        <span className="h-[6px] w-[6px] shrink-0 rounded-pills bg-current" />
                         {TASK_TYPE_OPTIONS.find((t) => t.value === o.task_type)?.label ?? o.task_type}
                       </span>
                       {o.specialty && (
                         <span
-                          className={`rounded-badges px-[6px] text-label ${
+                          className={`rounded-badges px-[6px] py-[2px] text-[13px] leading-[1.3] ${
                             matchesMyInterest(o)
                               ? "bg-peach/40 text-peach-ink"
                               : "bg-black/[0.045] text-fog"
