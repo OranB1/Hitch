@@ -18,6 +18,19 @@ type SortKey = "match" | "newest" | "closing";
 
 const SKILL_LABEL = new Map(SKILL_OPTIONS.map((s) => [s.value, s.label]));
 
+// Colour belongs to task type, not specialty: six bounded values rather than one hue per
+// specialty, which would be a rainbow and would mostly fail contrast. Each pairs a readable ink
+// with a wash of the same hue; both inks clear 4.5:1 on the card at badge size.
+const TASK_TONE: Record<string, { text: string; wash: string; stripe: string }> = {
+  qip: { text: "#1d4fa8", wash: "#1d4fa814", stripe: "#1d4fa8" },
+  audit: { text: "#0a6c78", wash: "#05808f14", stripe: "#0a6c78" },
+  research: { text: "#6b3fa0", wash: "#6b3fa014", stripe: "#6b3fa0" },
+  presentation: { text: "#9a5116", wash: "#9a511614", stripe: "#9a5116" },
+  teaching: { text: "#166835", wash: "#1a7a3f14", stripe: "#166835" },
+  other: { text: "#5a5650", wash: "#5a565014", stripe: "#9b958c" },
+};
+const taskTone = (t: string) => TASK_TONE[t] ?? TASK_TONE.other;
+
 // Whichever of hours, length and closing date a posting actually has. Anything missing is left
 // out rather than shown as an empty or "not specified" field.
 function cardFacts(o: Opportunity) {
@@ -334,6 +347,22 @@ export default function MarketplaceBrowser() {
   // an order derived from an empty profile. The picker hides "best match" for them too.
   const effectiveSort: SortKey = !user && sortBy === "match" ? "newest" : sortBy;
 
+  // Green on a card means one thing only: every stated requirement is met. Anything softer
+  // (a high score, most boxes ticked) would make the colour decorative instead of informative.
+  // Option C: a warm tint when the posting sits in the specialty the viewer said they care
+  // about. Deliberately the peach accent rather than another hue, so it reads as "for you"
+  // instead of joining the task-type colour system.
+  const mySpecialty = profile.targetSpecialty ?? profile.currentSpecialty;
+  const matchesMyInterest = (o: Opportunity) =>
+    !!user && !!mySpecialty && !!o.specialty && o.specialty === mySpecialty;
+
+  function qualifies(o: Opportunity) {
+    const checks = matchByOpportunity.get(o.id)?.checks;
+    if (!checks?.length) return false;
+    const required = checks.filter((c) => c.required);
+    return required.length > 0 && required.every((c) => c.met);
+  }
+
   const savedCount = useMemo(() => [...listingState.values()].filter((s) => s === "saved").length, [listingState]);
   const hiddenCount = useMemo(() => [...listingState.values()].filter((s) => s === "hidden").length, [listingState]);
 
@@ -614,10 +643,21 @@ export default function MarketplaceBrowser() {
                 <button
                   key={o.id}
                   onClick={() => setSelectedId(o.id)}
-                  className={`relative w-full rounded-cards border bg-carbon p-4 text-left transition-colors ${
-                    isSelected ? "border-transparent" : "border-graphite hover:border-smoke"
+                  className={`relative w-full overflow-hidden rounded-cards border p-4 pl-[18px] text-left transition-colors ${
+                    isSelected
+                      ? "border-transparent bg-carbon"
+                      : matchesMyInterest(o)
+                        ? "border-peach bg-peach/[0.12] hover:border-peach-ink/40"
+                        : "border-graphite bg-carbon hover:border-smoke"
                   }`}
                 >
+                  {/* Task-type spine: lets the eye group by type down the column without
+                      colouring the whole card. */}
+                  <span
+                    aria-hidden
+                    className="absolute bottom-[14px] left-0 top-[14px] w-[3px] rounded-r-small"
+                    style={{ backgroundColor: taskTone(o.task_type).stripe }}
+                  />
                   {isSelected && (
                     <motion.span
                       layoutId="marketplace-selection"
@@ -642,10 +682,31 @@ export default function MarketplaceBrowser() {
                     {cardFacts(o).length > 0 && (
                       <p className="mt-1 text-caption text-ash">{cardFacts(o).join(" · ")}</p>
                     )}
-                    <div className="mt-2 flex flex-wrap gap-1">
-                      <span className="rounded-badges bg-black/[0.045] px-[6px] text-label text-fog">
+                    <div className="mt-2 flex flex-wrap items-center gap-1">
+                      <span
+                        className="inline-flex items-center gap-[5px] rounded-badges px-[6px] text-label font-[510]"
+                        style={{ color: taskTone(o.task_type).text, backgroundColor: taskTone(o.task_type).wash }}
+                      >
+                        <span className="h-[5px] w-[5px] shrink-0 rounded-pills bg-current" />
                         {TASK_TYPE_OPTIONS.find((t) => t.value === o.task_type)?.label ?? o.task_type}
                       </span>
+                      {o.specialty && (
+                        <span
+                          className={`rounded-badges px-[6px] text-label ${
+                            matchesMyInterest(o)
+                              ? "bg-peach/40 text-peach-ink"
+                              : "bg-black/[0.045] text-fog"
+                          }`}
+                        >
+                          {o.specialty}
+                          {matchesMyInterest(o) && " · your interest"}
+                        </span>
+                      )}
+                      {user && qualifies(o) && (
+                        <span className="rounded-badges bg-pulse-green/15 px-[6px] text-label font-[510] text-[#13633a]">
+                          ✓ You qualify
+                        </span>
+                      )}
                       {application && (
                         <span className={`rounded-badges px-[6px] text-label ${STATUS_PILL[application.status] ?? "bg-black/[0.045] text-fog"}`}>
                           {STATUS_LABEL[application.status] ?? application.status}

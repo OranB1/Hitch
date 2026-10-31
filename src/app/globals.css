@@ -27,7 +27,7 @@
   --color-pulse-green: #1a7a3f;
   --color-coral-red: #b93838; /* 5.1:1 on void; was #c94343 at 4.3:1, under the AA floor */
   --color-signal-teal: #05808f;
-  --color-iris-violet: #4d4fce;
+  --color-iris-violet: #4442b8; /* was #4d4fce; at 15% tint that chip read 4.46:1, under AA */
   --color-lavender: #7a49cf;
   --color-peach: #f3c39a; /* editorial highlight accent, used sparingly */
   --color-peach-ink: #7a3a12; /* ink for text on peach — 7.2:1 */
