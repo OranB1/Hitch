@@ -223,8 +223,8 @@ export default function ProfileForm() {
         <div className="rounded-cards bg-carbon p-6 shadow-subtle">
           <p className="text-body-sm text-mist">Posting as {fullName || "yourself"}</p>
           <p className="mt-1 text-caption text-ash">
-            As a consultant or registrar, applicants see your name when you post an opportunity. No CV or applicant
-            bio needed here.
+            Your posts show your department and hospital, never your name. An applicant only gets your email once you
+            accept them. No CV or applicant bio needed here.
           </p>
         </div>
       )}

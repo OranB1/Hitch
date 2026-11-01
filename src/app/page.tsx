@@ -42,7 +42,7 @@ const HOW_IT_WORKS = [
   {
     step: "3",
     title: "Deliver",
-    body: "The poster reviews a ranked shortlist, picks who to work with, and can verify what the student actually contributed once the project's done.",
+    body: "The poster reviews a ranked shortlist and picks who to work with.",
   },
 ];
 
