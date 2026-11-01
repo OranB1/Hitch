@@ -39,7 +39,8 @@ export default function Footer() {
           ))}
         </nav>
         <div className="mt-12 flex flex-col justify-between gap-4 border-t border-graphite pt-8 sm:flex-row sm:items-center">
-          <span className="font-serif text-[17px] text-paper">Hitch</span>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/brand/logo-hitch.webp" alt="Hitch" width={720} height={209} className="h-7 w-auto self-start" />
           <p className="text-caption text-ash">© {new Date().getFullYear()} Hitch. All rights reserved.</p>
         </div>
       </div>
