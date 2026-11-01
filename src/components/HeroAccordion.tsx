@@ -102,7 +102,7 @@ export default function HeroAccordion() {
     <ul
       ref={rootRef}
       aria-label="Example opportunities on Hitch"
-      className={`flex max-w-full gap-[10px] ${stacked ? "w-full flex-col gap-2" : layout!.box}`}
+      className={`flex ${stacked ? "mx-auto w-full max-w-[260px] flex-col gap-2" : `max-w-full gap-[10px] ${layout!.box}`}`}
       style={{ "--grow": layout?.grow ?? 1 } as React.CSSProperties}
       onPointerEnter={(e) => e.pointerType === "mouse" && setPaused(true)}
       onPointerLeave={(e) => e.pointerType === "mouse" && setPaused(false)}
