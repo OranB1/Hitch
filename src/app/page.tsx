@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/Button";
 import { Reveal } from "@/components/Reveal";
-import HeroCarousel from "@/components/HeroCarousel";
+import HeroAccordion from "@/components/HeroAccordion";
 
 const STATS = [
   {
@@ -101,7 +101,7 @@ export default function Home() {
         </div>
 
         <Reveal delay={0.22} className="mt-12 lg:mt-0 lg:w-[540px] lg:shrink-0 xl:w-[640px]">
-          <HeroCarousel />
+          <HeroAccordion />
         </Reveal>
       </section>
 
