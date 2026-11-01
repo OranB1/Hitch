@@ -28,24 +28,6 @@ const STATS = [
   },
 ];
 
-const HOW_IT_WORKS = [
-  {
-    step: "1",
-    title: "Post",
-    body: "A consultant, registrar, or QI team lists a QIP, audit, research task, or presentation opportunity: required vs. preferred criteria, estimated commitment, and deadline.",
-  },
-  {
-    step: "2",
-    title: "Match",
-    body: "Students and foundation doctors see an explainable match score against their own structured profile.",
-  },
-  {
-    step: "3",
-    title: "Deliver",
-    body: "The poster reviews a ranked shortlist and picks who to work with.",
-  },
-];
-
 // Each point is something the product does today (board shows department and hospital only, the
 // poster's dashboard ranks applicants with reasons, status is the poster's call, and the poster's
 // email is only revealed to an accepted applicant).
@@ -149,34 +131,25 @@ export default function Home() {
         </Reveal>
       </section>
 
-      <div className="mt-24">
-        <Reveal>
-          <h2 className="text-subheading font-serif font-normal text-paper">How it works</h2>
-        </Reveal>
-        <div className="mt-6 grid gap-6 sm:grid-cols-3">
-          {HOW_IT_WORKS.map((s, i) => (
-            <Reveal key={s.step} delay={0.08 + i * 0.08}>
-              <span className="text-[14px] font-[510] text-acid-lime">Step {s.step}</span>
-              <h3 className="mt-1 text-[17px] font-[510] text-paper">{s.title}</h3>
-              <p className="mt-2 text-body-sm text-fog">{s.body}</p>
-            </Reveal>
-          ))}
-        </div>
-      </div>
-
       <section className="mt-24">
         <Reveal>
-          <h2 className="text-subheading font-serif font-normal text-paper">See what a match looks like</h2>
-          <p className="mt-2 max-w-[62ch] text-body-sm text-fog">
-            Every opportunity lists what it needs. You see exactly how your profile lines up, and the
-            poster sees a short ranked list with the reasons, so nobody has to screen everyone.
+          <h2 className="text-subheading font-serif font-normal text-paper">How it works</h2>
+          <p className="mt-6 flex items-baseline gap-[14px] rounded-[14px] bg-carbon px-[18px] py-[14px] text-body-sm text-fog shadow-subtle">
+            <span className="whitespace-nowrap text-[14px] font-[510] text-acid-lime">Step 1</span>
+            <span>
+              <span className="font-[510] text-paper">Post.</span> A consultant, registrar or QI team lists what the
+              task needs, the time it takes and a deadline.
+            </span>
           </p>
         </Reveal>
         <div className="mt-6 grid gap-6 md:grid-cols-2">
           <Reveal>
             <div className="h-full rounded-cards bg-carbon p-7 shadow-subtle">
               <div className="flex items-center justify-between text-[14px] text-ash">
-                <span>What an applicant sees</span>
+                <span>
+                  <span className="font-[510] text-acid-lime">Step 2</span>
+                  <span className="ml-3">What an applicant sees</span>
+                </span>
                 <ExampleTag />
               </div>
               <span className="mt-4 inline-flex items-center gap-[6px] rounded-badges bg-[#05808f14] px-[10px] py-[2px] text-caption font-[600] text-[#0a6c78]">
@@ -210,7 +183,10 @@ export default function Home() {
           <Reveal delay={0.08}>
             <div className="h-full rounded-cards bg-carbon p-7 shadow-subtle">
               <div className="flex items-center justify-between text-[14px] text-ash">
-                <span>What the poster sees</span>
+                <span>
+                  <span className="font-[510] text-acid-lime">Step 3</span>
+                  <span className="ml-3">What the poster sees</span>
+                </span>
                 <ExampleTag />
               </div>
               <h4 className="mt-4 text-body-sm font-[510] text-paper">Your shortlist for this audit</h4>
