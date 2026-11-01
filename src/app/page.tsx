@@ -169,7 +169,7 @@ export default function Home() {
                     <Mark met={c.met} />
                     <span className={c.met ? "text-mist" : "text-coral-red"}>{c.label}</span>
                     {c.required && (
-                      <span className="ml-auto shrink-0 rounded-badges border border-smoke px-2 text-[13px] font-[510] text-paper">
+                      <span className="ml-auto shrink-0 rounded-badges bg-[#efe8dc] px-2 text-[13px] font-[510] text-paper">
                         Required
                       </span>
                     )}
