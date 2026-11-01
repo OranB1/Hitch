@@ -156,7 +156,7 @@ export default function Home() {
         <div className="mt-6 grid gap-6 sm:grid-cols-3">
           {HOW_IT_WORKS.map((s, i) => (
             <Reveal key={s.step} delay={0.08 + i * 0.08}>
-              <span className="text-caption font-[510] text-acid-lime">Step {s.step}</span>
+              <span className="text-[14px] font-[510] text-acid-lime">Step {s.step}</span>
               <h3 className="mt-1 text-[17px] font-[510] text-paper">{s.title}</h3>
               <p className="mt-2 text-body-sm text-fog">{s.body}</p>
             </Reveal>
@@ -175,7 +175,7 @@ export default function Home() {
         <div className="mt-6 grid gap-6 md:grid-cols-2">
           <Reveal>
             <div className="h-full rounded-cards bg-carbon p-7 shadow-subtle">
-              <div className="flex items-center justify-between text-caption text-ash">
+              <div className="flex items-center justify-between text-[14px] text-ash">
                 <span>What an applicant sees</span>
                 <ExampleTag />
               </div>
@@ -186,7 +186,7 @@ export default function Home() {
               <h3 className="mt-3 text-[19px] font-[510] leading-[1.35] text-paper">{MATCH_EXAMPLE.title}</h3>
               <p className="text-body-sm text-fog">{MATCH_EXAMPLE.department}</p>
               <h4 className="mt-5 text-body-sm font-[510] text-paper">How this lines up with your profile</h4>
-              <p className="mt-1 text-caption text-ash">A guide, not a gate. You can apply regardless.</p>
+              <p className="mt-1 text-[14px] text-ash">A guide, not a gate. You can apply regardless.</p>
               <ul className="mt-2">
                 {MATCH_EXAMPLE.checks.map((c) => (
                   <li
@@ -209,12 +209,12 @@ export default function Home() {
 
           <Reveal delay={0.08}>
             <div className="h-full rounded-cards bg-carbon p-7 shadow-subtle">
-              <div className="flex items-center justify-between text-caption text-ash">
+              <div className="flex items-center justify-between text-[14px] text-ash">
                 <span>What the poster sees</span>
                 <ExampleTag />
               </div>
               <h4 className="mt-4 text-body-sm font-[510] text-paper">Your shortlist for this audit</h4>
-              <p className="mt-1 text-caption text-ash">Ranked by fit. You choose who to work with.</p>
+              <p className="mt-1 text-[14px] text-ash">Ranked by fit. You choose who to work with.</p>
               <ol className="mt-4 grid gap-3">
                 {MATCH_EXAMPLE.shortlist.map((a, i) => (
                   <li
@@ -277,7 +277,7 @@ export default function Home() {
             See a demo
           </Button>
         </div>
-        <p className="mt-4 text-caption text-ash">Sign-in is limited to NHS and university email addresses.</p>
+        <p className="mt-4 text-[14px] text-ash">Sign-in is limited to NHS and university email addresses.</p>
       </section>
 
       <section className="mt-24">
@@ -297,7 +297,7 @@ export default function Home() {
                   href={s.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-1 inline-flex min-h-[44px] items-center text-caption text-ash underline decoration-smoke underline-offset-2 transition-colors hover:text-fog"
+                  className="mt-1 inline-flex min-h-[44px] items-center text-[14px] text-ash underline decoration-smoke underline-offset-2 transition-colors hover:text-fog"
                 >
                   {s.source}
                 </a>
