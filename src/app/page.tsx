@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Building2, Check, ListOrdered, Mail } from "lucide-react";
 import { Button } from "@/components/Button";
 import { Reveal } from "@/components/Reveal";
 import HeroAccordion from "@/components/HeroAccordion";
@@ -62,6 +62,32 @@ const EXPLORE_CARDS = [
     body: "Get help with the project that's been sitting on your list: data collection, literature review, patient recruitment, or a QI cycle you don't have time to run alone.",
     cta: "Post an opportunity",
     primary: false,
+  },
+];
+
+// Each point is something the product does today (board shows department and hospital only, the
+// poster's dashboard ranks applicants with reasons, status is the poster's call, and the poster's
+// email is only revealed to an accepted applicant).
+const POSTER_POINTS = [
+  {
+    icon: Building2,
+    title: "Department, not you",
+    body: "Your post shows your department and hospital. Never your name, photo or GMC number.",
+  },
+  {
+    icon: ListOrdered,
+    title: "A ranked shortlist",
+    body: "Applicants are ranked by how well they fit what you asked for, with the reasons shown.",
+  },
+  {
+    icon: Check,
+    title: "You decide",
+    body: "Shortlist, accept or decline each applicant. Hitch never picks for you.",
+  },
+  {
+    icon: Mail,
+    title: "Email only when you accept",
+    body: "An applicant gets your email only after you accept them.",
   },
 ];
 
@@ -274,6 +300,36 @@ export default function Home() {
             </div>
           </Reveal>
         </div>
+      </section>
+
+      <section className="mt-24 rounded-cards bg-carbon p-6 shadow-subtle sm:p-9">
+        <Reveal>
+          <h2 className="text-subheading font-serif font-normal text-paper">Got a project that needs help?</h2>
+          <p className="mt-2 max-w-[62ch] text-body-sm text-fog">
+            For a doctor, a QI lead or a team with a QIP, audit or research task that is stalling.
+            Posting is quick, and you stay in control.
+          </p>
+        </Reveal>
+        <ul className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {POSTER_POINTS.map((pt, i) => (
+            <li key={pt.title}>
+              <Reveal delay={i * 0.06}>
+                <pt.icon size={22} strokeWidth={1.7} aria-hidden="true" className="text-acid-lime" />
+                <h3 className="mt-3 text-[16px] font-[510] text-paper">{pt.title}</h3>
+                <p className="mt-[6px] text-body-sm text-fog">{pt.body}</p>
+              </Reveal>
+            </li>
+          ))}
+        </ul>
+        <div className="mt-8 flex flex-wrap items-center gap-3">
+          <Button href="/marketplace/post" size="lg">
+            Post an opportunity
+          </Button>
+          <Button href="/demo" variant="secondary" size="lg">
+            Try the demo first
+          </Button>
+        </div>
+        <p className="mt-4 text-caption text-ash">Sign-in is limited to NHS and university email addresses.</p>
       </section>
 
       <section className="mt-24">
