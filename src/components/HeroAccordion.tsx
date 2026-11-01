@@ -10,21 +10,25 @@ import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 const TILES = [
   {
     src: "/hero/qip.webp",
+    href: "/marketplace?type=qip",
     label:
       "QIP example from Acute Medicine: fewer missed doses of time-critical medicines on an acute medical ward. Looking for data collection and audit/QI training.",
   },
   {
     src: "/hero/audit.webp",
+    href: "/marketplace?type=audit",
     label:
       "Audit example from General Surgery: re-audit of VTE risk assessment completed within a day of admission. Looking for Excel and statistics.",
   },
   {
     src: "/hero/research.webp",
+    href: "/marketplace?type=research",
     label:
       "Research example from Anaesthetics and Critical Care: retrospective review of outcomes after emergency laparotomy in older adults. Looking for literature review and manuscript writing.",
   },
   {
     src: "/hero/teaching.webp",
+    href: "/marketplace?type=teaching",
     label:
       "Teaching example from Cardiology: peer-led ECG interpretation sessions for medical students on placement. Looking for poster and presentation skills.",
   },
@@ -124,7 +128,7 @@ export default function HeroAccordion() {
             }
           >
             <Link
-              href="/marketplace"
+              href={tile.href}
               aria-label={tile.label}
               aria-current={open ? "true" : undefined}
               className="block h-full w-full outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ash"

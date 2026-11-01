@@ -1,10 +1,20 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import MarketplaceBrowser from "./MarketplaceBrowser";
+import { TASK_TYPE_OPTIONS, type TaskType } from "@/lib/data/marketplace-options";
 
 export const metadata: Metadata = { title: "Opportunities" };
 
-export default function MarketplacePage() {
+export default async function MarketplacePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ type?: string }>;
+}) {
+  // ?type=audit pre-selects the type filter (the homepage example tiles link here). Anything that
+  // isn't a known task type is ignored rather than trusted.
+  const { type } = await searchParams;
+  const initialTaskType = TASK_TYPE_OPTIONS.find((o) => o.value === type)?.value as TaskType | undefined;
+
   return (
     <main id="main" className="mx-auto w-full max-w-[1200px] flex-1 px-6 py-10 md:py-16">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -27,7 +37,7 @@ export default function MarketplacePage() {
           </Link>
         </div>
       </div>
-      <MarketplaceBrowser />
+      <MarketplaceBrowser initialTaskType={initialTaskType} />
     </main>
   );
 }

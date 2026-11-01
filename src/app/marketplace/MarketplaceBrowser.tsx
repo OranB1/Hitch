@@ -124,7 +124,7 @@ const STATUS_LABEL: Record<string, string> = {
 const INPUT_CLASS =
   "min-h-[44px] rounded-inputs border border-graphite bg-black/[0.025] px-3 py-2 text-[13px] text-mist focus:border-mist focus:outline-none";
 
-export default function MarketplaceBrowser() {
+export default function MarketplaceBrowser({ initialTaskType }: { initialTaskType?: TaskType }) {
   const supabase = useMemo(() => createClient(), []);
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<MatchProfile & { medSchool: string | null; cvUrl: string | null; role: string | null }>({
@@ -151,7 +151,7 @@ export default function MarketplaceBrowser() {
   const [loadError, setLoadError] = useState(false);
   const [contactEmails, setContactEmails] = useState<Map<string, string | null>>(new Map());
 
-  const [taskTypeFilter, setTaskTypeFilter] = useState<TaskType | "">("");
+  const [taskTypeFilter, setTaskTypeFilter] = useState<TaskType | "">(initialTaskType ?? "");
   const [restrictToPartners, setRestrictToPartners] = useState(true);
   const [beginnerFriendlyOnly, setBeginnerFriendlyOnly] = useState(false);
   const [locationFilter, setLocationFilter] = useState<"all" | "near_me" | "remote">("all");
