@@ -40,7 +40,7 @@ export default function MobileNav({
                 key={l.href}
                 href={l.href}
                 onClick={() => setOpen(false)}
-                className="rounded-buttons px-3 py-2 text-[15px] font-[450] text-mist transition-colors hover:text-paper"
+                className="flex min-h-[44px] items-center rounded-buttons px-3 text-[15px] font-[450] text-mist transition-colors hover:text-paper"
               >
                 {l.label}
               </Link>
@@ -48,7 +48,7 @@ export default function MobileNav({
             <Link
               href="/marketplace/post"
               onClick={() => setOpen(false)}
-              className="rounded-buttons px-3 py-2 text-[15px] font-[450] text-mist transition-colors hover:text-paper"
+              className="flex min-h-[44px] items-center rounded-buttons px-3 text-[15px] font-[450] text-mist transition-colors hover:text-paper"
             >
               Post an opportunity
             </Link>
@@ -60,27 +60,27 @@ export default function MobileNav({
                 <Link
                   href="/marketplace/applications"
                   onClick={() => setOpen(false)}
-                  className="rounded-buttons px-3 py-2 text-[15px] font-[450] text-mist transition-colors hover:text-paper"
+                  className="flex min-h-[44px] items-center rounded-buttons px-3 text-[15px] font-[450] text-mist transition-colors hover:text-paper"
                 >
                   My applications
                 </Link>
                 <Link
                   href="/profile"
                   onClick={() => setOpen(false)}
-                  className="rounded-buttons px-3 py-2 text-[15px] font-[450] text-mist transition-colors hover:text-paper"
+                  className="flex min-h-[44px] items-center rounded-buttons px-3 text-[15px] font-[450] text-mist transition-colors hover:text-paper"
                 >
                   Profile
                 </Link>
-                <form action={signOutAction} className="mt-1 flex items-center justify-between px-3 py-2">
+                <form action={signOutAction} className="mt-1 flex min-h-[44px] items-center justify-between px-3">
                   <span className="text-caption text-fog">{userEmail}</span>
-                  <button type="submit" className="text-[13px] text-mist transition-colors hover:text-paper">
+                  <button type="submit" className="min-h-[44px] px-2 text-[13px] text-mist transition-colors hover:text-paper">
                     Sign out
                   </button>
                 </form>
               </div>
             ) : (
               <div className="px-3">
-                <Button href="/login" variant="pill" size="sm" onClick={() => setOpen(false)}>
+                <Button href="/login" variant="pill" size="lg" onClick={() => setOpen(false)}>
                   Sign in
                 </Button>
               </div>
