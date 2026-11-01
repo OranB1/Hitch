@@ -20,8 +20,9 @@ const STATS = [
   },
   {
     value: "19",
+    unit: "students",
     label:
-      "students paired with audit supervisors in a UK pilot, which improved confidence and got projects disseminated locally and nationally",
+      "were paired with audit supervisors in a UK pilot, which improved confidence and got projects disseminated locally and nationally",
     source: "Kumar et al., Clinical Audit Platform for Students, Postgraduate Medical Journal 2021",
     href: "https://doi.org/10.1136/postgradmedj-2020-138426",
   },
@@ -36,7 +37,7 @@ const HOW_IT_WORKS = [
   {
     step: "2",
     title: "Match",
-    body: "Students and foundation doctors see an explainable match score against their own structured profile. No CV trawling, no relying on who they happen to know.",
+    body: "Students and foundation doctors see an explainable match score against their own structured profile.",
   },
   {
     step: "3",
@@ -52,6 +53,7 @@ const EXPLORE_CARDS = [
     title: "Find an opportunity",
     body: "Browse open QIPs, audits, research tasks, and presentations near you, ranked by how well they match your profile.",
     cta: "Browse opportunities",
+    primary: true,
   },
   {
     href: "/marketplace/post",
@@ -59,6 +61,7 @@ const EXPLORE_CARDS = [
     title: "Post an opportunity",
     body: "Get help with the project that's been sitting on your list: data collection, literature review, patient recruitment, or a QI cycle you don't have time to run alone.",
     cta: "Post an opportunity",
+    primary: false,
   },
 ];
 
@@ -105,24 +108,35 @@ export default function Home() {
         </Reveal>
       </section>
 
-      <div className="mt-24 grid gap-6 sm:grid-cols-3">
-        {STATS.map((s, i) => (
-          <Reveal key={s.label} delay={i * 0.08}>
-            <div className="h-full rounded-cards bg-carbon p-6 shadow-subtle">
-              <p className="text-heading-sm font-serif font-normal text-paper">{s.value}</p>
-              <p className="mt-2 text-body-sm text-mist">{s.label}</p>
-              <a
-                href={s.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-3 inline-block text-caption text-ash underline decoration-smoke underline-offset-2 transition-colors hover:text-fog"
+      <section className="mt-24">
+        <Reveal>
+          <h2 className="text-subheading font-serif font-normal text-paper">Which side are you on?</h2>
+          <p className="mt-2 max-w-[60ch] text-body-sm text-fog">
+            Hitch works for both: whoever has the project, and whoever wants to help run it.
+          </p>
+        </Reveal>
+        <div className="mt-6 grid gap-6 sm:grid-cols-2">
+          {EXPLORE_CARDS.map((card, i) => (
+            <Reveal key={card.href} delay={i * 0.08}>
+              <Link
+                href={card.href}
+                className="flex h-full flex-col rounded-cards bg-carbon p-7 shadow-subtle transition-[box-shadow,transform] duration-200 hover:-translate-y-[2px] hover:shadow-[0_0_0_1px_var(--color-smoke)_inset]"
               >
-                {s.source}
-              </a>
-            </div>
-          </Reveal>
-        ))}
-      </div>
+                <p className="text-caption text-ash">{card.audience}</p>
+                <h3 className="mt-1 text-[20px] font-[510] text-paper">{card.title}</h3>
+                <p className="mt-2 text-body-sm text-fog">{card.body}</p>
+                <span
+                  className={`mt-5 inline-flex min-h-[44px] items-center gap-1 self-start rounded-buttons px-5 text-[14px] font-[510] ${
+                    card.primary ? "bg-acid-lime text-white" : "border border-smoke text-mist"
+                  }`}
+                >
+                  {card.cta} <ArrowRight size={14} />
+                </span>
+              </Link>
+            </Reveal>
+          ))}
+        </div>
+      </section>
 
       <div className="mt-24">
         <Reveal>
@@ -139,23 +153,32 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="mt-24 grid gap-6 sm:grid-cols-2">
-        {EXPLORE_CARDS.map((card, i) => (
-          <Reveal key={card.href} delay={i * 0.08}>
-            <Link
-              href={card.href}
-              className="flex h-full flex-col rounded-cards bg-carbon p-6 shadow-subtle transition-[box-shadow,transform] duration-200 hover:-translate-y-[2px] hover:shadow-[0_0_0_1px_var(--color-smoke)_inset]"
-            >
-              <p className="text-caption text-ash">{card.audience}</p>
-              <h2 className="mt-1 text-[17px] font-[510] text-paper">{card.title}</h2>
-              <p className="mt-2 text-body-sm text-fog">{card.body}</p>
-              <span className="mt-4 inline-flex items-center gap-1 text-[13px] font-[510] text-mist">
-                {card.cta} <ArrowRight size={14} />
-              </span>
-            </Link>
-          </Reveal>
-        ))}
-      </div>
+      <section className="mt-24">
+        <Reveal>
+          <h2 className="text-subheading font-serif font-normal text-paper">Why this exists</h2>
+        </Reveal>
+        <div className="mt-6 grid gap-6 sm:grid-cols-3">
+          {STATS.map((s, i) => (
+            <Reveal key={s.label} delay={i * 0.08}>
+              <div className="h-full rounded-cards bg-carbon p-6 shadow-subtle">
+                <p className="text-heading-sm font-serif font-normal text-paper">
+                  {s.value}
+                  {s.unit && <span className="ml-2 font-sans text-body-sm font-[510] text-fog">{s.unit}</span>}
+                </p>
+                <p className="mt-2 text-body-sm text-mist">{s.label}</p>
+                <a
+                  href={s.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-3 inline-block text-caption text-ash underline decoration-smoke underline-offset-2 transition-colors hover:text-fog"
+                >
+                  {s.source}
+                </a>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </section>
     </main>
   );
 }
