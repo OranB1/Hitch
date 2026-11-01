@@ -6,29 +6,46 @@ import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 // One worked example per task type, in the same hues the board uses. Each is a made-up project written
 // the way a department would post it, baked into the image (public/hero): no hospital, figures, dates
 // or people, and every tile carries an "Example" mark because Hitch isn't taking applications yet.
-// `label` is the link's accessible name, so it repeats what the picture says.
+// `label` is the link's accessible name, so it repeats what the picture says. `tint`, `hue`, `kind` and
+// `dept` draw the closed desktop tab (the tile's own background, its task-type colour, and a vertical label).
 const TILES = [
   {
     src: "/hero/qip.webp",
     href: "/marketplace?type=qip",
+    tint: "#dfe4f0",
+    hue: "#1d4fa8",
+    kind: "QIP",
+    dept: "Acute Medicine",
     label:
       "QIP example from Acute Medicine: fewer missed doses of time-critical medicines on an acute medical ward. Looking for data collection and audit/QI training.",
   },
   {
     src: "/hero/audit.webp",
     href: "/marketplace?type=audit",
+    tint: "#daeaeb",
+    hue: "#0a6c78",
+    kind: "Audit",
+    dept: "General Surgery",
     label:
       "Audit example from General Surgery: re-audit of VTE risk assessment completed within a day of admission. Looking for Excel and statistics.",
   },
   {
     src: "/hero/research.webp",
     href: "/marketplace?type=research",
+    tint: "#e6dfef",
+    hue: "#6b3fa0",
+    kind: "Research",
+    dept: "Anaesthetics & Critical Care",
     label:
       "Research example from Anaesthetics and Critical Care: retrospective review of outcomes after emergency laparotomy in older adults. Looking for literature review and manuscript writing.",
   },
   {
     src: "/hero/teaching.webp",
     href: "/marketplace?type=teaching",
+    tint: "#d9ebe0",
+    hue: "#166835",
+    kind: "Teaching",
+    dept: "Cardiology",
     label:
       "Teaching example from Cardiology: peer-led ECG interpretation sessions for medical students on placement. Looking for poster and presentation skills.",
   },
@@ -121,11 +138,12 @@ export default function HeroAccordion() {
           <li
             key={tile.src}
             className="relative min-h-0 min-w-0 overflow-hidden rounded-cards transition-[flex-grow,height] duration-[600ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
-            style={
-              stacked
+            style={{
+              backgroundColor: tile.tint,
+              ...(stacked
                 ? { height: open ? (stackHeight ?? 420) : 44, flex: "none" }
-                : { flexGrow: open ? "var(--grow)" : 1, flexBasis: 0 }
-            }
+                : { flexGrow: open ? "var(--grow)" : 1, flexBasis: 0 }),
+            }}
           >
             <Link
               href={tile.href}
@@ -151,14 +169,34 @@ export default function HeroAccordion() {
                 alt=""
                 draggable={false}
                 decoding="async"
-                className={`absolute left-0 top-0 block max-w-none select-none ${stacked ? "w-full" : "h-full w-auto"}`}
-              />
-              <span
-                aria-hidden="true"
-                className={`pointer-events-none absolute inset-0 bg-void transition-opacity duration-[600ms] motion-reduce:transition-none ${
-                  open ? "opacity-0" : "opacity-[0.28]"
+                className={`absolute left-0 top-0 block max-w-none select-none transition-opacity duration-[400ms] motion-reduce:transition-none ${
+                  stacked ? "w-full" : `h-full w-auto ${open ? "" : "opacity-0"}`
                 }`}
               />
+              {stacked ? (
+                <span
+                  aria-hidden="true"
+                  className={`pointer-events-none absolute inset-0 bg-void transition-opacity duration-[600ms] motion-reduce:transition-none ${
+                    open ? "opacity-0" : "opacity-[0.28]"
+                  }`}
+                />
+              ) : (
+                // The closed desktop tab: the tile's tint with a vertical label, so no clipped words show.
+                <span
+                  aria-hidden="true"
+                  className={`pointer-events-none absolute inset-0 flex flex-col items-center gap-[10px] py-[18px] transition-opacity duration-[400ms] motion-reduce:transition-none ${
+                    open ? "opacity-0" : "opacity-100"
+                  }`}
+                >
+                  <span className="size-2 flex-none rounded-full" style={{ backgroundColor: tile.hue }} />
+                  <span className="flex flex-1 flex-row-reverse justify-center gap-[6px] [&>span]:rotate-180 [&>span]:whitespace-nowrap [&>span]:[writing-mode:vertical-rl]">
+                    <span className="text-[16px] font-[600]" style={{ color: tile.hue }}>
+                      {tile.kind} example
+                    </span>
+                    <span className="text-[14px] text-fog">{tile.dept}</span>
+                  </span>
+                </span>
+              )}
             </Link>
           </li>
         );
