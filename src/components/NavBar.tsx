@@ -22,7 +22,7 @@ export default async function NavBar() {
       <nav aria-label="Main" className="mx-auto flex max-w-[1200px] items-center gap-6 px-6 py-4">
         <Link href="/" className="flex min-h-[44px] items-center">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/brand/logo-hitch.webp" alt="Hitch" width={720} height={209} className="h-11 w-auto" />
+          <img src="/brand/logo-hitch.svg" alt="Hitch" width={2748} height={798} className="h-11 w-auto" />
         </Link>
         <div className="hidden flex-1 gap-2 md:flex">
           {LINKS.map((l) => (
