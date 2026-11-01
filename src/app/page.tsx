@@ -65,6 +65,40 @@ const EXPLORE_CARDS = [
   },
 ];
 
+// A made-up audit shown the way the marketplace shows a match: ticks for what is met, red for what is
+// missing. No percentage, because any figure here would be invented.
+const MATCH_EXAMPLE = {
+  title: "Re-audit: VTE risk assessment completed within a day of admission",
+  department: "General Surgery",
+  checks: [
+    { label: "Excel", met: true, required: true },
+    { label: "Statistics", met: true, required: true },
+    { label: "Available 2\u20135h/week", met: true, required: false },
+    { label: "Led an audit before", met: false, required: false },
+  ],
+  shortlist: [
+    { name: "Applicant A", has: [true, true, true, true] },
+    { name: "Applicant B", has: [true, true, true, false] },
+    { name: "Applicant C", has: [true, false, true, false] },
+  ],
+};
+
+function ExampleTag() {
+  return (
+    <span className="rounded-badges border border-smoke px-2 text-label font-[600] text-fog">Example</span>
+  );
+}
+
+// Colour is never the only signal: a tick or a cross carries the meaning, with a screen-reader word.
+function Mark({ met }: { met: boolean }) {
+  return (
+    <span className={`w-4 shrink-0 text-center ${met ? "text-pulse-green" : "text-coral-red"}`}>
+      <span aria-hidden="true">{met ? "\u2713" : "\u2715"}</span>
+      <span className="sr-only">{met ? "Has:" : "Missing:"}</span>
+    </span>
+  );
+}
+
 export default function Home() {
   return (
     <main id="main" className="mx-auto w-full max-w-[1200px] flex-1 px-6 py-24">
@@ -152,6 +186,95 @@ export default function Home() {
           ))}
         </div>
       </div>
+
+      <section className="mt-24">
+        <Reveal>
+          <h2 className="text-subheading font-serif font-normal text-paper">See what a match looks like</h2>
+          <p className="mt-2 max-w-[62ch] text-body-sm text-fog">
+            Every opportunity lists what it needs. You see exactly how your profile lines up, and the
+            poster sees a short ranked list with the reasons, so nobody has to screen everyone.
+          </p>
+        </Reveal>
+        <div className="mt-6 grid gap-6 md:grid-cols-2">
+          <Reveal>
+            <div className="h-full rounded-cards bg-carbon p-7 shadow-subtle">
+              <div className="flex items-center justify-between text-caption text-ash">
+                <span>What an applicant sees</span>
+                <ExampleTag />
+              </div>
+              <span className="mt-4 inline-flex items-center gap-[6px] rounded-badges bg-[#05808f14] px-[10px] py-[2px] text-caption font-[600] text-[#0a6c78]">
+                <span aria-hidden="true" className="size-[6px] rounded-full bg-[#0a6c78]" />
+                Audit
+              </span>
+              <h3 className="mt-3 text-[19px] font-[510] leading-[1.35] text-paper">{MATCH_EXAMPLE.title}</h3>
+              <p className="text-body-sm text-fog">{MATCH_EXAMPLE.department}</p>
+              <h4 className="mt-5 text-body-sm font-[510] text-paper">How this lines up with your profile</h4>
+              <p className="mt-1 text-caption text-ash">A guide, not a gate. You can apply regardless.</p>
+              <ul className="mt-2">
+                {MATCH_EXAMPLE.checks.map((c) => (
+                  <li
+                    key={c.label}
+                    className="flex items-baseline gap-[10px] border-t-[0.5px] border-graphite py-2 text-body-sm first:border-t-0"
+                  >
+                    <Mark met={c.met} />
+                    <span className={c.met ? "text-mist" : "text-coral-red"}>{c.label}</span>
+                    {c.required && (
+                      <span className="ml-auto shrink-0 rounded-badges border border-smoke px-2 text-[13px] font-[510] text-paper">
+                        Required
+                      </span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-3 text-body-sm font-[510] text-pulse-green">Every requirement met</p>
+            </div>
+          </Reveal>
+
+          <Reveal delay={0.08}>
+            <div className="h-full rounded-cards bg-carbon p-7 shadow-subtle">
+              <div className="flex items-center justify-between text-caption text-ash">
+                <span>What the poster sees</span>
+                <ExampleTag />
+              </div>
+              <h4 className="mt-4 text-body-sm font-[510] text-paper">Your shortlist for this audit</h4>
+              <p className="mt-1 text-caption text-ash">Ranked by fit. You choose who to work with.</p>
+              <ol className="mt-4 grid gap-3">
+                {MATCH_EXAMPLE.shortlist.map((a, i) => (
+                  <li
+                    key={a.name}
+                    className={`flex gap-[14px] rounded-[14px] border p-4 ${
+                      i === 0 ? "border-pulse-green/40 bg-pulse-green/[0.06]" : "border-graphite"
+                    }`}
+                  >
+                    <span
+                      aria-hidden="true"
+                      className={`flex size-7 shrink-0 items-center justify-center rounded-full text-[14px] font-[600] ${
+                        i === 0 ? "bg-pulse-green text-white" : "bg-black/[0.06] text-paper"
+                      }`}
+                    >
+                      {i + 1}
+                    </span>
+                    <div className="flex-1">
+                      <p className="font-[510] text-paper">{a.name}</p>
+                      <ul className="mt-1 grid gap-x-4 gap-y-1 sm:grid-cols-2">
+                        {MATCH_EXAMPLE.checks.map((c, j) => (
+                          <li key={c.label} className="flex items-baseline gap-[6px] text-[14px]">
+                            <Mark met={a.has[j]} />
+                            <span className={a.has[j] ? "text-mist" : "text-coral-red"}>{c.label}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+              <p className="mt-4 text-body-sm text-fog">
+                You see the reasons, then you decide. Hitch never picks for you.
+              </p>
+            </div>
+          </Reveal>
+        </div>
+      </section>
 
       <section className="mt-24">
         <Reveal>
