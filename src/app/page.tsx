@@ -46,25 +46,6 @@ const HOW_IT_WORKS = [
   },
 ];
 
-const EXPLORE_CARDS = [
-  {
-    href: "/marketplace",
-    audience: "Students & foundation doctors",
-    title: "Find an opportunity",
-    body: "Browse open QIPs, audits, research tasks, and presentations near you, ranked by how well they match your profile.",
-    cta: "Browse opportunities",
-    primary: true,
-  },
-  {
-    href: "/marketplace/post",
-    audience: "Consultants, registrars & QI teams",
-    title: "Post an opportunity",
-    body: "Get help with the project that's been sitting on your list: data collection, literature review, patient recruitment, or a QI cycle you don't have time to run alone.",
-    cta: "Post an opportunity",
-    primary: false,
-  },
-];
-
 // Each point is something the product does today (board shows department and hospital only, the
 // poster's dashboard ranks applicants with reasons, status is the poster's call, and the poster's
 // email is only revealed to an accepted applicant).
@@ -166,36 +147,6 @@ export default function Home() {
         <Reveal delay={0.22} className="mt-12 lg:mt-0 lg:w-[540px] lg:shrink-0 xl:w-[640px]">
           <HeroAccordion />
         </Reveal>
-      </section>
-
-      <section className="mt-24">
-        <Reveal>
-          <h2 className="text-subheading font-serif font-normal text-paper">Which side are you on?</h2>
-          <p className="mt-2 max-w-[60ch] text-body-sm text-fog">
-            Hitch works for both: whoever has the project, and whoever wants to help run it.
-          </p>
-        </Reveal>
-        <div className="mt-6 grid gap-6 sm:grid-cols-2">
-          {EXPLORE_CARDS.map((card, i) => (
-            <Reveal key={card.href} delay={i * 0.08}>
-              <Link
-                href={card.href}
-                className="flex h-full flex-col rounded-cards bg-carbon p-7 shadow-subtle transition-[box-shadow,transform] duration-200 hover:-translate-y-[2px] hover:shadow-[0_0_0_1px_var(--color-smoke)_inset]"
-              >
-                <p className="text-caption text-ash">{card.audience}</p>
-                <h3 className="mt-1 text-[20px] font-[510] text-paper">{card.title}</h3>
-                <p className="mt-2 text-body-sm text-fog">{card.body}</p>
-                <span
-                  className={`mt-5 inline-flex min-h-[44px] items-center gap-1 self-start rounded-buttons px-5 text-[14px] font-[510] ${
-                    card.primary ? "bg-acid-lime text-white" : "border border-smoke text-mist"
-                  }`}
-                >
-                  {card.cta} <ArrowRight size={14} />
-                </span>
-              </Link>
-            </Reveal>
-          ))}
-        </div>
       </section>
 
       <div className="mt-24">
@@ -356,6 +307,24 @@ export default function Home() {
               </div>
             </Reveal>
           ))}
+        </div>
+      </section>
+
+      <section className="mt-24 flex flex-wrap items-center justify-between gap-6 rounded-cards bg-carbon p-6 shadow-subtle sm:p-9">
+        <Reveal>
+          <h2 className="text-subheading font-serif font-normal text-paper">Looking for a project to join?</h2>
+          <p className="mt-2 max-w-[48ch] text-body-sm text-fog">
+            Browse open QIPs, audits, research tasks and presentations near you, ranked by how well
+            they match your profile.
+          </p>
+        </Reveal>
+        <div className="flex flex-wrap items-center gap-3">
+          <Button href="/marketplace" size="lg" iconTrailing={<ArrowRight size={16} />}>
+            Browse opportunities
+          </Button>
+          <Button href="/demo" variant="secondary" size="lg">
+            Try the demo first
+          </Button>
         </div>
       </section>
     </main>
