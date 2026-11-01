@@ -147,7 +147,7 @@ export default function MyApplications() {
           {(a.status === "submitted" || a.status === "shortlisted") && (
             <button
               onClick={() => setWithdrawTarget(a.id)}
-              className="mt-3 rounded-buttons border border-graphite px-3 py-1.5 text-[13px] text-mist hover:border-smoke"
+              className="mt-3 rounded-buttons border border-graphite inline-flex min-h-[44px] items-center px-4 text-[13px] text-mist hover:border-smoke"
             >
               Withdraw
             </button>

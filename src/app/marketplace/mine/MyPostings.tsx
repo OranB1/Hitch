@@ -254,7 +254,7 @@ export default function MyPostings() {
                 {selected.status !== "open" && (
                   <button
                     onClick={() => updatePostingStatus(selected.id, "open")}
-                    className="rounded-buttons border border-graphite px-3 py-1.5 text-[13px] text-mist hover:border-smoke"
+                    className="rounded-buttons border border-graphite inline-flex min-h-[44px] items-center px-4 text-[13px] text-mist hover:border-smoke"
                   >
                     Reopen
                   </button>
@@ -262,7 +262,7 @@ export default function MyPostings() {
                 {selected.status !== "filled" && (
                   <button
                     onClick={() => updatePostingStatus(selected.id, "filled")}
-                    className="rounded-buttons border border-graphite px-3 py-1.5 text-[13px] text-mist hover:border-smoke"
+                    className="rounded-buttons border border-graphite inline-flex min-h-[44px] items-center px-4 text-[13px] text-mist hover:border-smoke"
                   >
                     Mark filled
                   </button>
@@ -270,14 +270,14 @@ export default function MyPostings() {
                 {selected.status !== "closed" && (
                   <button
                     onClick={() => updatePostingStatus(selected.id, "closed")}
-                    className="rounded-buttons border border-graphite px-3 py-1.5 text-[13px] text-mist hover:border-smoke"
+                    className="rounded-buttons border border-graphite inline-flex min-h-[44px] items-center px-4 text-[13px] text-mist hover:border-smoke"
                   >
                     Close
                   </button>
                 )}
                 <button
                   onClick={() => setDeleteTarget({ id: selected.id, title: selected.title })}
-                  className="rounded-buttons border border-coral-red/30 px-3 py-1.5 text-[13px] text-coral-red hover:border-coral-red/60"
+                  className="rounded-buttons border border-coral-red/30 inline-flex min-h-[44px] items-center px-4 text-[13px] text-coral-red hover:border-coral-red/60"
                 >
                   Delete
                 </button>
@@ -369,7 +369,7 @@ export default function MyPostings() {
                     {a.applicantProfile?.cv_url && (
                       <button
                         onClick={() => viewCv(a.applicantProfile!.cv_url!)}
-                        className="rounded-buttons border border-graphite px-3 py-1.5 text-[13px] text-mist hover:border-smoke"
+                        className="rounded-buttons border border-graphite inline-flex min-h-[44px] items-center px-4 text-[13px] text-mist hover:border-smoke"
                       >
                         View CV
                       </button>
@@ -377,7 +377,7 @@ export default function MyPostings() {
                     {a.status !== "shortlisted" && a.status !== "accepted" && (
                       <button
                         onClick={() => updateStatus(a.id, "shortlisted")}
-                        className="rounded-buttons border border-graphite px-3 py-1.5 text-[13px] text-mist hover:border-smoke"
+                        className="rounded-buttons border border-graphite inline-flex min-h-[44px] items-center px-4 text-[13px] text-mist hover:border-smoke"
                       >
                         Shortlist
                       </button>
@@ -385,7 +385,7 @@ export default function MyPostings() {
                     {a.status !== "accepted" && (
                       <button
                         onClick={() => updateStatus(a.id, "accepted")}
-                        className="rounded-buttons bg-acid-lime px-3 py-1.5 text-[13px] font-[510] text-void hover:opacity-90"
+                        className="rounded-buttons bg-acid-lime inline-flex min-h-[44px] items-center px-4 text-[13px] font-[510] text-void hover:opacity-90"
                       >
                         Accept
                       </button>
@@ -393,7 +393,7 @@ export default function MyPostings() {
                     {a.status !== "rejected" && (
                       <button
                         onClick={() => updateStatus(a.id, "rejected")}
-                        className="rounded-buttons border border-coral-red/30 px-3 py-1.5 text-[13px] text-coral-red hover:border-coral-red/60"
+                        className="rounded-buttons border border-coral-red/30 inline-flex min-h-[44px] items-center px-4 text-[13px] text-coral-red hover:border-coral-red/60"
                       >
                         Reject
                       </button>

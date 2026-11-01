@@ -106,7 +106,7 @@ function guessRoleFromEmail(email: string | undefined): Role | null {
 
 const CARD = "rounded-cards bg-carbon p-8 shadow-subtle";
 const SELECT_CLASS =
-  "mt-1 w-full rounded-inputs border border-graphite bg-black/[0.025] px-[14px] py-[12px] text-[14px] text-mist focus:border-mist focus:outline-none";
+  "mt-1 w-full rounded-inputs border border-graphite bg-black/[0.025] px-[14px] py-[12px] text-[16px] text-mist focus:border-mist focus:outline-none";
 
 const stepVariants = {
   enter: (direction: number) => ({ opacity: 0, x: direction >= 0 ? 16 : -16 }),
@@ -277,7 +277,7 @@ export default function OnboardingWizard() {
         </p>
         <button
           onClick={() => router.push("/marketplace/post")}
-          className="mt-6 rounded-buttons bg-acid-lime px-4 py-[10px] text-[14px] font-[510] tracking-[-0.011em] text-void transition-opacity hover:opacity-90"
+          className="mt-6 inline-flex min-h-[44px] items-center rounded-buttons bg-acid-lime px-5 text-[14px] font-[510] tracking-[-0.011em] text-void transition-opacity hover:opacity-90"
         >
           Post an opportunity →
         </button>
@@ -428,6 +428,7 @@ export default function OnboardingWizard() {
               <StepShell question="Which hospital or trust?" hint="Optional. Helps with local opportunity matching later.">
                 <input
                   type="text"
+                  aria-label="Hospital or trust"
                   value={form.hospitalTrust}
                   onChange={(e) => update("hospitalTrust", e.target.value)}
                   placeholder="e.g. Chelsea and Westminster Hospital NHS Foundation Trust"
@@ -440,6 +441,7 @@ export default function OnboardingWizard() {
               <StepShell question="Which specialty or department?">
                 <input
                   type="text"
+                  aria-label="Specialty or department"
                   value={form.department}
                   onChange={(e) => update("department", e.target.value)}
                   placeholder="e.g. Internal Medicine, General Surgery, Paediatrics"
@@ -500,7 +502,7 @@ export default function OnboardingWizard() {
                 question="Which of these can you already do?"
                 hint="Optional. Helps you match with the right opportunities. Pick as many as apply."
               >
-                <div className="flex flex-wrap gap-2">
+                <div role="group" aria-label="Skills" className="flex flex-wrap gap-2">
                   {SKILL_OPTIONS.map((o) => {
                     const selected = form.skills.includes(o.value);
                     return (
@@ -508,7 +510,8 @@ export default function OnboardingWizard() {
                         key={o.value}
                         type="button"
                         onClick={() => toggleSkill(o.value)}
-                        className={`rounded-pills border px-4 py-2 text-body-sm transition-colors ${
+                        aria-pressed={selected}
+                        className={`min-h-[44px] rounded-pills border px-4 text-body-sm transition-colors ${
                           selected ? "border-acid-lime bg-acid-lime/10 text-paper" : "border-graphite text-mist hover:border-smoke"
                         }`}
                       >
@@ -545,14 +548,14 @@ export default function OnboardingWizard() {
           <button
             onClick={handleBack}
             disabled={stepIndex === 0}
-            className="rounded-buttons border border-graphite px-4 py-2 text-[13px] text-mist disabled:opacity-0"
+            className="min-h-[44px] rounded-buttons border border-graphite px-5 text-[13px] text-mist disabled:opacity-0"
           >
             Back
           </button>
           <button
             onClick={handleNext}
             disabled={!canAdvance() || saving}
-            className="rounded-buttons bg-acid-lime px-4 py-[10px] text-[14px] font-[510] tracking-[-0.011em] text-void transition-opacity hover:opacity-90 disabled:opacity-40"
+            className="min-h-[44px] rounded-buttons bg-acid-lime px-6 text-[14px] font-[510] tracking-[-0.011em] text-void transition-opacity hover:opacity-90 disabled:opacity-40"
           >
             {saving ? "Saving…" : isLastStep ? "Finish" : "Next"}
           </button>
@@ -578,6 +581,7 @@ function OptionButton({
   return (
     <motion.button
       onClick={onClick}
+      aria-pressed={selected}
       whileTap={{ scale: 0.98 }}
       className={`relative flex w-full items-center overflow-hidden rounded-inputs border p-4 text-left text-body-sm transition-colors ${
         center ? "justify-center" : "justify-between"

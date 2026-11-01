@@ -132,14 +132,15 @@ export default function ProfileForm() {
   return (
     <div className="mt-8 space-y-4">
       <div className="rounded-cards bg-carbon p-6 shadow-subtle">
-        <label className="block text-body-sm text-mist">Name</label>
+        <label htmlFor="profile-name" className="block text-body-sm text-mist">Name</label>
         <input
+          id="profile-name"
           type="text"
           value={fullName}
           onChange={(e) => setFullName(e.target.value)}
           onBlur={handleSaveName}
           placeholder="Shown to posters when you apply"
-          className="mt-1 w-full rounded-inputs border border-graphite bg-black/[0.025] px-[14px] py-[12px] text-[14px] text-mist focus:border-mist focus:outline-none"
+          className="mt-1 w-full rounded-inputs border border-graphite bg-black/[0.025] px-[14px] py-[12px] text-[16px] text-mist focus:border-mist focus:outline-none"
         />
       </div>
 
@@ -154,38 +155,41 @@ export default function ProfileForm() {
             </div>
 
             <div>
-              <label className="block text-caption text-ash">What draws you to this specialty / type of work?</label>
+              <label htmlFor="profile-motivation" className="block text-caption text-ash">What draws you to this specialty / type of work?</label>
               <textarea
+                id="profile-motivation"
                 value={aboutMotivation}
                 onChange={(e) => setAboutMotivation(e.target.value)}
                 onBlur={() => handleSaveAbout("about_motivation", aboutMotivation)}
                 rows={2}
                 placeholder="e.g. what's pulling you toward this area, or why you want to build this skill"
-                className="mt-1 w-full rounded-inputs border border-graphite bg-black/[0.025] px-[14px] py-[12px] text-[14px] text-mist focus:border-mist focus:outline-none"
+                className="mt-1 w-full rounded-inputs border border-graphite bg-black/[0.025] px-[14px] py-[12px] text-[16px] text-mist focus:border-mist focus:outline-none"
               />
             </div>
 
             <div>
-              <label className="block text-caption text-ash">Relevant experience so far</label>
+              <label htmlFor="profile-experience" className="block text-caption text-ash">Relevant experience so far</label>
               <textarea
+                id="profile-experience"
                 value={aboutExperience}
                 onChange={(e) => setAboutExperience(e.target.value)}
                 onBlur={() => handleSaveAbout("about_experience", aboutExperience)}
                 rows={2}
                 placeholder="e.g. audits, QIPs, research, or anything else relevant, even if informal"
-                className="mt-1 w-full rounded-inputs border border-graphite bg-black/[0.025] px-[14px] py-[12px] text-[14px] text-mist focus:border-mist focus:outline-none"
+                className="mt-1 w-full rounded-inputs border border-graphite bg-black/[0.025] px-[14px] py-[12px] text-[16px] text-mist focus:border-mist focus:outline-none"
               />
             </div>
 
             <div>
-              <label className="block text-caption text-ash">What are you hoping to get out of it?</label>
+              <label htmlFor="profile-goals" className="block text-caption text-ash">What are you hoping to get out of it?</label>
               <textarea
+                id="profile-goals"
                 value={aboutGoals}
                 onChange={(e) => setAboutGoals(e.target.value)}
                 onBlur={() => handleSaveAbout("about_goals", aboutGoals)}
                 rows={2}
                 placeholder="e.g. a specific portfolio point, co-authorship, or just hands-on experience"
-                className="mt-1 w-full rounded-inputs border border-graphite bg-black/[0.025] px-[14px] py-[12px] text-[14px] text-mist focus:border-mist focus:outline-none"
+                className="mt-1 w-full rounded-inputs border border-graphite bg-black/[0.025] px-[14px] py-[12px] text-[16px] text-mist focus:border-mist focus:outline-none"
               />
             </div>
           </div>
@@ -198,12 +202,12 @@ export default function ProfileForm() {
               <button
                 onClick={() => cvInputRef.current?.click()}
                 disabled={saving}
-                className="rounded-buttons border border-graphite px-4 py-2 text-[13px] text-mist hover:border-smoke disabled:opacity-50"
+                className="min-h-[44px] rounded-buttons border border-graphite px-5 text-[13px] text-mist hover:border-smoke disabled:opacity-50"
               >
                 {cvFilename ? "Replace CV" : "Upload CV"}
               </button>
               {cvFilename && (
-                <button onClick={handleViewCv} className="text-[13px] text-mist underline hover:text-paper">
+                <button onClick={handleViewCv} className="min-h-[44px] text-[13px] text-mist underline hover:text-paper">
                   {cvFilename}
                 </button>
               )}
