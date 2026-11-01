@@ -245,9 +245,6 @@ export default function Home() {
                   </li>
                 ))}
               </ol>
-              <p className="mt-4 text-body-sm text-fog">
-                You see the reasons, then you decide. Hitch never picks for you.
-              </p>
             </div>
           </Reveal>
         </div>
@@ -310,22 +307,13 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="mt-24 flex flex-wrap items-center justify-between gap-6 rounded-cards bg-carbon p-6 shadow-subtle sm:p-9">
+      <section className="mt-16 flex flex-wrap items-center justify-between gap-4 rounded-cards bg-carbon px-6 py-4 shadow-subtle">
         <Reveal>
-          <h2 className="text-subheading font-serif font-normal text-paper">Looking for a project to join?</h2>
-          <p className="mt-2 max-w-[48ch] text-body-sm text-fog">
-            Browse open QIPs, audits, research tasks and presentations near you, ranked by how well
-            they match your profile.
-          </p>
+          <p className="text-body font-[510] text-paper">Looking for a project to join?</p>
         </Reveal>
-        <div className="flex flex-wrap items-center gap-3">
-          <Button href="/marketplace" size="lg" iconTrailing={<ArrowRight size={16} />}>
-            Browse opportunities
-          </Button>
-          <Button href="/demo" variant="secondary" size="lg">
-            Try the demo first
-          </Button>
-        </div>
+        <Button href="/marketplace" size="lg" iconTrailing={<ArrowRight size={16} />}>
+          Browse opportunities
+        </Button>
       </section>
     </main>
   );
