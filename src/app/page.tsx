@@ -156,7 +156,7 @@ export default function Home() {
           <Reveal delay={0.16}>
             <Link
               href="/demo"
-              className="mt-4 inline-flex items-center gap-1 text-[13px] font-[510] text-mist underline hover:text-paper"
+              className="mt-2 inline-flex min-h-[44px] items-center gap-1 text-[14px] font-[510] text-mist underline hover:text-paper"
             >
               Not ready to sign in? Try the interactive demo <ArrowRight size={13} />
             </Link>
@@ -349,7 +349,7 @@ export default function Home() {
                   href={s.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-3 inline-block text-caption text-ash underline decoration-smoke underline-offset-2 transition-colors hover:text-fog"
+                  className="mt-1 inline-flex min-h-[44px] items-center text-caption text-ash underline decoration-smoke underline-offset-2 transition-colors hover:text-fog"
                 >
                   {s.source}
                 </a>

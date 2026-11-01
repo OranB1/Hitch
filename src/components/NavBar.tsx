@@ -32,7 +32,7 @@ export default async function NavBar() {
             <Link
               key={l.href}
               href={l.href}
-              className="rounded-buttons px-3 py-2 text-[14px] font-[450] text-mist transition-colors hover:text-paper"
+              className="flex min-h-[44px] items-center rounded-buttons px-3 text-[14px] font-[450] text-mist transition-colors hover:text-paper"
             >
               {l.label}
             </Link>
@@ -40,7 +40,7 @@ export default async function NavBar() {
         </div>
         <Link
           href="/marketplace/post"
-          className="hidden rounded-buttons border border-graphite px-3 py-[7px] text-[13px] font-[510] text-mist transition-colors hover:border-smoke md:block"
+          className="hidden min-h-[44px] items-center rounded-buttons border border-graphite px-4 text-[13px] font-[510] text-mist transition-colors hover:border-smoke md:inline-flex"
         >
           Post an opportunity
         </Link>
@@ -48,21 +48,21 @@ export default async function NavBar() {
         <div className="hidden md:block">
           {user ? (
             <div className="flex items-center gap-4 text-[14px]">
-              <Link href="/marketplace/applications" className="text-mist transition-colors hover:text-paper">
+              <Link href="/marketplace/applications" className="flex min-h-[44px] items-center text-mist transition-colors hover:text-paper">
                 My applications
               </Link>
-              <Link href="/profile" className="text-mist transition-colors hover:text-paper">
+              <Link href="/profile" className="flex min-h-[44px] items-center text-mist transition-colors hover:text-paper">
                 Profile
               </Link>
               <form action={signOut} className="flex items-center gap-3">
                 <span className="text-fog">{user.email}</span>
-                <button type="submit" className="text-mist transition-colors hover:text-paper">
+                <button type="submit" className="min-h-[44px] px-2 text-mist transition-colors hover:text-paper">
                   Sign out
                 </button>
               </form>
             </div>
           ) : (
-            <Button href="/login" variant="pill" size="sm">
+            <Button href="/login" variant="pill" size="lg">
               Sign in
             </Button>
           )}
