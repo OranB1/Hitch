@@ -656,7 +656,7 @@ export default function MarketplaceBrowser({ initialTaskType }: { initialTaskTyp
                 href="/demo"
                 className="rounded-buttons border border-graphite px-4 py-[10px] text-[14px] font-[510] text-mist transition-colors hover:border-smoke hover:text-paper"
               >
-                Try the demo
+                See a demo
               </Link>
             </div>
           </div>

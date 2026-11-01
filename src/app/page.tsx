@@ -139,7 +139,7 @@ export default function Home() {
               href="/demo"
               className="mt-2 inline-flex min-h-[44px] items-center gap-1 text-[14px] font-[510] text-mist underline hover:text-paper"
             >
-              Not ready to sign in? Try the interactive demo <ArrowRight size={13} />
+              Not ready to sign in? See a demo <ArrowRight size={13} />
             </Link>
           </Reveal>
         </div>
@@ -274,7 +274,7 @@ export default function Home() {
             Post an opportunity
           </Button>
           <Button href="/demo" variant="secondary" size="lg">
-            Try the demo first
+            See a demo
           </Button>
         </div>
         <p className="mt-4 text-caption text-ash">Sign-in is limited to NHS and university email addresses.</p>
