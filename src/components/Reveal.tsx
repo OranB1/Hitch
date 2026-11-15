@@ -1,10 +1,16 @@
 "use client";
 
-import { motion, useReducedMotion } from "motion/react";
-import type { ReactNode } from "react";
+import { useEffect, useRef, type CSSProperties, type ReactNode } from "react";
 
-// Fade-and-rise on first entry into the viewport. Elements already above the fold fire on mount,
-// so this covers both hero and scroll-triggered sections without a separate trigger mode.
+// Fade-and-rise, written so the content is never hidden by markup. The entrance is a CSS animation
+// (globals.css, `.reveal`), so server-rendered HTML carries no inline `opacity: 0` and the page is
+// readable as soon as the stylesheet arrives, with or without JavaScript. This used to be a Motion
+// `initial={{ opacity: 0 }}`, which shipped every section, the hero H1 included, invisible until
+// hydration finished.
+//
+// After hydration, anything still below the fold is parked (`data-reveal="pending"`) and released
+// when it scrolls into view; removing the attribute restarts the same CSS animation. Anything already
+// on screen is left alone, so nothing visible ever flickers out and back in.
 export function Reveal({
   children,
   delay = 0,
@@ -14,17 +20,37 @@ export function Reveal({
   delay?: number;
   className?: string;
 }) {
-  const reduced = useReducedMotion();
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || !("IntersectionObserver" in window)) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (el.getBoundingClientRect().top < window.innerHeight) return;
+
+    el.dataset.reveal = "pending";
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        delete el.dataset.reveal;
+        observer.disconnect();
+      },
+      { rootMargin: "0px 0px -60px 0px" },
+    );
+    observer.observe(el);
+    return () => {
+      observer.disconnect();
+      delete el.dataset.reveal;
+    };
+  }, []);
 
   return (
-    <motion.div
-      className={className}
-      initial={{ opacity: 0, y: reduced ? 0 : 14 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "0px 0px -60px 0px" }}
-      transition={{ duration: 0.5, delay, ease: [0.22, 1, 0.36, 1] }}
+    <div
+      ref={ref}
+      className={className ? `reveal ${className}` : "reveal"}
+      style={{ "--reveal-delay": `${delay}s` } as CSSProperties}
     >
       {children}
-    </motion.div>
+    </div>
   );
 }

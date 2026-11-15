@@ -55,7 +55,8 @@ const STEP_MS = 4000;
 // Tiles are 4:5, so the open panel is as wide as the container is tall times 0.8. Sliver width is
 // whatever is left over, which sets how much grow the open panel needs (open width / sliver width).
 const LAYOUTS = {
-  xl: { box: "h-[460px] w-[640px]", grow: 4.6 },
+  // 400 tall gives a 320 open panel; the three closed tabs share the other 250, so grow = 320 / 83.3.
+  xl: { box: "h-[400px] w-[600px]", grow: 3.84 },
   lg: { box: "h-[400px] w-[540px]", grow: 5 },
 } as const;
 

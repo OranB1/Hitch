@@ -90,27 +90,39 @@ function Mark({ met }: { met: boolean }) {
 
 export default function Home() {
   return (
-    <main id="main" className="mx-auto w-full max-w-[1200px] flex-1 px-6 py-24">
-      <section className="lg:flex lg:items-center lg:gap-16">
-        <div className="max-w-2xl lg:flex-1">
-          <Reveal>
-            <h1 className="text-[36px] leading-[1.15] tracking-[-0.3px] font-serif font-normal text-paper sm:text-heading-lg">
-              Get your QIP, audit, or research project actually done.
-            </h1>
-            <p className="mt-6 max-w-lg text-body text-mist">
+    // Sections are a flex column so the poster block can sit directly under the hero on phones
+    // (order-*), where it used to be three and a half screens down. From md up the order is the
+    // source order.
+    <main id="main" className="mx-auto flex w-full max-w-[1200px] flex-1 flex-col px-6 pb-16 pt-8 md:pb-24 md:pt-16">
+      {/* Headline across the full width, then the paragraph and actions beside the example tiles.
+          Side by side, the tiles left the H1 a 448px column and it broke into five lines at 1280. */}
+      <section className="order-1 lg:grid lg:grid-cols-[minmax(0,1fr)_540px] lg:items-center lg:gap-x-16 lg:gap-y-10 xl:grid-cols-[minmax(0,1fr)_600px]">
+        <Reveal className="lg:col-span-full">
+          <h1 className="text-balance text-[36px] leading-[1.15] tracking-[-0.3px] font-serif font-normal text-paper sm:text-heading-lg">
+            Get your QIP, audit, or research project actually done.
+          </h1>
+        </Reveal>
+        <div>
+          <Reveal delay={0.06}>
+            <p className="mt-4 max-w-[30rem] text-body text-mist lg:mt-0 lg:text-body-lg lg:leading-[1.45]">
               A structured way for hospitals and consultants to find willing, matched student and
               trainee help, and for students and foundation doctors to find real opportunities,
               not just whoever they happen to know.
             </p>
           </Reveal>
           <Reveal delay={0.1}>
-            <div className="mt-8 flex flex-wrap items-center gap-3">
-              <Button href="/marketplace" size="lg" iconTrailing={<ArrowRight size={16} />}>
+            <div className="mt-6 flex flex-wrap items-center gap-2 sm:gap-3 lg:mt-8">
+              <Button
+                href="/marketplace"
+                size="lg"
+                className="w-full sm:w-auto"
+                iconTrailing={<ArrowRight size={16} />}
+              >
                 Browse opportunities
               </Button>
               <Link
                 href="/marketplace/post"
-                className="rounded-buttons border border-graphite px-5 py-[13px] text-[14px] font-[510] text-mist transition-colors hover:border-smoke hover:text-paper"
+                className="inline-flex min-h-[48px] w-full items-center justify-center rounded-buttons border border-graphite px-5 text-[14px] font-[510] text-mist transition-colors hover:border-smoke hover:text-paper sm:w-auto"
               >
                 Post an opportunity
               </Link>
@@ -119,19 +131,19 @@ export default function Home() {
           <Reveal delay={0.16}>
             <Link
               href="/demo"
-              className="mt-2 inline-flex min-h-[44px] items-center gap-1 text-[14px] font-[510] text-mist underline hover:text-paper"
+              className="mt-1 inline-flex min-h-[44px] items-center gap-1 text-[14px] font-[510] text-mist underline hover:text-paper lg:mt-2"
             >
               Not ready to sign in? See a demo <ArrowRight size={13} />
             </Link>
           </Reveal>
         </div>
 
-        <Reveal delay={0.22} className="mt-12 lg:mt-0 lg:w-[540px] lg:shrink-0 xl:w-[640px]">
+        <Reveal delay={0.22} className="mt-4 lg:mt-0 lg:justify-self-end">
           <HeroAccordion />
         </Reveal>
       </section>
 
-      <section className="mt-24">
+      <section className="order-3 mt-16 md:order-2 md:mt-24">
         <Reveal>
           <h2 className="text-subheading font-serif font-normal text-paper">How it works</h2>
           <p className="mt-6 flex items-baseline gap-[14px] rounded-[14px] bg-carbon px-[18px] py-[14px] text-body-sm text-fog shadow-subtle">
@@ -226,7 +238,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="mt-24 rounded-cards bg-carbon p-6 shadow-subtle sm:p-9">
+      <section className="order-2 mt-16 rounded-cards bg-carbon p-6 shadow-subtle sm:p-9 md:order-3 md:mt-24">
         <Reveal>
           <h2 className="text-subheading font-serif font-normal text-paper">Got a project that needs help?</h2>
           <p className="mt-2 max-w-[62ch] text-body-sm text-fog">
@@ -256,7 +268,7 @@ export default function Home() {
         <p className="mt-4 text-[14px] text-ash">Sign-in is limited to NHS and university email addresses.</p>
       </section>
 
-      <section className="mt-24">
+      <section className="order-4 mt-16 md:mt-24">
         <Reveal>
           <h2 className="text-subheading font-serif font-normal text-paper">Why this exists</h2>
         </Reveal>
@@ -283,7 +295,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="mt-16 flex flex-wrap items-center justify-between gap-4 rounded-cards bg-carbon px-6 py-4 shadow-subtle">
+      <section className="order-5 mt-16 flex flex-wrap items-center justify-between gap-4 rounded-cards bg-carbon px-6 py-4 shadow-subtle">
         <Reveal>
           <p className="text-body font-[510] text-paper">Looking for a project to join?</p>
         </Reveal>

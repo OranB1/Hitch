@@ -117,6 +117,33 @@ p {
   text-wrap: pretty;
 }
 
+/* Entrance used by <Reveal>. Pure CSS so nothing depends on JavaScript to become visible: the
+   resting state is fully shown, and the animation only plays when motion is allowed. A section
+   parked below the fold (data-reveal="pending", set after hydration) holds the start frame until
+   it scrolls in. */
+@keyframes reveal-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .reveal {
+    animation: reveal-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0s) backwards;
+  }
+
+  .reveal[data-reveal="pending"] {
+    animation: none;
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
 @keyframes toast-in {
   from {
     opacity: 0;
