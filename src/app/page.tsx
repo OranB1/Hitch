@@ -156,7 +156,7 @@ export default function Home() {
                 <span aria-hidden="true" className="size-[6px] rounded-full bg-[#0a6c78]" />
                 Audit
               </span>
-              <h3 className="mt-3 text-[19px] font-[510] leading-[1.35] text-paper">{MATCH_EXAMPLE.title}</h3>
+              <h3 className="mt-3 text-balance text-[19px] font-[510] leading-[1.35] text-paper">{MATCH_EXAMPLE.title}</h3>
               <p className="text-body-sm text-fog">{MATCH_EXAMPLE.department}</p>
               <h4 className="mt-5 text-body-sm font-[510] text-paper">How this lines up with your profile</h4>
               <p className="mt-1 text-[14px] text-ash">A guide, not a gate. You can apply regardless.</p>

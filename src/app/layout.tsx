@@ -23,7 +23,7 @@ const jetbrainsMono = JetBrains_Mono({
 
 const TITLE = "Hitch: Get your QIP, audit, or research project done.";
 const DESCRIPTION =
-  "A structured marketplace matching hospitals and consultants with medical students and foundation doctors for QIPs, audits, research, and presentations.";
+  "A structured marketplace matching hospitals and consultants with medical students and foundation doctors for QIPs, audits, research, teaching and presentations.";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://hitch.health"),

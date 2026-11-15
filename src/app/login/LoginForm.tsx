@@ -93,13 +93,13 @@ export default function LoginForm({ forPosting = false }: { forPosting?: boolean
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder={forPosting ? "you@nhs.net" : "you@imperial.ac.uk or you@nhs.net"}
+          placeholder={forPosting ? "you@nhs.net" : "you@university.ac.uk"}
           className="mt-1 w-full rounded-inputs border border-graphite bg-black/[0.025] px-[14px] py-[12px] text-[16px] text-mist focus:border-mist focus:outline-none"
         />
         <p className="mt-1 text-caption text-ash">
           {forPosting
-            ? "Use an address ending .nhs.net, .nhs.uk or .ac.uk. It stays private."
-            : "Must end in .ac.uk, nhs.net, or nhs.uk. This is currently for UK medical students and doctors only."}
+            ? "Must end in .nhs.net, .nhs.uk or .ac.uk. It stays private."
+            : "Must end in .ac.uk, .nhs.net or .nhs.uk. Hitch is for UK medical students and doctors."}
         </p>
       </div>
 
@@ -114,7 +114,7 @@ export default function LoginForm({ forPosting = false }: { forPosting?: boolean
         disabled={status === "sending"}
         className="min-h-[44px] rounded-buttons bg-acid-lime px-5 py-[10px] text-[14px] font-[510] tracking-[-0.011em] text-void transition-opacity hover:opacity-90 disabled:opacity-50"
       >
-        {status === "sending" ? "Sending…" : forPosting ? "Send sign-in link" : "Send magic link"}
+        {status === "sending" ? "Sending…" : "Send sign-in link"}
       </button>
     </form>
   );

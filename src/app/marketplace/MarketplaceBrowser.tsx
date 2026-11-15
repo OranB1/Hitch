@@ -6,7 +6,7 @@ import Link from "next/link";
 import type { User } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
 import { toastQueue } from "@/components/Toast";
-import { TASK_TYPE_OPTIONS, SKILL_OPTIONS, PROJECT_DURATION_OPTIONS, type TaskType, type Skill } from "@/lib/data/marketplace-options";
+import { TASK_TYPE_OPTIONS, SKILL_OPTIONS, PROJECT_DURATION_OPTIONS, AVAILABILITY_OPTIONS, type TaskType, type Skill } from "@/lib/data/marketplace-options";
 import { stageLabel } from "@/lib/data/onboarding-options";
 import { getPartneredHospitals, computeMatch, type MatchProfile } from "@/lib/marketplace";
 import { notifyPosterOfNewApplication } from "@/lib/notifications";
@@ -17,6 +17,25 @@ type Opportunity = Tables<"opportunities">;
 type SortKey = "match" | "newest" | "closing";
 
 const SKILL_LABEL = new Map(SKILL_OPTIONS.map((s) => [s.value, s.label]));
+
+// Every listing on the board today is fabricated demo data, so the notice above the list and the
+// "Example" mark on each card and listing header share this one switch. The mark is on the listing
+// itself because the notice scrolls away, and the phone sheet covers it entirely. Turn this off
+// (or replace it with a per-row flag) when real postings go live.
+const BOARD_IS_EXAMPLE_DATA = true;
+
+function ExampleTag({ className = "" }: { className?: string }) {
+  return (
+    <span className={`rounded-badges border border-smoke px-2 text-label font-[600] text-fog ${className}`}>
+      Example
+    </span>
+  );
+}
+
+// Stored as "<2h", "2-5h", "5-10h"; shown with the unit so it can't be read as a total.
+function commitmentLabel(value: string) {
+  return AVAILABILITY_OPTIONS.some((a) => a.value === value) ? `${value}/week` : value;
+}
 
 // Colour belongs to task type, not specialty: six bounded values rather than one hue per
 // specialty, which would be a rainbow and would mostly fail contrast. Each pairs a readable ink
@@ -35,7 +54,7 @@ const taskTone = (t: string) => TASK_TONE[t] ?? TASK_TONE.other;
 // out rather than shown as an empty or "not specified" field.
 function cardFacts(o: Opportunity) {
   const facts: string[] = [];
-  if (o.estimated_commitment) facts.push(o.estimated_commitment);
+  if (o.estimated_commitment) facts.push(commitmentLabel(o.estimated_commitment));
   if (o.project_duration) {
     facts.push(PROJECT_DURATION_OPTIONS.find((d) => d.value === o.project_duration)?.label ?? o.project_duration);
   }
@@ -486,7 +505,7 @@ export default function MarketplaceBrowser({ initialTaskType }: { initialTaskTyp
         </p>
         <button
           onClick={() => window.location.reload()}
-          className="mt-4 rounded-buttons bg-acid-lime px-4 py-[10px] text-[14px] font-[510] tracking-[-0.011em] text-void transition-opacity hover:opacity-90"
+          className="mt-4 min-h-[44px] rounded-buttons bg-acid-lime px-4 py-[10px] text-[14px] font-[510] tracking-[-0.011em] text-void transition-opacity hover:opacity-90"
         >
           Try again
         </button>
@@ -581,7 +600,7 @@ export default function MarketplaceBrowser({ initialTaskType }: { initialTaskTyp
         </div>
       </div>
 
-      {opportunities.length > 0 && (
+      {BOARD_IS_EXAMPLE_DATA && opportunities.length > 0 && (
         <div className="mt-4 flex flex-col gap-3 rounded-cards border border-graphite bg-black/[0.02] px-4 py-3 md:flex-row md:items-center md:justify-between md:pl-5 md:pr-4">
           <p className="max-w-[78ch] text-caption leading-[1.5] text-fog">
             <span className="font-[510] text-paper">These are example opportunities.</span>{" "}
@@ -609,7 +628,7 @@ export default function MarketplaceBrowser({ initialTaskType }: { initialTaskTyp
           {anyFilterActive && (
             <button
               onClick={clearFilters}
-              className="text-[13px] font-[510] text-mist underline underline-offset-2 transition-colors hover:text-paper"
+              className="inline-flex min-h-[44px] items-center text-[14px] font-[510] text-mist underline underline-offset-2 transition-colors hover:text-paper"
             >
               Clear filters
             </button>
@@ -617,7 +636,7 @@ export default function MarketplaceBrowser({ initialTaskType }: { initialTaskTyp
           {user && savedCount > 0 && (
             <button
               onClick={() => setShowSavedOnly((v) => !v)}
-              className={`rounded-badges px-[8px] py-[2px] text-[13px] font-[510] transition-colors ${
+              className={`inline-flex min-h-[44px] items-center rounded-badges px-[8px] text-[14px] font-[510] transition-colors ${
                 showSavedOnly ? "bg-acid-lime/15 text-acid-lime" : "text-mist hover:text-paper"
               }`}
             >
@@ -627,7 +646,7 @@ export default function MarketplaceBrowser({ initialTaskType }: { initialTaskTyp
           {user && hiddenCount > 0 && (
             <button
               onClick={() => setShowHidden((v) => !v)}
-              className="text-[13px] font-[510] text-ash underline underline-offset-2 transition-colors hover:text-fog"
+              className="inline-flex min-h-[44px] items-center text-[14px] font-[510] text-ash underline underline-offset-2 transition-colors hover:text-fog"
             >
               {showHidden
                 ? "Stop showing hidden"
@@ -648,13 +667,13 @@ export default function MarketplaceBrowser({ initialTaskType }: { initialTaskTyp
             <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
               <Link
                 href="/marketplace/post"
-                className="rounded-buttons bg-acid-lime px-4 py-[10px] text-[14px] font-[510] tracking-[-0.011em] text-void transition-opacity hover:opacity-90"
+                className="inline-flex min-h-[44px] items-center rounded-buttons bg-acid-lime px-4 text-[14px] font-[510] tracking-[-0.011em] text-void transition-opacity hover:opacity-90"
               >
                 Post an opportunity
               </Link>
               <Link
                 href="/demo"
-                className="rounded-buttons border border-graphite px-4 py-[10px] text-[14px] font-[510] text-mist transition-colors hover:border-smoke hover:text-paper"
+                className="inline-flex min-h-[44px] items-center rounded-buttons border border-graphite px-4 text-[14px] font-[510] text-mist transition-colors hover:border-smoke hover:text-paper"
               >
                 See a demo
               </Link>
@@ -670,7 +689,7 @@ export default function MarketplaceBrowser({ initialTaskType }: { initialTaskTyp
             </p>
             <button
               onClick={clearFilters}
-              className="mt-6 rounded-buttons bg-acid-lime px-4 py-[10px] text-[14px] font-[510] tracking-[-0.011em] text-void transition-opacity hover:opacity-90"
+              className="mt-6 min-h-[44px] rounded-buttons bg-acid-lime px-4 py-[10px] text-[14px] font-[510] tracking-[-0.011em] text-void transition-opacity hover:opacity-90"
             >
               Clear filters
             </button>
@@ -761,6 +780,7 @@ export default function MarketplaceBrowser({ initialTaskType }: { initialTaskTyp
                           {STATUS_LABEL[application.status] ?? application.status}
                         </span>
                       )}
+                      {BOARD_IS_EXAMPLE_DATA && <ExampleTag className="ml-auto" />}
                     </div>
                   </div>
                 </button>
@@ -798,6 +818,16 @@ export default function MarketplaceBrowser({ initialTaskType }: { initialTaskTyp
                   <span aria-hidden>←</span> All opportunities
                 </button>
               </div>
+              <div className="mb-3 flex flex-wrap items-center gap-2">
+                <span
+                  className="inline-flex items-center gap-[6px] rounded-badges px-[8px] py-[2px] text-[14px] font-[510] leading-[1.3]"
+                  style={{ color: taskTone(selected.task_type).text, backgroundColor: taskTone(selected.task_type).wash }}
+                >
+                  <span aria-hidden className="h-[6px] w-[6px] shrink-0 rounded-pills bg-current" />
+                  {TASK_TYPE_OPTIONS.find((t) => t.value === selected.task_type)?.label ?? selected.task_type}
+                </span>
+                {BOARD_IS_EXAMPLE_DATA && <ExampleTag />}
+              </div>
               <h2
                 ref={headingRef}
                 tabIndex={-1}
@@ -827,7 +857,7 @@ export default function MarketplaceBrowser({ initialTaskType }: { initialTaskTyp
                     onClick={() =>
                       setListing(selected.id, listingState.get(selected.id) === "saved" ? null : "saved")
                     }
-                    className={`rounded-buttons border px-3 py-[6px] text-[13px] font-[510] transition-colors ${
+                    className={`min-h-[44px] rounded-buttons border px-4 text-[14px] font-[510] transition-colors ${
                       listingState.get(selected.id) === "saved"
                         ? "border-acid-lime bg-acid-lime/10 text-acid-lime"
                         : "border-graphite text-mist hover:border-smoke hover:text-paper"
@@ -839,7 +869,7 @@ export default function MarketplaceBrowser({ initialTaskType }: { initialTaskTyp
                     onClick={() =>
                       setListing(selected.id, listingState.get(selected.id) === "hidden" ? null : "hidden")
                     }
-                    className="rounded-buttons border border-graphite px-3 py-[6px] text-[13px] font-[510] text-mist transition-colors hover:border-smoke hover:text-paper"
+                    className="min-h-[44px] rounded-buttons border border-graphite px-4 text-[14px] font-[510] text-mist transition-colors hover:border-smoke hover:text-paper"
                   >
                     {listingState.get(selected.id) === "hidden" ? "Unhide" : "Hide"}
                   </button>
@@ -848,7 +878,7 @@ export default function MarketplaceBrowser({ initialTaskType }: { initialTaskTyp
 
               {(() => {
                 const facts: { label: string; value: string }[] = [];
-                if (selected.estimated_commitment) facts.push({ label: "Commitment", value: selected.estimated_commitment });
+                if (selected.estimated_commitment) facts.push({ label: "Commitment", value: commitmentLabel(selected.estimated_commitment) });
                 if (selected.project_duration) {
                   facts.push({
                     label: "Duration",
@@ -929,34 +959,19 @@ export default function MarketplaceBrowser({ initialTaskType }: { initialTaskTyp
                 </section>
               )}
 
-              {((selected.required_skills && selected.required_skills.length > 0) ||
-                (selected.preferred_skills && selected.preferred_skills.length > 0)) && (
-                <div className="mt-4 flex flex-wrap gap-[6px]">
-                  {selected.required_skills?.map((s) => (
-                    <span key={s} className="rounded-badges bg-iris-violet/15 px-2 py-[1px] text-[13px] text-iris-violet">
-                      {SKILL_OPTIONS.find((o) => o.value === s)?.label ?? s}
-                    </span>
-                  ))}
-                  {selected.preferred_skills?.map((s) => (
-                    <span key={s} className="rounded-badges bg-black/[0.045] px-2 py-[1px] text-[13px] text-fog">
-                      {SKILL_OPTIONS.find((o) => o.value === s)?.label ?? s} (preferred)
-                    </span>
-                  ))}
-                </div>
-              )}
-
               <div className="mt-6 border-t-[0.5px] border-graphite pt-4">
                 {!user ? (
                   <div className="flex flex-wrap items-center gap-4">
                     <p className="min-w-[220px] flex-1 text-caption leading-[1.5] text-fog">
-                      Sign in to apply. You&apos;ll also see how well each opportunity matches your year,
-                      specialty interest, skills and availability.
+                      {BOARD_IS_EXAMPLE_DATA
+                        ? "Applications aren't open yet. Sign in to see how each example matches your year, specialty interest, skills and availability."
+                        : "Sign in to apply. You'll also see how well each opportunity matches your year, specialty interest, skills and availability."}
                     </p>
                     <Link
                       href="/login"
                       className="inline-flex min-h-[44px] w-full items-center justify-center rounded-buttons bg-acid-lime px-4 text-[14px] font-[510] tracking-[-0.011em] text-void transition-opacity hover:opacity-90 sm:w-auto"
                     >
-                      Sign in to apply
+                      {BOARD_IS_EXAMPLE_DATA ? "Sign in to see your match" : "Sign in to apply"}
                     </Link>
                   </div>
                 ) : selectedApplication?.status === "accepted" ? (
@@ -1000,7 +1015,7 @@ export default function MarketplaceBrowser({ initialTaskType }: { initialTaskTyp
                     <button
                       onClick={handleApply}
                       disabled={applying}
-                      className="mt-3 rounded-buttons bg-acid-lime px-4 py-[10px] text-[14px] font-[510] tracking-[-0.011em] text-void transition-opacity hover:opacity-90 disabled:opacity-50"
+                      className="mt-3 min-h-[44px] rounded-buttons bg-acid-lime px-5 py-[10px] text-[14px] font-[510] tracking-[-0.011em] text-void transition-opacity hover:opacity-90 disabled:opacity-50"
                     >
                       {applying ? "Applying…" : "Apply"}
                     </button>

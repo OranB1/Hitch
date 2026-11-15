@@ -43,7 +43,7 @@ export default function DemoRoot() {
       <div className="mt-8 grid gap-4 sm:grid-cols-2">
         <button
           onClick={() => setView("doctor")}
-          className="group rounded-cards border border-graphite bg-carbon p-6 text-left shadow-subtle transition-colors hover:border-smoke"
+          className="group flex h-full flex-col items-start rounded-cards border border-graphite bg-carbon p-6 text-left shadow-subtle transition-colors hover:border-smoke"
         >
           <div className="flex h-11 w-11 items-center justify-center rounded-pills bg-iris-violet/15 text-iris-violet">
             <Stethoscope size={20} />
@@ -53,14 +53,14 @@ export default function DemoRoot() {
             As a consultant, registrar, or QI lead: see the whole posting flow in under two
             minutes.
           </p>
-          <span className="mt-4 inline-flex items-center gap-1 text-[13px] font-[510] text-mist transition-colors group-hover:text-paper">
+          <span className="mt-auto inline-flex items-center gap-1 pt-4 text-[14px] font-[510] text-mist transition-colors group-hover:text-paper">
             Start here <ArrowRight size={14} />
           </span>
         </button>
 
         <button
           onClick={() => setView("student")}
-          className="group rounded-cards border border-graphite bg-carbon p-6 text-left shadow-subtle transition-colors hover:border-smoke"
+          className="group flex h-full flex-col items-start rounded-cards border border-graphite bg-carbon p-6 text-left shadow-subtle transition-colors hover:border-smoke"
         >
           <div className="flex h-11 w-11 items-center justify-center rounded-pills bg-acid-lime/15 text-acid-lime">
             <GraduationCap size={20} />
@@ -69,7 +69,7 @@ export default function DemoRoot() {
           <p className="mt-1 text-body-sm text-fog">
             As a student or foundation doctor: browse, see your match score, and apply.
           </p>
-          <span className="mt-4 inline-flex items-center gap-1 text-[13px] font-[510] text-mist transition-colors group-hover:text-paper">
+          <span className="mt-auto inline-flex items-center gap-1 pt-4 text-[14px] font-[510] text-mist transition-colors group-hover:text-paper">
             Start here <ArrowRight size={14} />
           </span>
         </button>

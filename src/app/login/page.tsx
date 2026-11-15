@@ -26,9 +26,7 @@ export default async function LoginPage({
         {forPosting ? "Sign in to post an opportunity" : "Sign in"}
       </h1>
       <p className="mt-2 text-body-sm text-fog">
-        {forPosting
-          ? "We'll email you a one-time link. No password."
-          : "No password needed, we'll email you a one-time link."}
+        We&apos;ll email you a one-time link. No password.
       </p>
       {forPosting && (
         <ul className="mt-4 grid gap-[10px]">

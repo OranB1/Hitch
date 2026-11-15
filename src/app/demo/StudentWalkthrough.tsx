@@ -208,12 +208,12 @@ export default function StudentWalkthrough({
     <main id="main" className="mx-auto w-full max-w-2xl flex-1 px-6 py-16">
       <button
         onClick={onExit}
-        className="inline-flex items-center gap-1 text-caption text-ash transition-colors hover:text-fog"
+        className="flex min-h-[44px] items-center gap-1 text-[14px] text-ash transition-colors hover:text-fog"
       >
-        <ArrowLeft size={13} /> All demos
+        <ArrowLeft size={14} /> All demos
       </button>
 
-      <div className="mt-4 inline-flex items-center gap-2 rounded-pills bg-black/[0.045] px-3 py-[6px] text-label text-fog">
+      <div className="inline-flex items-center gap-2 rounded-pills bg-black/[0.045] px-3 py-[6px] text-label text-fog">
         <span className="h-1.5 w-1.5 rounded-full bg-iris-violet" />
         Demo: example opportunities, nothing you enter here is saved
       </div>
@@ -223,7 +223,7 @@ export default function StudentWalkthrough({
       </h1>
       <p className="mt-2 text-body-sm text-fog">
         {postedOpportunity
-          ? "The opportunity you just posted is now visible here, matched against a student profile, exactly as it would appear for real."
+          ? "The example you just wrote is shown here, matched against a student profile, the way it would appear on the board."
           : "This is what a medical student or foundation doctor sees when they open Hitch. No account needed to look around."}
       </p>
 
@@ -305,13 +305,13 @@ export default function StudentWalkthrough({
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder="Search opportunities"
                     aria-label="Search opportunities"
-                    className="w-full min-w-0 rounded-inputs border border-graphite bg-black/[0.025] px-3 py-2 text-[13px] text-mist focus:border-mist focus:outline-none sm:w-auto sm:flex-1"
+                    className="min-h-[44px] w-full min-w-0 rounded-inputs border border-graphite bg-black/[0.025] px-3 py-2 text-[16px] text-mist focus:border-mist focus:outline-none sm:w-auto sm:flex-1"
                   />
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value as "match" | "closing")}
                     aria-label="Sort opportunities"
-                    className="rounded-inputs border border-graphite bg-black/[0.025] px-3 py-2 text-[13px] text-mist focus:border-mist focus:outline-none"
+                    className="min-h-[44px] rounded-inputs border border-graphite bg-black/[0.025] px-3 py-2 text-[16px] text-mist focus:border-mist focus:outline-none"
                   >
                     <option value="match" className="bg-carbon">Best match</option>
                     <option value="closing" className="bg-carbon">Closing soonest</option>
@@ -413,10 +413,11 @@ export default function StudentWalkthrough({
                   Your profile is attached automatically. Just add a short note.
                 </p>
                 <textarea
+                  aria-label="Note to the poster"
                   rows={4}
                   value={coverNote}
                   onChange={(e) => setCoverNote(e.target.value)}
-                  className="mt-4 w-full rounded-inputs border border-graphite bg-black/[0.025] px-[14px] py-[12px] text-[14px] text-mist focus:border-mist focus:outline-none"
+                  className="mt-4 w-full rounded-inputs border border-graphite bg-black/[0.025] px-[14px] py-[12px] text-[16px] text-mist focus:border-mist focus:outline-none"
                 />
               </div>
             )}
@@ -468,11 +469,11 @@ export default function StudentWalkthrough({
                 </div>
 
                 <div className="mt-8 flex flex-wrap gap-3">
-                  <Button onClick={restart} variant="secondary">
+                  <Button onClick={restart} variant="secondary" size="lg">
                     Restart demo
                   </Button>
-                  <Button href="/marketplace" variant="primary">
-                    Browse real opportunities
+                  <Button href="/marketplace" variant="primary" size="lg">
+                    See the example board
                   </Button>
                 </div>
               </div>
@@ -485,13 +486,13 @@ export default function StudentWalkthrough({
             <button
               onClick={goBack}
               disabled={stepIndex === 0}
-              className="rounded-buttons border border-graphite px-4 py-2 text-[13px] text-mist disabled:opacity-0"
+              className="min-h-[44px] rounded-buttons border border-graphite px-5 text-[14px] text-mist disabled:opacity-0"
             >
               Back
             </button>
             <button
               onClick={goNext}
-              className="rounded-buttons bg-acid-lime px-4 py-[10px] text-[14px] font-[510] tracking-[-0.011em] text-void transition-opacity hover:opacity-90"
+              className="min-h-[44px] rounded-buttons bg-acid-lime px-5 text-[14px] font-[510] tracking-[-0.011em] text-void transition-opacity hover:opacity-90"
             >
               {step === "apply" ? "Send application" : "Next"}
             </button>

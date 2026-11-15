@@ -66,8 +66,8 @@ const CROSS_TRUST_TEASER = [
 
 const CARD = "rounded-cards bg-carbon p-6 shadow-subtle sm:p-8";
 const INPUT_CLASS =
-  "mt-1 w-full rounded-inputs border border-graphite bg-black/[0.025] px-[14px] py-[12px] text-[14px] text-mist focus:border-mist focus:outline-none";
-const CHIP_BASE = "rounded-pills border px-3 py-[7px] text-[13px] transition-colors";
+  "mt-1 w-full rounded-inputs border border-graphite bg-black/[0.025] min-h-[44px] px-[14px] py-[12px] text-[16px] text-mist focus:border-mist focus:outline-none";
+const CHIP_BASE = "inline-flex min-h-[44px] items-center rounded-pills border px-4 text-[14px] transition-colors";
 const CHIP_ON = "border-acid-lime bg-acid-lime/10 text-paper";
 const CHIP_OFF = "border-graphite text-mist hover:border-smoke";
 
@@ -156,12 +156,12 @@ export default function DoctorWalkthrough({
     <main id="main" className="mx-auto w-full max-w-2xl flex-1 px-6 py-16">
       <button
         onClick={onExit}
-        className="inline-flex items-center gap-1 text-caption text-ash transition-colors hover:text-fog"
+        className="flex min-h-[44px] items-center gap-1 text-[14px] text-ash transition-colors hover:text-fog"
       >
-        <ArrowLeft size={13} /> All demos
+        <ArrowLeft size={14} /> All demos
       </button>
 
-      <div className="mt-4 inline-flex items-center gap-2 rounded-pills bg-black/[0.045] px-3 py-[6px] text-label text-fog">
+      <div className="inline-flex items-center gap-2 rounded-pills bg-black/[0.045] px-3 py-[6px] text-label text-fog">
         <span className="h-1.5 w-1.5 rounded-full bg-iris-violet" />
         Demo: example opportunities, nothing you enter here is saved
       </div>
@@ -170,9 +170,8 @@ export default function DoctorWalkthrough({
         Posting an opportunity, as a doctor
       </h1>
       <p className="mt-2 text-body-sm text-fog">
-        This is exactly what it looks like for a consultant, registrar, or QI lead to post a real
-        opportunity on Hitch. Try changing the fields below, it&apos;s the real posting form,
-        just without needing to sign in.
+        This is what posting looks like for a consultant, registrar or QI lead. Try changing the
+        fields below. Nothing is saved and nothing goes on the board.
       </p>
 
       {step !== "posted" && (
@@ -228,6 +227,7 @@ export default function DoctorWalkthrough({
                 <div className="mt-3 flex gap-2">
                   <button
                     type="button"
+                    aria-pressed={!isRemote}
                     onClick={() => setIsRemote(false)}
                     className={`${CHIP_BASE} ${!isRemote ? CHIP_ON : CHIP_OFF}`}
                   >
@@ -235,6 +235,7 @@ export default function DoctorWalkthrough({
                   </button>
                   <button
                     type="button"
+                    aria-pressed={isRemote}
                     onClick={() => setIsRemote(true)}
                     className={`${CHIP_BASE} ${isRemote ? CHIP_ON : CHIP_OFF}`}
                   >
@@ -242,10 +243,11 @@ export default function DoctorWalkthrough({
                   </button>
                 </div>
                 <div className="mt-4">
-                  <label className="block text-body-sm text-mist">
+                  <label htmlFor="demo-hospital" className="block text-body-sm text-mist">
                     Hospital / trust{!isRemote && <span className="text-coral-red"> *</span>}
                   </label>
                   <input
+                    id="demo-hospital"
                     type="text"
                     value={hospitalTrust}
                     onChange={(e) => setHospitalTrust(e.target.value)}
@@ -265,6 +267,7 @@ export default function DoctorWalkthrough({
                       <button
                         key={o.value}
                         type="button"
+                        aria-pressed={taskType === o.value}
                         onClick={() => setTaskType(o.value)}
                         className={`${CHIP_BASE} ${taskType === o.value ? CHIP_ON : CHIP_OFF}`}
                       >
@@ -274,8 +277,9 @@ export default function DoctorWalkthrough({
                   </div>
                 </div>
                 <div>
-                  <label className="block text-body-sm text-mist">Title</label>
+                  <label htmlFor="demo-title" className="block text-body-sm text-mist">Title</label>
                   <input
+                    id="demo-title"
                     type="text"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
@@ -283,8 +287,9 @@ export default function DoctorWalkthrough({
                   />
                 </div>
                 <div>
-                  <label className="block text-body-sm text-mist">What a student would actually do</label>
+                  <label htmlFor="demo-description" className="block text-body-sm text-mist">What a student would actually do</label>
                   <textarea
+                    id="demo-description"
                     rows={4}
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
@@ -304,6 +309,7 @@ export default function DoctorWalkthrough({
                       <button
                         key={o.value}
                         type="button"
+                        aria-pressed={requiredSkills.includes(o.value)}
                         onClick={() => setRequiredSkills((prev) => toggle(prev, o.value))}
                         className={`${CHIP_BASE} ${requiredSkills.includes(o.value) ? CHIP_ON : CHIP_OFF}`}
                       >
@@ -320,6 +326,7 @@ export default function DoctorWalkthrough({
                       <button
                         key={o.value}
                         type="button"
+                        aria-pressed={preferredSkills.includes(o.value)}
                         onClick={() => setPreferredSkills((prev) => toggle(prev, o.value))}
                         className={`${CHIP_BASE} ${preferredSkills.includes(o.value) ? CHIP_ON : CHIP_OFF}`}
                       >
@@ -330,8 +337,9 @@ export default function DoctorWalkthrough({
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>
-                    <label className="block text-body-sm text-mist">Experience level *</label>
+                    <label htmlFor="demo-experience" className="block text-body-sm text-mist">Experience level *</label>
                     <select
+                      id="demo-experience"
                       className={INPUT_CLASS}
                       value={experienceLevel}
                       onChange={(e) => setExperienceLevel(e.target.value as ExperienceLevel)}
@@ -344,8 +352,9 @@ export default function DoctorWalkthrough({
                     </select>
                   </div>
                   <div>
-                    <label className="block text-body-sm text-mist">Minimum year / stage *</label>
+                    <label htmlFor="demo-stage" className="block text-body-sm text-mist">Minimum year / stage *</label>
                     <select
+                      id="demo-stage"
                       className={INPUT_CLASS}
                       value={minYearOfStudy}
                       onChange={(e) => setMinYearOfStudy(e.target.value)}
@@ -366,8 +375,9 @@ export default function DoctorWalkthrough({
                 <p className="text-[20px] font-[510] tracking-[-0.24px] text-paper">How much time will this take?</p>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>
-                    <label className="block text-body-sm text-mist">Hours per week *</label>
+                    <label htmlFor="demo-hours" className="block text-body-sm text-mist">Hours per week *</label>
                     <select
+                      id="demo-hours"
                       className={INPUT_CLASS}
                       value={estimatedCommitment}
                       onChange={(e) => setEstimatedCommitment(e.target.value as AvailabilityHours)}
@@ -380,8 +390,8 @@ export default function DoctorWalkthrough({
                     </select>
                   </div>
                   <div>
-                    <label className="block text-body-sm text-mist">Total project duration</label>
-                    <select className={INPUT_CLASS} value={duration} onChange={(e) => setDuration(e.target.value)}>
+                    <label htmlFor="demo-duration" className="block text-body-sm text-mist">Total project duration</label>
+                    <select id="demo-duration" className={INPUT_CLASS} value={duration} onChange={(e) => setDuration(e.target.value)}>
                       {PROJECT_DURATION_OPTIONS.map((o) => (
                         <option key={o.value} value={o.label} className="bg-carbon">
                           {o.label}
@@ -437,12 +447,12 @@ export default function DoctorWalkthrough({
               <div>
                 <div className="flex items-center gap-2">
                   <span className="h-2 w-2 rounded-full bg-pulse-green" />
-                  <p className="text-[20px] font-[510] tracking-[-0.24px] text-paper">Your opportunity is live</p>
+                  <p className="text-[20px] font-[510] tracking-[-0.24px] text-paper">This is how your post would appear</p>
                 </div>
                 <p className="mt-1 text-body-sm text-fog">
                   {isRemote
-                    ? "Students and foundation doctors looking for remote work can see and apply to this now. You'll see a ranked shortlist as applications come in."
-                    : `Students and foundation doctors near ${hospitalTrust.split(" NHS")[0]} can see and apply to this now. You'll see a ranked shortlist as applications come in.`}
+                    ? "Students and foundation doctors looking for remote work would see this on the board and could apply. You would get a ranked shortlist as applications come in."
+                    : `Students and foundation doctors near ${hospitalTrust.split(" NHS")[0]} would see this on the board and could apply. You would get a ranked shortlist as applications come in.`}
                 </p>
 
                 <div className="mt-6 rounded-cards border border-graphite bg-black/[0.015] p-5">
@@ -491,11 +501,11 @@ export default function DoctorWalkthrough({
                 </div>
 
                 <div className="mt-8 flex flex-wrap gap-3">
-                  <Button onClick={restart} variant="secondary">
+                  <Button onClick={restart} variant="secondary" size="lg">
                     Restart demo
                   </Button>
-                  <Button href="/marketplace/post" variant="primary">
-                    Post a real opportunity
+                  <Button href="/marketplace/post" variant="primary" size="lg">
+                    Post an opportunity
                   </Button>
                 </div>
               </div>
@@ -508,13 +518,13 @@ export default function DoctorWalkthrough({
             <button
               onClick={goBack}
               disabled={stepIndex === 0}
-              className="rounded-buttons border border-graphite px-4 py-2 text-[13px] text-mist disabled:opacity-0"
+              className="min-h-[44px] rounded-buttons border border-graphite px-5 text-[14px] text-mist disabled:opacity-0"
             >
               Back
             </button>
             <button
               onClick={goNext}
-              className="rounded-buttons bg-acid-lime px-4 py-[10px] text-[14px] font-[510] tracking-[-0.011em] text-void transition-opacity hover:opacity-90"
+              className="min-h-[44px] rounded-buttons bg-acid-lime px-5 text-[14px] font-[510] tracking-[-0.011em] text-void transition-opacity hover:opacity-90"
             >
               {step === "preview" ? "Post opportunity" : "Next"}
             </button>
