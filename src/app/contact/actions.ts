@@ -2,6 +2,7 @@
 
 import { Resend } from "resend";
 import { createClient } from "@/lib/supabase/server";
+import { CONTACT_TOPICS } from "./topics";
 
 const CONTACT_EMAIL_TO = "oran.barak9@gmail.com";
 
@@ -16,11 +17,16 @@ export async function submitContactForm(
 ): Promise<ContactFormState> {
   const name = String(formData.get("name") ?? "").trim();
   const email = String(formData.get("email") ?? "").trim();
-  const message = String(formData.get("message") ?? "").trim();
+  const body = String(formData.get("message") ?? "").trim();
+  const topicValue = formData.get("topic");
+  const topic = CONTACT_TOPICS.find((t) => t.value === topicValue);
 
-  if (!name || !email || !message) {
+  if (!name || !email || !body) {
     return { status: "error", message: "Please fill in every field." };
   }
+
+  // The topic rides at the start of the message, so the table and the email need no new column.
+  const message = topic ? `[${topic.label}]\n\n${body}` : body;
 
   const supabase = await createClient();
   const { error: dbError } = await supabase.from("contact_messages").insert({ name, email, message });

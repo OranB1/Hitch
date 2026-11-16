@@ -135,6 +135,11 @@ export default function Home() {
             >
               Not ready to sign in? See a demo <ArrowRight size={13} />
             </Link>
+            <p className="mt-3 flex max-w-[30rem] items-baseline gap-2 text-[14px] text-fog">
+              <span aria-hidden="true" className="inline-block size-2 shrink-0 translate-y-[-1px] rounded-full bg-smoke" />
+              Hitch hasn&apos;t launched yet. The board shows example projects so you can see how it
+              works.
+            </p>
           </Reveal>
         </div>
 
@@ -266,6 +271,16 @@ export default function Home() {
           </Button>
         </div>
         <p className="mt-4 text-[14px] text-ash">Sign-in is limited to NHS and university email addresses.</p>
+        <div className="mt-6 border-t border-graphite pt-5">
+          <p className="text-body font-[510] text-paper">Run QI or audit for a department or trust?</p>
+          <p className="mt-1 text-body-sm text-fog">We&apos;re looking for teams to try Hitch with before launch.</p>
+          <Link
+            href="/contact?topic=qi"
+            className="inline-flex min-h-[44px] items-center gap-1 text-[15px] font-[510] text-acid-lime hover:underline"
+          >
+            Talk to us about a pilot <ArrowRight size={14} />
+          </Link>
+        </div>
       </section>
 
       <section className="order-4 mt-16 md:mt-24">

@@ -77,7 +77,9 @@ const OTHER_OPPORTUNITIES: DemoListing[] = [
       "Reviewing compliance with local antimicrobial guidelines for community-acquired pneumonia. Good first audit: full training and supervision provided.",
     taskType: "audit",
     specialty: null,
-    hospital_trust: "Chelsea and Westminster Hospital",
+    // Not Chelsea and Westminster: that pilot is pending, and an example post from there would
+    // read as if it were running.
+    hospital_trust: "St Mary's Hospital",
     deanery_region: null,
     min_year_of_study: null,
     required_skills: ["governance_training"],
