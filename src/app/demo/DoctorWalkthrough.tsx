@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
-import { ArrowLeft, User, Building2, ClipboardList, ListChecks, Clock, Eye } from "lucide-react";
+import { ArrowLeft, Building2, ClipboardList, ListChecks, Clock, Eye, Users } from "lucide-react";
 import { Button } from "@/components/Button";
 import {
   TASK_TYPE_OPTIONS,
@@ -16,53 +16,48 @@ import {
   type ExperienceLevel,
   type AvailabilityHours,
 } from "@/lib/data/marketplace-options";
-import { computeMatch } from "@/lib/marketplace";
+import type { OpportunityForMatch } from "@/lib/marketplace";
 import { STAGE_OPTIONS, stageLabel } from "@/lib/data/onboarding-options";
-import { DEMO_STUDENT_PROFILE } from "./demoStudentProfile";
+import { rankDemoApplicants } from "./demoApplicants";
+import { DemoCardBody, DEMO_CARD_CLASS } from "./DemoCard";
 import type { PostedOpportunity } from "./types";
 
-const STEPS = ["profile", "hospital", "basics", "requirements", "commitment", "preview", "posted"] as const;
+// No "who's posting" step: it showed a made-up consultant's name, and posts on the board are
+// attributed to a hospital only. The walkthrough ends on the part that saves a poster time, the
+// ranked list of who applied.
+const STEPS = ["hospital", "basics", "requirements", "commitment", "preview", "posted"] as const;
 type Step = (typeof STEPS)[number];
 
 const STEP_LABEL: Record<Step, string> = {
-  profile: "Your details",
   hospital: "Your hospital",
   basics: "What are you posting?",
   requirements: "What do you need?",
   commitment: "Commitment",
   preview: "Preview",
-  posted: "Posted",
+  posted: "Who applied",
 };
 
 const STEP_ICON: Record<Step, React.ComponentType<{ size?: number }>> = {
-  profile: User,
   hospital: Building2,
   basics: ClipboardList,
   requirements: ListChecks,
   commitment: Clock,
   preview: Eye,
-  posted: Eye,
+  posted: Users,
 };
 
-// Fictional trusts and figures: deliberately not naming any real NHS trust here, since this is
-// an illustrative "coming soon" mockup, not real data.
-const CROSS_TRUST_TEASER = [
-  {
-    trust: "A London teaching hospital trust",
-    title: "Cutting surgical-site infections on colorectal wards",
-    stat: "Illustrative example",
-  },
-  {
-    trust: "A regional acute trust",
-    title: "Standardising discharge summaries in acute medicine",
-    stat: "Illustrative example",
-  },
-  {
-    trust: "A district general hospital",
-    title: "Improving VTE prophylaxis prescribing on admission",
-    stat: "Illustrative example",
-  },
-];
+type DemoStatus = "shortlisted" | "accepted" | "declined";
+const STATUS_PILL: Record<DemoStatus, string> = {
+  shortlisted: "bg-iris-violet/15 text-iris-violet",
+  accepted: "bg-pulse-green/15 text-[#13633a]",
+  declined: "bg-black/[0.045] text-ash",
+};
+const STATUS_LABEL: Record<DemoStatus, string> = {
+  shortlisted: "Shortlisted",
+  accepted: "Accepted",
+  declined: "Declined",
+};
+const ACTION_BTN = "inline-flex min-h-[44px] items-center rounded-buttons px-4 text-[14px] transition-colors";
 
 const CARD = "rounded-cards bg-carbon p-6 shadow-subtle sm:p-8";
 const INPUT_CLASS =
@@ -108,6 +103,7 @@ export default function DoctorWalkthrough({
   const [minYearOfStudy, setMinYearOfStudy] = useState("3");
   const [estimatedCommitment, setEstimatedCommitment] = useState<AvailabilityHours>("2-5h");
   const [duration, setDuration] = useState("1–3 months");
+  const [statuses, setStatuses] = useState<Record<string, DemoStatus>>({});
 
   function goNext() {
     if (step === "preview") {
@@ -135,22 +131,22 @@ export default function DoctorWalkthrough({
   function restart() {
     setDirection(-1);
     setStepIndex(0);
+    setStatuses({});
   }
 
-  const taskTypeLabel = TASK_TYPE_OPTIONS.find((t) => t.value === taskType)?.label ?? taskType;
-  const matchPercent = computeMatch(
-    {
-      specialty: null,
-      hospital_trust: hospitalTrust,
-      deanery_region: null,
-      min_year_of_study: minYearOfStudy,
-      required_skills: requiredSkills,
-      preferred_skills: preferredSkills,
-      experience_level: experienceLevel,
-      estimated_commitment: estimatedCommitment,
-    },
-    DEMO_STUDENT_PROFILE
-  ).percent;
+  const location = isRemote ? "Remote / virtual" : hospitalTrust || "Location not specified";
+  const cardFacts = [`${estimatedCommitment}/week`, duration];
+  const opportunityForMatch: OpportunityForMatch = {
+    specialty: null,
+    hospital_trust: isRemote ? null : hospitalTrust || null,
+    deanery_region: null,
+    min_year_of_study: minYearOfStudy,
+    required_skills: requiredSkills,
+    preferred_skills: preferredSkills,
+    experience_level: experienceLevel,
+    estimated_commitment: estimatedCommitment,
+  };
+  const applicants = rankDemoApplicants(opportunityForMatch);
 
   return (
     <main id="main" className="mx-auto w-full max-w-2xl flex-1 px-6 py-16">
@@ -200,24 +196,6 @@ export default function DoctorWalkthrough({
             exit="exit"
             transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
           >
-            {step === "profile" && (
-              <div>
-                <p className="text-[20px] font-[510] tracking-[-0.24px] text-paper">Who&apos;s posting</p>
-                <p className="mt-1 text-caption text-ash">
-                  Pulled automatically from your Hitch profile. Nothing to fill in here.
-                </p>
-                <div className="mt-5 flex items-center gap-4 rounded-inputs border border-graphite bg-black/[0.02] p-4">
-                  <div className="h-12 w-12 shrink-0 rounded-pills bg-iris-violet/15 flex items-center justify-center text-[17px] font-[510] text-iris-violet">
-                    AO
-                  </div>
-                  <div>
-                    <p className="font-[510] text-paper">Dr. Amara Okafor</p>
-                    <p className="text-caption text-fog">Consultant, Cardiothoracic Surgery</p>
-                  </div>
-                </div>
-              </div>
-            )}
-
             {step === "hospital" && (
               <div>
                 <p className="text-[20px] font-[510] tracking-[-0.24px] text-paper">Where will this be done?</p>
@@ -406,15 +384,14 @@ export default function DoctorWalkthrough({
             {step === "preview" && (
               <div>
                 <p className="text-[20px] font-[510] tracking-[-0.24px] text-paper">This is what students will see</p>
-                <div className="mt-4 rounded-cards border border-graphite bg-black/[0.015] p-5">
-                  <p className="font-[510] text-paper">{title}</p>
-                  <p className="mt-1 text-caption text-fog">
-                    {isRemote ? "Remote / virtual" : hospitalTrust || "Location not specified"}
-                  </p>
-                  <div className="mt-2 flex flex-wrap gap-1">
-                    <span className="rounded-badges bg-black/[0.045] px-[6px] text-label text-fog">{taskTypeLabel}</span>
-                  </div>
-                  <p className="mt-3 whitespace-pre-wrap text-body-sm text-mist">{description}</p>
+                <p className="mt-1 text-caption text-ash">
+                  The same card as on the board, so what you preview here is what they&apos;ll get.
+                </p>
+                <div className={`${DEMO_CARD_CLASS} mt-4 border-graphite bg-carbon`}>
+                  <DemoCardBody title={title} location={location} facts={cardFacts} taskType={taskType} />
+                </div>
+                <div className="mt-3 rounded-cards border border-graphite bg-black/[0.015] p-5">
+                  <p className="whitespace-pre-wrap text-body-sm text-mist">{description}</p>
                   <div className="mt-4 flex flex-wrap gap-1">
                     {requiredSkills.map((s) => (
                       <span key={s} className="rounded-badges bg-iris-violet/15 px-[6px] text-label text-iris-violet">
@@ -445,27 +422,117 @@ export default function DoctorWalkthrough({
 
             {step === "posted" && (
               <div>
-                <div className="flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-pulse-green" />
-                  <p className="text-[20px] font-[510] tracking-[-0.24px] text-paper">This is how your post would appear</p>
-                </div>
+                <p className="text-[20px] font-[510] tracking-[-0.24px] text-paper">Who applied</p>
                 <p className="mt-1 text-body-sm text-fog">
-                  {isRemote
-                    ? "Students and foundation doctors looking for remote work would see this on the board and could apply. You would get a ranked shortlist as applications come in."
-                    : `Students and foundation doctors near ${hospitalTrust.split(" NHS")[0]} would see this on the board and could apply. You would get a ranked shortlist as applications come in.`}
+                  Three example applicants, ranked against the post you just wrote. Each one shows what
+                  they meet and what they don&apos;t, so you can see why they&apos;re in that order. You
+                  make every decision. Hitch never accepts anyone for you.
                 </p>
 
-                <div className="mt-6 rounded-cards border border-graphite bg-black/[0.015] p-5">
-                  <div className="flex items-start justify-between gap-2">
-                    <p className="font-[510] text-paper">{title}</p>
-                    <span className="shrink-0 rounded-badges bg-acid-lime/15 px-[6px] text-label font-[510] text-acid-lime">
-                      {matchPercent}% match
-                    </span>
-                  </div>
-                  <p className="mt-1 text-caption text-fog">
-                    {isRemote ? "Remote / virtual" : hospitalTrust || "Location not specified"}
-                  </p>
+                <div className={`${DEMO_CARD_CLASS} mt-6 border-graphite bg-carbon`}>
+                  <DemoCardBody title={title} location={location} taskType={taskType} compact />
                 </div>
+
+                <ol className="mt-4 space-y-3">
+                  {applicants.map((a, i) => {
+                    const status = statuses[a.name];
+                    const allMet = a.match.checks.every((c) => c.met);
+                    const set = (s: DemoStatus) => setStatuses((prev) => ({ ...prev, [a.name]: s }));
+                    return (
+                      <li key={a.name} className="rounded-cards border border-graphite bg-carbon p-4">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex items-start gap-3">
+                            <span
+                              aria-hidden
+                              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-pills bg-black/[0.045] text-[13px] font-[600] text-fog"
+                            >
+                              {i + 1}
+                            </span>
+                            <div>
+                              <div className="flex flex-wrap items-center gap-2">
+                                <p className="font-[510] text-paper">
+                                  <span className="sr-only">Ranked {i + 1}: </span>
+                                  {a.name}
+                                </p>
+                                <span className="rounded-badges bg-acid-lime/15 px-[6px] text-label font-[510] text-acid-lime">
+                                  {a.match.percent}% match
+                                </span>
+                              </div>
+                              <p className="text-caption text-fog">{a.detail}</p>
+                            </div>
+                          </div>
+                          {status && (
+                            <span className={`shrink-0 rounded-badges px-[6px] text-label font-[510] ${STATUS_PILL[status]}`}>
+                              {STATUS_LABEL[status]}
+                            </span>
+                          )}
+                        </div>
+
+                        {a.match.checks.length > 0 && (
+                          <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1">
+                            {a.match.checks.map((c) => {
+                              const unmetRequired = c.required && !c.met;
+                              return (
+                                <li key={c.label} className="flex items-center gap-1.5 text-body-sm">
+                                  <span
+                                    aria-hidden
+                                    className={c.met ? "text-pulse-green" : unmetRequired ? "text-coral-red" : "text-ash"}
+                                  >
+                                    {c.met ? "✓" : "○"}
+                                  </span>
+                                  <span className={c.met ? "text-mist" : unmetRequired ? "text-coral-red" : "text-ash"}>
+                                    {c.label}
+                                    {c.required && <span className="ml-1 text-label text-ash">(required)</span>}
+                                    <span className="sr-only">{c.met ? ", met" : ", not met"}</span>
+                                  </span>
+                                </li>
+                              );
+                            })}
+                          </ul>
+                        )}
+                        {allMet && (
+                          <p className="mt-2 text-body-sm font-[510] text-pulse-green">Every requirement met</p>
+                        )}
+
+                        {status === "accepted" && (
+                          <p className="mt-3 rounded-inputs border border-pulse-green/40 bg-pulse-green/[0.06] p-3 text-body-sm text-mist">
+                            In the real product you would now see their email address to arrange next steps.
+                          </p>
+                        )}
+
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          {status !== "shortlisted" && status !== "accepted" && (
+                            <button
+                              type="button"
+                              onClick={() => set("shortlisted")}
+                              className={`${ACTION_BTN} border border-graphite text-mist hover:border-smoke`}
+                            >
+                              Shortlist
+                            </button>
+                          )}
+                          {status !== "accepted" && (
+                            <button
+                              type="button"
+                              onClick={() => set("accepted")}
+                              className={`${ACTION_BTN} bg-acid-lime font-[510] text-void hover:opacity-90`}
+                            >
+                              Accept
+                            </button>
+                          )}
+                          {status !== "declined" && (
+                            <button
+                              type="button"
+                              onClick={() => set("declined")}
+                              className={`${ACTION_BTN} border border-coral-red/30 text-coral-red hover:border-coral-red/60`}
+                            >
+                              Decline
+                            </button>
+                          )}
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ol>
 
                 <button
                   onClick={onSeeStudentSide}
@@ -476,29 +543,6 @@ export default function DoctorWalkthrough({
                     Switch to the applicant view. This exact posting will be waiting for them.
                   </p>
                 </button>
-
-                <div className="mt-6 rounded-cards border border-dashed border-graphite p-5">
-                  <div className="flex items-center gap-2">
-                    <span className="rounded-badges bg-signal-teal/15 px-[6px] text-label font-[510] text-signal-teal">
-                      Coming soon
-                    </span>
-                    <p className="text-[14px] font-[510] text-paper">See what other trusts are running</p>
-                  </div>
-                  <p className="mt-1 text-caption text-ash">
-                    Cross-trust visibility, so you can see what&apos;s worked elsewhere before starting
-                    from scratch.
-                  </p>
-                  <div className="mt-4 space-y-2 opacity-60">
-                    {CROSS_TRUST_TEASER.map((t) => (
-                      <div key={t.title} className="rounded-inputs border border-graphite bg-black/[0.02] p-3">
-                        <p className="text-body-sm font-[510] text-mist">{t.title}</p>
-                        <p className="text-caption text-ash">
-                          {t.trust} · {t.stat}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
 
                 <div className="mt-8 flex flex-wrap gap-3">
                   <Button onClick={restart} variant="secondary" size="lg">

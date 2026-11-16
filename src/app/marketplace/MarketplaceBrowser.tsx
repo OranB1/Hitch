@@ -10,6 +10,7 @@ import { TASK_TYPE_OPTIONS, SKILL_OPTIONS, PROJECT_DURATION_OPTIONS, AVAILABILIT
 import { stageLabel } from "@/lib/data/onboarding-options";
 import { getPartneredHospitals, computeMatch, type MatchProfile } from "@/lib/marketplace";
 import { notifyPosterOfNewApplication } from "@/lib/notifications";
+import { taskTone } from "@/lib/taskTone";
 import type { Tables } from "@/lib/supabase/database.types";
 
 type Opportunity = Tables<"opportunities">;
@@ -37,18 +38,6 @@ function commitmentLabel(value: string) {
   return AVAILABILITY_OPTIONS.some((a) => a.value === value) ? `${value}/week` : value;
 }
 
-// Colour belongs to task type, not specialty: six bounded values rather than one hue per
-// specialty, which would be a rainbow and would mostly fail contrast. Each pairs a readable ink
-// with a wash of the same hue; both inks clear 4.5:1 on the card at badge size.
-const TASK_TONE: Record<string, { text: string; wash: string; stripe: string }> = {
-  qip: { text: "#1d4fa8", wash: "#1d4fa814", stripe: "#1d4fa8" },
-  audit: { text: "#0a6c78", wash: "#05808f14", stripe: "#0a6c78" },
-  research: { text: "#6b3fa0", wash: "#6b3fa014", stripe: "#6b3fa0" },
-  presentation: { text: "#9a5116", wash: "#9a511614", stripe: "#9a5116" },
-  teaching: { text: "#166835", wash: "#1a7a3f14", stripe: "#166835" },
-  other: { text: "#5a5650", wash: "#5a565014", stripe: "#9b958c" },
-};
-const taskTone = (t: string) => TASK_TONE[t] ?? TASK_TONE.other;
 
 // Whichever of hours, length and closing date a posting actually has. Anything missing is left
 // out rather than shown as an empty or "not specified" field.

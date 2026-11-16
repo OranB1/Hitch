@@ -14,13 +14,15 @@ import {
 } from "@/lib/data/marketplace-options";
 import { DEMO_STUDENT_NAME, DEMO_STUDENT_SUBTITLE, DEMO_STUDENT_PROFILE } from "./demoStudentProfile";
 import type { PostedOpportunity } from "./types";
+import { rankDemoApplicants } from "./demoApplicants";
+import { DemoCardBody, DEMO_CARD_CLASS } from "./DemoCard";
 
 const SKILL_LABEL = new Map(SKILL_OPTIONS.map((s) => [s.value as string, s.label]));
 
 // Same rule as the real dashboard: show the facts a posting has, omit the ones it doesn't.
 function listingFacts(o: { estimated_commitment: string | null; projectDuration?: ProjectDuration; deadline?: string }) {
   const facts: string[] = [];
-  if (o.estimated_commitment) facts.push(o.estimated_commitment);
+  if (o.estimated_commitment) facts.push(`${o.estimated_commitment}/week`);
   if (o.projectDuration) facts.push(PROJECT_DURATION_OPTIONS.find((d) => d.value === o.projectDuration)?.label ?? o.projectDuration);
   if (o.deadline) facts.push(`Apply by ${new Date(o.deadline).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}`);
   return facts;
@@ -104,11 +106,6 @@ const OTHER_OPPORTUNITIES: DemoListing[] = [
     estimated_commitment: "5-10h",
     projectDuration: "3_6_months",
   },
-];
-
-const OTHER_APPLICANTS = [
-  { initials: "JP", name: "Jamie Patel", detail: "Year 5 · King's College London", percent: 74 },
-  { initials: "RK", name: "Riya Kaur", detail: "Year 3 · UCL", percent: 61 },
 ];
 
 const stepVariants = {
@@ -331,28 +328,26 @@ export default function StudentWalkthrough({
                       <button
                         key={opportunity.title}
                         onClick={() => setSelectedIndex(i)}
-                        className={`relative w-full rounded-inputs border bg-black/[0.015] p-3 text-left transition-colors ${
-                          i === safeIndex ? "border-transparent" : "border-graphite hover:border-smoke"
+                        aria-pressed={i === safeIndex}
+                        className={`${DEMO_CARD_CLASS} transition-colors ${
+                          i === safeIndex ? "border-transparent bg-carbon" : "border-graphite bg-carbon hover:border-smoke"
                         }`}
                       >
                         {i === safeIndex && (
                           <motion.span
                             layoutId="demo-listing-selection"
-                            className="absolute inset-0 rounded-inputs border border-acid-lime bg-acid-lime/5"
+                            className="absolute inset-0 rounded-cards border border-acid-lime bg-acid-lime/5"
                             transition={reducedMotion ? { duration: 0 } : { type: "spring", stiffness: 380, damping: 32 }}
                           />
                         )}
-                        <div className="relative">
-                          <div className="flex items-start justify-between gap-2">
-                            <p className="text-caption font-[510] text-paper">{opportunity.title}</p>
-                          </div>
-                          {listingFacts(opportunity).length > 0 && (
-                            <p className="mt-1 text-label text-ash">{listingFacts(opportunity).join(" · ")}</p>
-                          )}
-                          <span className="mt-1 inline-block rounded-badges bg-acid-lime/15 px-[6px] text-label font-[510] text-acid-lime">
-                            {match.percent}% match
-                          </span>
-                        </div>
+                        <DemoCardBody
+                          title={opportunity.title}
+                          location={opportunity.hospital_trust}
+                          facts={listingFacts(opportunity)}
+                          taskType={opportunity.taskType}
+                          percent={match.percent}
+                          compact
+                        />
                       </button>
                     ))}
                     {listings.length === 0 && (
@@ -437,37 +432,38 @@ export default function StudentWalkthrough({
                 <div className="mt-6 rounded-cards border border-dashed border-graphite p-5">
                   <p className="text-[14px] font-[510] text-paper">What the poster sees on their end</p>
                   <p className="mt-1 text-caption text-ash">
-                    A ranked shortlist instead of a pile of emails. {DEMO_STUDENT_NAME.split(" ")[0]}&apos;s
-                    application lands right at the top.
+                    A ranked list instead of a pile of emails, worked out the same way as your match.
+                    Here&apos;s where {DEMO_STUDENT_NAME.split(" ")[0]} would land among the example
+                    applicants.
                   </p>
-                  <div className="mt-4 space-y-2">
-                    <div className="flex items-center gap-3 rounded-inputs border border-acid-lime/40 bg-acid-lime/[0.06] p-3">
-                      <div className="h-9 w-9 shrink-0 rounded-pills bg-acid-lime/15 flex items-center justify-center text-[13px] font-[510] text-acid-lime">
-                        SO
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-body-sm font-[510] text-paper">{DEMO_STUDENT_NAME}</p>
-                        <p className="text-caption text-fog">{DEMO_STUDENT_SUBTITLE}</p>
-                      </div>
-                      <span className="shrink-0 rounded-badges bg-acid-lime/20 px-[6px] text-label font-[510] text-acid-lime">
-                        {selected.match.percent}% match
-                      </span>
-                    </div>
-                    {OTHER_APPLICANTS.map((a) => (
-                      <div key={a.name} className="flex items-center gap-3 rounded-inputs border border-graphite bg-black/[0.015] p-3 opacity-70">
-                        <div className="h-9 w-9 shrink-0 rounded-pills bg-black/[0.045] flex items-center justify-center text-[13px] font-[510] text-fog">
-                          {a.initials}
-                        </div>
-                        <div className="flex-1">
-                          <p className="text-body-sm font-[510] text-mist">{a.name}</p>
-                          <p className="text-caption text-ash">{a.detail}</p>
-                        </div>
-                        <span className="shrink-0 rounded-badges bg-black/[0.045] px-[6px] text-label text-fog">
-                          {a.percent}% match
+                  <ol className="mt-4 space-y-2">
+                    {rankDemoApplicants(selected.opportunity).map((a, i) => (
+                      <li
+                        key={a.name}
+                        className={`flex items-center gap-3 rounded-inputs border p-3 ${
+                          a.isDemoStudent ? "border-acid-lime/40 bg-acid-lime/[0.06]" : "border-graphite bg-black/[0.015]"
+                        }`}
+                      >
+                        <span
+                          aria-hidden
+                          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-pills bg-black/[0.045] text-[13px] font-[600] text-fog"
+                        >
+                          {i + 1}
                         </span>
-                      </div>
+                        <div className="flex-1">
+                          <p className={`text-body-sm font-[510] ${a.isDemoStudent ? "text-paper" : "text-mist"}`}>
+                            <span className="sr-only">Ranked {i + 1}: </span>
+                            {a.name}
+                            {a.isDemoStudent && <span className="font-normal text-fog"> (you)</span>}
+                          </p>
+                          <p className="text-caption text-fog">{a.detail}</p>
+                        </div>
+                        <span className="shrink-0 rounded-badges bg-acid-lime/15 px-[6px] text-label font-[510] text-acid-lime">
+                          {a.match.percent}% match
+                        </span>
+                      </li>
                     ))}
-                  </div>
+                  </ol>
                 </div>
 
                 <div className="mt-8 flex flex-wrap gap-3">

@@ -321,7 +321,7 @@ export default function MyPostings() {
                       </div>
                     </div>
                     <span className={`rounded-badges px-[6px] text-label capitalize ${STATUS_STYLES[a.status] ?? ""}`}>
-                      {a.status}
+                      {a.status === "rejected" ? "declined" : a.status}
                     </span>
                   </div>
 
@@ -395,7 +395,7 @@ export default function MyPostings() {
                         onClick={() => updateStatus(a.id, "rejected")}
                         className="rounded-buttons border border-coral-red/30 inline-flex min-h-[44px] items-center px-4 text-[13px] text-coral-red hover:border-coral-red/60"
                       >
-                        Reject
+                        Decline
                       </button>
                     )}
                   </div>
